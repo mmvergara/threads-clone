@@ -26,8 +26,7 @@ import { getUserIdFromSession, requireUser } from "~/session/session.server";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserIdFromSession(request);
   if (userId) {
-    console.log("Already logged in, redirecting to /app");
-    return redirect("/app");
+    return redirect("/app/home");
   }
   return null;
 };
