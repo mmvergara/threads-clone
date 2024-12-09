@@ -1,15 +1,10 @@
 import { useState } from "react";
-import { Form } from "@remix-run/react";
+import { Form, Link } from "@remix-run/react";
 import { AtSign, Lock, Eye, EyeOff } from "lucide-react";
 
 const ThreadsSignIn = () => {
-  const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
 
   return (
     <div className="min-h-screen bg-[#101010] text-white flex items-center justify-center px-4">
@@ -24,9 +19,7 @@ const ThreadsSignIn = () => {
           </p>
         </div>
 
-        {/* Sign In Form */}
         <Form method="post" className="space-y-2">
-          {/* Email Input */}
           <input
             type="email"
             name="email"
@@ -38,7 +31,6 @@ const ThreadsSignIn = () => {
                          focus:outline-none focus:ring-[1px] focus:ring-zinc-500 text-white placeholder-gray-400"
           />
 
-          {/* Password Input */}
           <div className="relative">
             <input
               type="password"
@@ -52,7 +44,6 @@ const ThreadsSignIn = () => {
             />
           </div>
 
-          {/* Sign In Button */}
           <button
             type="submit"
             className="w-full py-3 bg-white text-black font-semibold rounded-xl
@@ -62,7 +53,6 @@ const ThreadsSignIn = () => {
           </button>
         </Form>
 
-        {/* Additional Options */}
         <div className="text-center mt-6 space-y-4">
           <a href="#" className="text-zinc-500 text-sm hover:underline">
             Forgot password?
@@ -70,9 +60,12 @@ const ThreadsSignIn = () => {
 
           <div className="flex items-center justify-center mt-4">
             <span className="text-gray-500">Don't have an account?</span>
-            <a href="/auth/signup" className="ml-2 text-blue-500 hover:underline">
+            <Link
+              to="/auth/signup"
+              className="ml-2 text-blue-500 hover:underline"
+            >
               Sign up
-            </a>
+            </Link>
           </div>
         </div>
       </div>
