@@ -1,6 +1,14 @@
 const Thread = () => {
+  const handleThreadClick = () => {
+    // Add your navigation logic here
+    console.log("Thread clicked");
+  };
+
   return (
-    <div className="flex gap-4 px-6 py-4 border-[#303030] border-t-[0.5px] ">
+    <div
+      onClick={handleThreadClick}
+      className="flex gap-4 px-6 py-4 border-[#303030] border-t-[0.5px] cursor-pointer"
+    >
       {/* User Avatar */}
       <div className="flex-shrink-0">
         <img
@@ -35,7 +43,10 @@ const Thread = () => {
 
         {/* Thread Actions */}
         <div className="flex gap-4 mt-3 text-zinc-500">
-          <button className="hover:text-white">
+          <button
+            onClick={(e) => e.stopPropagation()}
+            className="p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -50,7 +61,10 @@ const Thread = () => {
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
             </svg>
           </button>
-          <button className="hover:text-white">
+          <button
+            onClick={(e) => e.stopPropagation()}
+            className="p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -65,7 +79,10 @@ const Thread = () => {
               <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
             </svg>
           </button>
-          <button className="hover:text-white">
+          <button
+            onClick={(e) => e.stopPropagation()}
+            className="p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
@@ -83,7 +100,10 @@ const Thread = () => {
               <path d="M21 13v2a4 4 0 0 1-4 4H3" />
             </svg>
           </button>
-          <button className="hover:text-white">
+          <button
+            onClick={(e) => e.stopPropagation()}
+            className="p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="20"
