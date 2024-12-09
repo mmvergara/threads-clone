@@ -1,51 +1,70 @@
-import { Form, Link, useActionData, useLoaderData } from "@remix-run/react";
+import {
+  Form,
+  Link,
+  useActionData,
+  useLoaderData,
+  useNavigate,
+} from "@remix-run/react";
 import { ActionFunctionArgs } from "@remix-run/node";
 import { z } from "zod";
+import {
+  actionError,
+  ActionReturnType,
+  actionSuccess,
+  handleErrorAction,
+  useToastedAction,
+} from "~/utils/action-utils";
+import bcrypt from "bcrypt";
+import { createUser, isEmailTaken, isHandleTaken } from "~/db/repo_users";
 import { useEffect } from "react";
 
 const signUpSchema = z.object({
   email: z.string().email("Please enter a valid email"),
-  username: z
+  handle: z
     .string()
-    .min(3, "Username must be 3, or more characters")
-    .max(20, "Username must be 20 or less characters"),
+    .min(3, "Handle must be 3 or more characters")
+    .max(20, "Handle must be 20 or less characters"),
   password: z.string().min(8, "Password must be 8 or more characters"),
 });
 
 export const action = async ({
   request,
-}: ActionFunctionArgs): Promise<{
-  error: string | null;
-}> => {
+}: ActionFunctionArgs): Promise<ActionReturnType<void>> => {
   try {
     const formData = await request.formData();
     const email = formData.get("email") as string;
-    const username = formData.get("username") as string;
+    const handle = formData.get("handle") as string;
     const password = formData.get("password") as string;
+    const valid = await signUpSchema.parseAsync({ email, handle, password });
 
-    const res = await signUpSchema.parseAsync({ email, username, password });
-    console.log("Valid data:", res);
+    const emailTaken = await isEmailTaken(valid.email);
+    if (emailTaken) return actionError("Email is already taken");
 
-    // Process the validated data...
+    const handleTaken = await isHandleTaken(valid.handle);
+    if (handleTaken) return actionError("Handle is already taken");
 
-    return { error: null };
+    const salt = await bcrypt.genSalt();
+    const passwordHash = await bcrypt.hash(password, salt);
+
+    await createUser({
+      email: valid.email,
+      handle: valid.handle,
+      passwordHash: passwordHash,
+    });
+    return actionSuccess("Successfully created account!");
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      console.error("Validation errors:", error.errors);
-      return { error: error.errors[0].message };
-    } else {
-      console.error("Unexpected error:", error);
-      return { error: "Unexpected error occurred" };
-    }
+    console.log(error);
+    return handleErrorAction(error);
   }
 };
 
 const ThreadsSignUp = () => {
   const data = useActionData<typeof action>();
+  const navigate = useNavigate();
+  useToastedAction(data);
   useEffect(() => {
-    if (!data) return;
-    if (data.error) {
-      alert(data.error);
+    if (data?.success) {
+      navigate("/auth/signin");
     }
   }, [data]);
   return (
@@ -59,7 +78,6 @@ const ThreadsSignUp = () => {
             Not really, this is just a clone.
           </p>
         </div>
-
         <Form method="post" className="space-y-2">
           <input
             type="email"
@@ -68,16 +86,14 @@ const ThreadsSignUp = () => {
             required
             className="w-full text-sm p-4 bg-[#1E1E1E] rounded-xl focus:outline-none focus:ring-[1px] focus:ring-zinc-500 text-white placeholder-gray-400"
           />
-
           <input
             type="text"
-            name="username"
+            name="handle"
             max={20}
-            placeholder="Username"
+            placeholder="Handle (username)"
             required
             className="w-full text-sm p-4 bg-[#1E1E1E] rounded-xl focus:outline-none focus:ring-[1px] focus:ring-zinc-500 text-white placeholder-gray-400"
           />
-
           <input
             type="password"
             name="password"
@@ -85,7 +101,6 @@ const ThreadsSignUp = () => {
             required
             className="w-full text-sm p-4 bg-[#1E1E1E] rounded-xl focus:outline-none focus:ring-[1px] focus:ring-zinc-500 text-white placeholder-gray-400"
           />
-
           <button
             type="submit"
             className="w-full py-3 bg-white text-black font-semibold rounded-xl hover:bg-blue-500 transition duration-300"
@@ -93,7 +108,6 @@ const ThreadsSignUp = () => {
             Sign Up
           </button>
         </Form>
-
         <div className="text-center mt-6 space-y-4">
           <div className="flex items-center justify-center mt-4">
             <span className="text-gray-500">Already have an account?</span>
