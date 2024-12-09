@@ -5,7 +5,11 @@ import {
   useLoaderData,
   useNavigate,
 } from "@remix-run/react";
-import { ActionFunctionArgs } from "@remix-run/node";
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  redirect,
+} from "@remix-run/node";
 import { z } from "zod";
 import {
   actionError,
@@ -15,8 +19,18 @@ import {
   useToastedAction,
 } from "~/utils/action-utils";
 import bcrypt from "bcrypt";
-import { createUser, isEmailTaken, isHandleTaken } from "~/db/repo_users";
+import { createUser, isEmailTaken, isHandleTaken } from "~/db/repo_auth";
 import { useEffect } from "react";
+import { getUserIdFromSession, requireUser } from "~/session/session.server";
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const userId = await getUserIdFromSession(request);
+  if (userId) {
+    console.log("Already logged in, redirecting to /app");
+    return redirect("/app");
+  }
+  return null;
+};
 
 const signUpSchema = z.object({
   email: z.string().email("Please enter a valid email"),
