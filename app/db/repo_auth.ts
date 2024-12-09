@@ -1,4 +1,4 @@
-import { newSnowflakeID } from "~/utils/snowflake.server";
+import { generateID } from "~/utils/cuid.server";
 import { db } from "./drizzle.server";
 import { users } from "./schema.server";
 import { eq } from "drizzle-orm";
@@ -13,7 +13,7 @@ export const createUser = async ({
   handle,
   passwordHash,
 }: createUserParams) => {
-  const id = newSnowflakeID();
+  const id = generateID();
   await db.insert(users).values({
     id,
     handle,
