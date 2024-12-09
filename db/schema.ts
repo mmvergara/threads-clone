@@ -3,9 +3,8 @@ import {
   sqliteTable,
   text,
   integer,
-  real,
-  blob,
   primaryKey,
+  AnySQLiteColumn,
 } from "drizzle-orm/sqlite-core";
 
 // User Table
@@ -21,12 +20,9 @@ export const users = sqliteTable("users", {
   followers: integer("followers").default(0),
   following: integer("following").default(0),
   isVerified: integer("is_verified", { mode: "boolean" }).default(false),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(
-    sql`strftime('%s', 'now')`
-  ),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).default(
-    sql`strftime('%s', 'now')`
-  ),
+  createdAt: integer("created_at", { mode: "number" })
+    .notNull()
+    .default(sql`(unixepoch())`),
 });
 
 // Thread (Post) Table
@@ -35,16 +31,23 @@ export const threads = sqliteTable("threads", {
   userId: text("user_id")
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
-  content: text("content").notNull(),
+  content: text("content"),
   imageUrls: text("image_urls"),
-  isReply: integer("is_reply", { mode: "boolean" }).default(false),
-  likes: integer("likes").default(0),
-  reposts: integer("reposts").default(0),
-  replies: integer("replies").default(0),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(
-    sql`strftime('%s', 'now')`
+  parentThreadId: text("parent_thread_id").references(
+    (): AnySQLiteColumn => threads.id,
+    {
+      onDelete: "cascade",
+    }
   ),
+  isReply: integer("is_reply", { mode: "boolean" }).default(false),
+  likes: integer("likes").default(0).notNull(),
+  reposts: integer("reposts").default(0).notNull(),
+  replies: integer("replies").default(0).notNull(),
+  createdAt: integer("created_at", { mode: "number" })
+    .notNull()
+    .default(sql`(unixepoch())`),
 });
+
 // Likes Table
 export const likes = sqliteTable(
   "likes",
@@ -63,12 +66,16 @@ export const likes = sqliteTable(
 export const follows = sqliteTable(
   "follows",
   {
-    followerId: text("follower_id").references(() => users.id, {
-      onDelete: "cascade",
-    }),
-    followedId: text("followed_id").references(() => users.id, {
-      onDelete: "cascade",
-    }),
+    followerId: text("follower_id")
+      .references(() => users.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
+    followedId: text("followed_id")
+      .references(() => users.id, {
+        onDelete: "cascade",
+      })
+      .notNull(),
   },
   (table) => ({
     pk: primaryKey({ columns: [table.followerId, table.followedId] }),
@@ -90,10 +97,10 @@ export const notifications = sqliteTable("notifications", {
   threadId: text("thread_id").references(() => threads.id, {
     onDelete: "set null",
   }),
-  isRead: integer("is_read", { mode: "boolean" }).default(false),
-  createdAt: integer("created_at", { mode: "timestamp" }).default(
-    sql`strftime('%s', 'now')`
-  ),
+  isRead: integer("is_read", { mode: "boolean" }).notNull().default(false),
+  createdAt: integer("created_at", { mode: "number" })
+    .notNull()
+    .default(sql`(unixepoch())`),
 });
 
 // Relation Definitions
@@ -109,6 +116,10 @@ export const threadsRelations = relations(threads, ({ one, many }) => ({
   author: one(users, {
     fields: [threads.userId],
     references: [users.id],
+  }),
+  parentThread: one(threads, {
+    fields: [threads.parentThreadId],
+    references: [threads.id],
   }),
   likes: many(likes),
   replies: many(threads, { relationName: "thread_replies" }),
