@@ -6,9 +6,9 @@ const CreateThreadButton = () => {
   const [content, setContent] = useState("");
 
   return (
-    <>
+    <div className="px-6 py-6">
       {/* Create Thread Button */}
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-zinc-800">
+      <div className="flex items-center gap-3">
         <img
           src="https://via.placeholder.com/40x40"
           alt="User avatar"
@@ -119,7 +119,7 @@ const CreateThreadButton = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
