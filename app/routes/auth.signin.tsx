@@ -23,7 +23,7 @@ import {
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserIdFromSession(request);
   if (userId) {
-    return redirect("/app");
+    return redirect("/app/home");
   }
   return null;
 };
