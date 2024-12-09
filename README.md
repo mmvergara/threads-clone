@@ -23,4 +23,13 @@ npx drizzle-studio
 
 ---
 
-I ignored, client side validation implementation for now. it's easy to implement, i focused on learning Remix and Drizzle.
+#### Thoughts upon developing (probably irrelevant)
+
+- Remix has a straightforward logic, only took me a few days to understand the concepts of Remix.
+
+- I like drizzle better than prisma.
+
+- They kinda stick to web standards, so it's easy to understand.
+
+- No middlewares, so we have to check for user session in every route for security :<.
+  > https://remix.run/docs/en/1.19.3/pages/faq#how-can-i-have-a-parent-route-loader-validate-the-user-and-protect-all-child-routes
