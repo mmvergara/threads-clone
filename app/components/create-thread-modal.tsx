@@ -1,5 +1,5 @@
 import { ImageUpIcon } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { UploadButton } from "~/utils/uploadthing";
 import { Form } from "@remix-run/react";
@@ -11,6 +11,9 @@ type Props = {
 
 const CreateThreadModal = ({ isOpen, setIsOpen }: Props) => {
   const [images, setImages] = useState<string[]>([]);
+  const uploadThingBtnRef = useRef<HTMLDivElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-black/85 flex items-start justify-center p-4 pt-[10vh] overflow-y-auto z-50">
@@ -72,40 +75,51 @@ const CreateThreadModal = ({ isOpen, setIsOpen }: Props) => {
 
                 <button
                   type="button"
-                  className="px-2.5 group rounded-md hover:bg-zinc-800 transition-colors"
+                  className="p-2.5 group rounded-md hover:bg-zinc-800 transition-colors"
+                  onClick={() => {
+                    uploadThingBtnRef.current?.click();
+                  }}
                 >
+                  <span className="flex items-center gap-1">
+                    <ImageUpIcon
+                      size={16}
+                      className="text-zinc-500 group-hover:text-white bg-gra"
+                    />
+                    {isUploading && (
+                      <div className="flex flex-col gap-1 pl-2">
+                        <span className="text-zinc-500">
+                          Uploading... {progress}%
+                        </span>
+                        <div className="w-[100px] h-1 bg-zinc-800 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-white transition-all duration-300"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </span>
                   <UploadButton
+                    className="ut-label:hidden"
                     endpoint="threadImageUploader"
+                    onUploadBegin={() => setIsUploading(true)}
+                    onUploadProgress={setProgress}
                     onClientUploadComplete={(images: any) => {
+                      setIsUploading(false);
                       setImages(images.map((i: any) => i.url));
                     }}
                     onUploadError={(error: Error) => {
-                      console.log("error", error);
-                      console.log("error", error);
-                      console.log("error", error);
-                      console.log("error", error);
-                      console.log("error", error);
+                      setIsUploading(false);
                       toast.error(error.message);
                     }}
                     appearance={{
-                      container: "w-max flex-row rounded-md border-zinc-700 ",
-                      label: "hidden",
+                      clearBtn: "hidden",
+                      button: "hidden",
+                      container: "hidden",
                       allowedContent: "hidden",
                     }}
                     content={{
-                      button: ({ isUploading }: { isUploading: boolean }) => (
-                        <>
-                          <ImageUpIcon
-                            size={16}
-                            className="text-zinc-500 group-hover:text-white"
-                          />
-                          {isUploading && (
-                            <span className="text-zinc-500 pl-2">
-                              Uploading...
-                            </span>
-                          )}
-                        </>
-                      ),
+                      button: () => <div ref={uploadThingBtnRef}></div>,
                     }}
                   />
                 </button>
@@ -132,6 +146,7 @@ const CreateThreadModal = ({ isOpen, setIsOpen }: Props) => {
               <button
                 type="submit"
                 className="px-4 py-2 rounded-full bg-white text-black"
+                disabled={isUploading}
               >
                 Post
               </button>
