@@ -8,6 +8,7 @@ type createUserParams = {
   handle: string;
   passwordHash: string;
 };
+
 export const createUser = async ({
   email,
   handle,
