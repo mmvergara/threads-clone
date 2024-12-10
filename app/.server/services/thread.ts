@@ -1,6 +1,9 @@
 import { generateID } from "~/utils/cuid.server";
-import { threads } from "../db/schema.server";
+import { threads, users } from "../db/schema.server";
 import { db } from "../db/drizzle.server";
+import { desc, eq, getTableColumns } from "drizzle-orm";
+
+const { passwordHash, ...userWithoutPasswordHash } = getTableColumns(users);
 
 type CreateThreadParams = {
   userId: string;
@@ -26,6 +29,28 @@ export const createThread = async ({
     })
     .returning();
   return res[0];
+};
+
+type GetThreadsWithUserParams = {
+  limit?: number;
+  skip?: number;
+};
+
+export const getThreadsWithUser = async ({
+  limit = 10,
+  skip = 0,
+}: GetThreadsWithUserParams) => {
+  const res = await db
+    .select({
+      thread: getTableColumns(threads),
+      user: userWithoutPasswordHash,
+    })
+    .from(threads)
+    .innerJoin(users, eq(threads.userId, users.id))
+    .orderBy(desc(threads.createdAt))
+    .limit(limit)
+    .offset(skip);
+  return res;
 };
 
 // export const threads = sqliteTable("threads", {
