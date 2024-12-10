@@ -1,3 +1,4 @@
+import { useActionData } from "@remix-run/react";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { z } from "zod";
@@ -8,16 +9,23 @@ export type ActionReturnType<T> = {
   success: boolean;
 };
 
-export const useToastedAction = (
-  data?: ActionReturnType<unknown> | undefined
-) => {
+export const useToastedActionData = () => {
+  const data = useActionData() as {
+    success?: boolean;
+    message?: string[];
+    data?: unknown;
+  };
+
   useEffect(() => {
-    if (data?.message) {
-      data.message.forEach((message) => {
-        data.success ? toast.success(message) : toast.error(message);
+    if (!data) return;
+    if (data.success) {
+      data?.message?.forEach((message) => {
+        data?.success ? toast.success(message) : toast.error(message);
       });
     }
   }, [data]);
+
+  return data;
 };
 
 export const handleErrorAction = (error: unknown): ActionReturnType<never> => {
@@ -36,9 +44,9 @@ export const handleErrorAction = (error: unknown): ActionReturnType<never> => {
   }
 };
 
-export const actionSuccess = (message: string): ActionReturnType<void> => {
+export function actionSuccess<T>(message: string): ActionReturnType<T> {
   return { success: true, message: [message] };
-};
+}
 
 export const actionError = (message: string): ActionReturnType<never> => {
   return { success: false, message: [message] };
