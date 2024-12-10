@@ -1,4 +1,4 @@
-import { Form, Link, useActionData, useNavigate } from "@remix-run/react";
+import { Form, Link, useActionData } from "@remix-run/react";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -6,24 +6,24 @@ import {
   TypedResponse,
 } from "@remix-run/node";
 import { z } from "zod";
-import { useEffect } from "react";
 import {
   actionError,
   ActionReturnType,
   handleErrorAction,
   useToastedAction,
 } from "~/utils/action-utils";
-import { getUserByEmail } from "~/.server/repo_user";
 import bcrypt from "bcrypt";
 import {
   getUserIdFromSession,
   storeUserInSession,
-} from "~/session/session.server";
+} from "~/.server/session/session";
+import { getUserByEmail } from "~/.server/services/user";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserIdFromSession(request);
   if (userId) {
-    return redirect("/app/home");
+    console.log("User already logged in, redirecting to /app");
+    return redirect("/app");
   }
   return null;
 };

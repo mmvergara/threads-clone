@@ -23,14 +23,14 @@ import {
   createUser,
   isEmailTaken,
   isHandleTaken,
-} from "~/.server/services/repo_auth";
+} from "~/.server/services/auth";
 import { useEffect } from "react";
-import { getUserIdFromSession, requireUser } from "~/session/session.server";
+import { getUserIdFromSession } from "~/.server/session/session";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserIdFromSession(request);
   if (userId) {
-    return redirect("/app/home");
+    return redirect("/app");
   }
   return null;
 };

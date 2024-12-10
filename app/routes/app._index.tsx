@@ -1,6 +1,6 @@
 import Thread from "../components/thread";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { requireUser } from "~/session/session.server";
+import { requireUser } from "~/.server/session/session";
 import { useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
 export const loader = async ({ request }: LoaderFunctionArgs) => {
