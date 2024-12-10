@@ -7,6 +7,7 @@
 - Remix
 - Drizzle
 - Sqlite
+- Uploadthing
 
 ### Installation
 
