@@ -4,6 +4,37 @@ import { requireUser } from "~/.server/session/session";
 import { useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
 
+import { ActionFunctionArgs, redirect } from "@remix-run/node";
+import { createThread } from "~/.server/services/thread";
+import { actionSuccess, handleErrorAction } from "~/utils/action-utils";
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const userId = await requireUser(request);
+  const formData = await request.formData();
+  const intent = formData.get("intent") as string;
+  console.log("intent", intent);
+  if (intent === "createThread") {
+    const content = formData.get("content") as string;
+    const imagesUrlJsonString = formData.get("images") as string;
+    const parentThreadId = formData.get("parentThreadId") as string | undefined;
+    console.log("content", content);
+    console.log("images", imagesUrlJsonString);
+    console.log(request.headers.get("Referer"));
+    try {
+      const threadId = await createThread({
+        userId,
+        content,
+        imagesUrlJsonString,
+        parentThreadId,
+      });
+      return actionSuccess("Thread created successfully" + threadId);
+    } catch (error) {
+      console.error(error);
+      return handleErrorAction(error);
+    }
+  }
+};
+
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await requireUser(request);
   return null;
