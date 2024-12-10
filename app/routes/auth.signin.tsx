@@ -1,4 +1,4 @@
-import { Form, Link } from "@remix-run/react";
+import { Form, Link, useActionData } from "@remix-run/react";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -10,18 +10,20 @@ import {
   ActionReturnType,
   handleActionError,
   handleCatchErrorAction,
-  useToastedActionData,
-} from "~/utils/action-utils";
+} from "~/.server/utils/action-utils";
 import bcrypt from "bcrypt";
 import {
   getUserIdFromSession,
   storeUserInSession,
 } from "~/.server/session/session";
-import { getUserByEmail } from "~/.server/services/user";
+import { getUserByEmail, getUserById } from "~/.server/services/user";
+import { useEffect } from "react";
+import { toastActionData } from "~/utils/toast";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserIdFromSession(request);
-  if (userId) {
+  const user = await getUserById(userId);
+  if (user) {
     console.log("User already logged in, redirecting to /app");
     return redirect("/app");
   }
@@ -33,11 +35,7 @@ const signInSchema = z.object({
   password: z.string().min(8, "Password must be 8 or more characters"),
 });
 
-export const action = async ({
-  request,
-}: ActionFunctionArgs): Promise<
-  ActionReturnType<void> | TypedResponse<unknown>
-> => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     const formData = await request.formData();
     const email = formData.get("email") as string;
@@ -46,10 +44,11 @@ export const action = async ({
     const valid = await signInSchema.parseAsync({ email, password });
 
     const user = await getUserByEmail(valid.email);
-    if (!user) return handleActionError("Invalid Credentials");
+    if (!user) return handleActionError(["Invalid Credentials"], "signIn");
 
     const validPassword = await bcrypt.compare(password, user.passwordHash);
-    if (!validPassword) return handleActionError("Invalid Credentials");
+    if (!validPassword)
+      return handleActionError(["Invalid Credentials"], "signIn");
 
     const sessionHeader = await storeUserInSession(user.id);
     return redirect("/app", {
@@ -58,12 +57,15 @@ export const action = async ({
       },
     });
   } catch (error) {
-    return handleCatchErrorAction(error);
+    return handleCatchErrorAction(error, "signIn");
   }
 };
 
 const ThreadsSignIn = () => {
-  useToastedActionData();
+  const actionData = useActionData() as ActionReturnType;
+  useEffect(() => {
+    toastActionData(actionData, "signIn");
+  }, [actionData]);
 
   return (
     <div className="min-h-screen bg-[#101010] text-white flex items-center justify-center px-4">
