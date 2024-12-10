@@ -13,10 +13,9 @@ import {
 import { z } from "zod";
 import {
   actionError,
-  ActionReturnType,
   actionSuccess,
   handleErrorAction,
-  useToastedAction,
+  useToastedActionData,
 } from "~/utils/action-utils";
 import bcrypt from "bcrypt";
 import {
@@ -44,9 +43,7 @@ const signUpSchema = z.object({
   password: z.string().min(8, "Password must be 8 or more characters"),
 });
 
-export const action = async ({
-  request,
-}: ActionFunctionArgs): Promise<ActionReturnType<void>> => {
+export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     const formData = await request.formData();
     const email = formData.get("email") as string;
@@ -76,9 +73,8 @@ export const action = async ({
 };
 
 const ThreadsSignUp = () => {
-  const data = useActionData<typeof action>();
+  const data = useToastedActionData();
   const navigate = useNavigate();
-  useToastedAction(data);
   useEffect(() => {
     if (data?.success) {
       navigate("/auth/signin");
