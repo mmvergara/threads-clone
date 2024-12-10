@@ -5,13 +5,13 @@ import { db } from "../db/drizzle.server";
 type CreateThreadParams = {
   userId: string;
   content: string;
-  imageUrls: string[];
+  imagesUrlJsonString: string;
   parentThreadId?: string;
 };
 export const createThread = async ({
   userId,
   content,
-  imageUrls,
+  imagesUrlJsonString,
   parentThreadId,
 }: CreateThreadParams) => {
   const id = generateID();
@@ -19,8 +19,8 @@ export const createThread = async ({
     id,
     userId,
     content,
-    imageUrls,
-    parentThreadId,
+    imageUrls: imagesUrlJsonString,
+    parentThreadId: parentThreadId || null,
   });
   return id;
 };
