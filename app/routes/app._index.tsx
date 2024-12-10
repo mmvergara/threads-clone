@@ -1,50 +1,61 @@
 import Thread from "../components/thread";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { requireUser } from "~/.server/session/session";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
 import { ActionFunctionArgs } from "@remix-run/node";
-import { createThread } from "~/.server/services/thread";
+import { createThread, getThreadsWithUser } from "~/.server/services/thread";
 import {
+  ActionReturnType,
   handleActionSuccess,
   handleCatchErrorAction,
-  useToastedActionData,
-} from "~/utils/action-utils";
+} from "~/.server/utils/action-utils";
+import { useActionData, useLoaderData } from "@remix-run/react";
+import { toastActionData } from "~/utils/toast";
+import { createThreadAction } from "~/.server/intent-actions/create-thread";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await requireUser(request);
-  return null;
+  try {
+    const threads = await getThreadsWithUser({ limit: 10, skip: 0 });
+    console.log(threads);
+    return threads;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const userId = await requireUser(request);
-  const formData = await request.formData();
-  const intent = formData.get("intent") as string;
-  console.log("intent", intent);
-  if (intent === "createThread") {
-    const content = formData.get("content") as string;
-    const imagesUrlJsonString = formData.get("images") as string;
-    const parentThreadId = formData.get("parentThreadId") as string | undefined;
-    try {
-      const thread = await createThread({
-        userId,
-        content,
-        imagesUrlJsonString,
-        parentThreadId,
-      });
-      console.log(thread);
-      return handleActionSuccess("Thread created successfully", thread);
-    } catch (error) {
-      console.error(error);
-      return handleCatchErrorAction(error);
+  try {
+    const user = await requireUser(request);
+    const formData = await request.formData();
+    const intent = formData.get("intent") as string;
+
+    switch (intent) {
+      case "createThread":
+        return createThreadAction(user.id, formData);
+      default:
+        throw new Error("Invalid intent");
     }
+  } catch (error) {
+    console.error(error);
+    return handleCatchErrorAction(error, "createThread");
   }
-  return null;
 };
 
 const ForYou = () => {
-  useToastedActionData();
   const [isOpen, setIsOpen] = useState(false);
+  const actionData = useActionData() as ActionReturnType;
+  const threads = useLoaderData<typeof loader>();
+
+  useEffect(() => {
+    toastActionData(actionData, "createThread");
+    if (actionData?.success && actionData?.intent === "createThread") {
+      setIsOpen(false);
+    }
+  }, [actionData]);
+
   return (
     <div className="flex flex-col w-full">
       <div className="flex items-center gap-3 px-6 py-4">
@@ -67,13 +78,13 @@ const ForYou = () => {
         </button>
       </div>
       <CreateThreadModal isOpen={isOpen} setIsOpen={setIsOpen} />
-      <Thread />
-      <Thread />
-      <Thread />
-      <Thread />
-      <Thread />
-      <Thread />
-      <Thread />
+      {threads.map((thread) => (
+        <Thread
+          key={thread.thread.id}
+          thread={thread.thread}
+          user={thread.user}
+        />
+      ))}
     </div>
   );
 };
