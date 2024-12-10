@@ -1,10 +1,4 @@
-import {
-  Form,
-  Link,
-  useActionData,
-  useLoaderData,
-  useNavigate,
-} from "@remix-run/react";
+import { Form, Link, useActionData, useNavigate } from "@remix-run/react";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -12,11 +6,11 @@ import {
 } from "@remix-run/node";
 import { z } from "zod";
 import {
+  ActionReturnType,
   handleActionError,
   handleActionSuccess,
   handleCatchErrorAction,
-  useToastedActionData,
-} from "~/utils/action-utils";
+} from "~/.server/utils/action-utils";
 import bcrypt from "bcrypt";
 import {
   createUser,
@@ -25,10 +19,14 @@ import {
 } from "~/.server/services/auth";
 import { useEffect } from "react";
 import { getUserIdFromSession } from "~/.server/session/session";
+import { toastActionData } from "~/utils/toast";
+import { getUserById } from "~/.server/services/user";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserIdFromSession(request);
-  if (userId) {
+  const user = await getUserById(userId);
+  if (user) {
+    console.log("User already logged in, redirecting to /app");
     return redirect("/app");
   }
   return null;
@@ -52,10 +50,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const valid = await signUpSchema.parseAsync({ email, handle, password });
 
     const emailTaken = await isEmailTaken(valid.email);
-    if (emailTaken) return handleActionError("Email is already taken");
+    if (emailTaken)
+      return handleActionError(["Email is already taken"], "signUp");
 
     const handleTaken = await isHandleTaken(valid.handle);
-    if (handleTaken) return handleActionError("Handle is already taken");
+    if (handleTaken)
+      return handleActionError(["Handle is already taken"], "signUp");
 
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
@@ -65,21 +65,21 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       handle: valid.handle,
       passwordHash: passwordHash,
     });
-    return handleActionSuccess("Successfully created account!");
+    return handleActionSuccess("Successfully created account!", "signUp");
   } catch (error) {
-    console.log(error);
-    return handleCatchErrorAction(error);
+    return handleCatchErrorAction(error, "signUp");
   }
 };
 
 const ThreadsSignUp = () => {
-  const data = useToastedActionData();
+  const actionData = useActionData() as ActionReturnType;
   const navigate = useNavigate();
   useEffect(() => {
-    if (data?.success) {
+    toastActionData(actionData, "signUp");
+    if (actionData?.success) {
       navigate("/auth/signin");
     }
-  }, [data]);
+  }, [actionData]);
   return (
     <div className="min-h-screen bg-[#101010] text-white flex items-center justify-center px-4">
       <div className="w-full max-w-sm rounded-lg shadow-lg p-6">
