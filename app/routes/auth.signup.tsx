@@ -19,7 +19,11 @@ import {
   useToastedAction,
 } from "~/utils/action-utils";
 import bcrypt from "bcrypt";
-import { createUser, isEmailTaken, isHandleTaken } from "~/db/repo_auth";
+import {
+  createUser,
+  isEmailTaken,
+  isHandleTaken,
+} from "~/.server/services/repo_auth";
 import { useEffect } from "react";
 import { getUserIdFromSession, requireUser } from "~/session/session.server";
 

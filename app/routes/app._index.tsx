@@ -1,5 +1,4 @@
 import Thread from "../components/thread";
-import CreateThreadButton from "../components/create-thread";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { requireUser } from "~/session/session.server";
 import { useState } from "react";

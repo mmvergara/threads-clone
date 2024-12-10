@@ -18,7 +18,7 @@ npm run dev
 # npx drizzle-orm
 # npx -D drizzle-kit
 npx drizzle-kit push
-npx drizzle-studio
+npx drizzle-kit studio
 ```
 
 ---

@@ -13,7 +13,7 @@ import {
   handleErrorAction,
   useToastedAction,
 } from "~/utils/action-utils";
-import { getUserByEmail } from "~/db/repo_user";
+import { getUserByEmail } from "~/.server/repo_user";
 import bcrypt from "bcrypt";
 import {
   getUserIdFromSession,
