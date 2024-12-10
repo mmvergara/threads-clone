@@ -1,6 +1,5 @@
 const Thread = () => {
   const handleThreadClick = () => {
-    // Add your navigation logic here
     console.log("Thread clicked");
   };
 
@@ -9,7 +8,6 @@ const Thread = () => {
       onClick={handleThreadClick}
       className="flex gap-4 px-6 py-4 border-[#303030] border-t-[0.5px] cursor-pointer"
     >
-      {/* User Avatar */}
       <div className="flex-shrink-0">
         <img
           src="https://via.placeholder.com/40x40"
@@ -18,21 +16,17 @@ const Thread = () => {
         />
       </div>
 
-      {/* Thread Content */}
       <div className="flex-1">
-        {/* Thread Header */}
         <div className="flex items-center gap-2">
           <span className="font-semibold text-white">johndoe</span>
           <span className="text-zinc-500">@johndoe</span>
           <span className="text-zinc-500">· 2h</span>
         </div>
 
-        {/* Thread Text */}
         <div className="mt-1 text-white">
           This is a sample thread post. It could be about anything!
         </div>
 
-        {/* Thread Image (if any) */}
         <div className="mt-3">
           <img
             src="https://via.placeholder.com/500x300"
@@ -41,7 +35,6 @@ const Thread = () => {
           />
         </div>
 
-        {/* Thread Actions */}
         <div className="flex gap-4 mt-3 text-zinc-500">
           <button
             onClick={(e) => e.stopPropagation()}

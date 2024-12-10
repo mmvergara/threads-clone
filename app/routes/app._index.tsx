@@ -1,17 +1,8 @@
 import Thread from "../components/thread";
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { LoaderFunctionArgs } from "@remix-run/node";
 import { requireUser } from "~/.server/session/session";
 import { useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
-
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const formData = await request.formData();
-  const content = formData.get("content") as string;
-  const images = JSON.parse(formData.get("images") as string) as string[];
-  console.log("content", content);
-  console.log("images", images);
-  return null;
-};
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await requireUser(request);

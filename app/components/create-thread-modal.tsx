@@ -25,7 +25,7 @@ const CreateThreadModal = ({ isOpen, setIsOpen }: Props) => {
           <h1 className="text-white font-semibold">New thread</h1>
           <div className="w-20"></div>
         </div>
-        <Form method="post" className="contents">
+        <Form action="/api/upload-thread" method="post" className="contents">
           <input type="hidden" name="images" value={JSON.stringify(images)} />
           <div className="p-4">
             <div className="flex gap-3">
