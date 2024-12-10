@@ -16,6 +16,7 @@
     "@remix-run/node": "^2.15.0",
     "@remix-run/react": "^2.15.0",
     "@remix-run/serve": "^2.15.0",
+    "@uploadthing/react": "^7.1.2",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.37.0",
@@ -24,6 +25,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-toastify": "^10.0.6",
+    "uploadthing": "^7.4.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
