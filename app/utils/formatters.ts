@@ -7,7 +7,9 @@ export const since = (unixTimestamp: number) => {
   const minutes = Math.floor(seconds / 60);
   const hours = Math.floor(minutes / 60);
   const days = Math.floor(hours / 24);
-  return days > 0
+  return seconds < 60
+    ? "just now"
+    : days > 0
     ? `${days}d`
     : hours > 0
     ? `${hours}h`
