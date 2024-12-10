@@ -3,10 +3,18 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { requireUser } from "~/.server/session/session";
 import { useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
-
-import { ActionFunctionArgs, redirect } from "@remix-run/node";
+import { ActionFunctionArgs } from "@remix-run/node";
 import { createThread } from "~/.server/services/thread";
-import { actionSuccess, handleErrorAction } from "~/utils/action-utils";
+import {
+  handleActionSuccess,
+  handleCatchErrorAction,
+  useToastedActionData,
+} from "~/utils/action-utils";
+
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  await requireUser(request);
+  return null;
+};
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   const userId = await requireUser(request);
@@ -17,30 +25,25 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const content = formData.get("content") as string;
     const imagesUrlJsonString = formData.get("images") as string;
     const parentThreadId = formData.get("parentThreadId") as string | undefined;
-    console.log("content", content);
-    console.log("images", imagesUrlJsonString);
-    console.log(request.headers.get("Referer"));
     try {
-      const threadId = await createThread({
+      const thread = await createThread({
         userId,
         content,
         imagesUrlJsonString,
         parentThreadId,
       });
-      return actionSuccess("Thread created successfully" + threadId);
+      console.log(thread);
+      return handleActionSuccess("Thread created successfully", thread);
     } catch (error) {
       console.error(error);
-      return handleErrorAction(error);
+      return handleCatchErrorAction(error);
     }
   }
-};
-
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await requireUser(request);
   return null;
 };
 
 const ForYou = () => {
+  useToastedActionData();
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div className="flex flex-col w-full">

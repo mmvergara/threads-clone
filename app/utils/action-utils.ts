@@ -28,7 +28,9 @@ export const useToastedActionData = () => {
   return data;
 };
 
-export const handleErrorAction = (error: unknown): ActionReturnType<never> => {
+export const handleCatchErrorAction = (
+  error: unknown
+): ActionReturnType<never> => {
   if (error instanceof z.ZodError) {
     console.error("Validation errors:", error.errors);
     return {
@@ -44,10 +46,13 @@ export const handleErrorAction = (error: unknown): ActionReturnType<never> => {
   }
 };
 
-export function actionSuccess<T>(message: string): ActionReturnType<T> {
-  return { success: true, message: [message] };
+export function handleActionSuccess<T>(
+  message: string,
+  data? : any
+): ActionReturnType<T> {
+  return { success: true, message: [message], data };
 }
 
-export const actionError = (message: string): ActionReturnType<never> => {
+export const handleActionError = (message: string): ActionReturnType<never> => {
   return { success: false, message: [message] };
 };

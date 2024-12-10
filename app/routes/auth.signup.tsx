@@ -12,9 +12,9 @@ import {
 } from "@remix-run/node";
 import { z } from "zod";
 import {
-  actionError,
-  actionSuccess,
-  handleErrorAction,
+  handleActionError,
+  handleActionSuccess,
+  handleCatchErrorAction,
   useToastedActionData,
 } from "~/utils/action-utils";
 import bcrypt from "bcrypt";
@@ -52,10 +52,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     const valid = await signUpSchema.parseAsync({ email, handle, password });
 
     const emailTaken = await isEmailTaken(valid.email);
-    if (emailTaken) return actionError("Email is already taken");
+    if (emailTaken) return handleActionError("Email is already taken");
 
     const handleTaken = await isHandleTaken(valid.handle);
-    if (handleTaken) return actionError("Handle is already taken");
+    if (handleTaken) return handleActionError("Handle is already taken");
 
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
@@ -65,10 +65,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       handle: valid.handle,
       passwordHash: passwordHash,
     });
-    return actionSuccess("Successfully created account!");
+    return handleActionSuccess("Successfully created account!");
   } catch (error) {
     console.log(error);
-    return handleErrorAction(error);
+    return handleCatchErrorAction(error);
   }
 };
 

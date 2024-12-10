@@ -15,14 +15,17 @@ export const createThread = async ({
   parentThreadId,
 }: CreateThreadParams) => {
   const id = generateID();
-  await db.insert(threads).values({
-    id,
-    userId,
-    content,
-    imageUrls: imagesUrlJsonString,
-    parentThreadId: parentThreadId || null,
-  });
-  return id;
+  const res = await db
+    .insert(threads)
+    .values({
+      id,
+      userId,
+      content,
+      imageUrls: imagesUrlJsonString,
+      parentThreadId: parentThreadId || null,
+    })
+    .returning();
+  return res[0];
 };
 
 // export const threads = sqliteTable("threads", {

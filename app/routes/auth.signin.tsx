@@ -1,4 +1,4 @@
-import { Form, Link, useActionData } from "@remix-run/react";
+import { Form, Link } from "@remix-run/react";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -7,10 +7,10 @@ import {
 } from "@remix-run/node";
 import { z } from "zod";
 import {
-  actionError,
   ActionReturnType,
-  handleErrorAction,
-  useToastedAction,
+  handleActionError,
+  handleCatchErrorAction,
+  useToastedActionData,
 } from "~/utils/action-utils";
 import bcrypt from "bcrypt";
 import {
@@ -46,10 +46,10 @@ export const action = async ({
     const valid = await signInSchema.parseAsync({ email, password });
 
     const user = await getUserByEmail(valid.email);
-    if (!user) return actionError("Invalid Credentials");
+    if (!user) return handleActionError("Invalid Credentials");
 
     const validPassword = await bcrypt.compare(password, user.passwordHash);
-    if (!validPassword) return actionError("Invalid Credentials");
+    if (!validPassword) return handleActionError("Invalid Credentials");
 
     const sessionHeader = await storeUserInSession(user.id);
     return redirect("/app", {
@@ -58,13 +58,12 @@ export const action = async ({
       },
     });
   } catch (error) {
-    return handleErrorAction(error);
+    return handleCatchErrorAction(error);
   }
 };
 
 const ThreadsSignIn = () => {
-  const data = useActionData<typeof action>();
-  useToastedAction(data as ActionReturnType<void>);
+  useToastedActionData();
 
   return (
     <div className="min-h-screen bg-[#101010] text-white flex items-center justify-center px-4">
