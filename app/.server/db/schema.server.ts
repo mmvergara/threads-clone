@@ -1,4 +1,4 @@
-import { relations, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import {
   sqliteTable,
   text,
@@ -24,7 +24,7 @@ export const users = sqliteTable("users", {
     .default(false),
   createdAt: integer("created_at", { mode: "number" })
     .notNull()
-    .default(sql`(unixepoch())`),
+    .default(sql`(strftime('%s', 'now'))`),
 });
 
 export const threads = sqliteTable("threads", {
@@ -42,5 +42,8 @@ export const threads = sqliteTable("threads", {
   reposts: integer("reposts").notNull().default(0),
   createdAt: integer("created_at", { mode: "number" })
     .notNull()
-    .default(sql`(unixepoch())`),
+    .default(sql`(strftime('%s', 'now'))`),
 });
+
+export type User = Omit<typeof users.$inferSelect, "passwordHash">;
+export type Thread = typeof threads.$inferSelect;
