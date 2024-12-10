@@ -24,7 +24,7 @@ export const storeUserInSession = async (userId: string) => {
 
 export const getUserIdFromSession = async (request: Request) => {
   const session = await getSession(request.headers.get("Cookie"));
-  const userId = session.get("userId");
+  const userId = session.get("userId") as string;
   // console.log("userId", userId);
   return userId;
 };
