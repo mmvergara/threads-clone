@@ -1,7 +1,7 @@
 import { generateID } from "~/utils/cuid.server";
 import { threads, users } from "../db/schema.server";
 import { db } from "../db/drizzle.server";
-import { desc, eq, getTableColumns } from "drizzle-orm";
+import { desc, eq, getTableColumns, isNull, sql } from "drizzle-orm";
 
 const { passwordHash, ...userWithoutPasswordHash } = getTableColumns(users);
 
@@ -28,6 +28,15 @@ export const createThread = async ({
       parentThreadId: parentThreadId || null,
     })
     .returning();
+
+  // if parentThreadId is provided, increment the replies count of the parent thread
+  if (parentThreadId) {
+    await db
+      .update(threads)
+      .set({ replies: sql`${threads.replies} + 1` })
+      .where(eq(threads.id, parentThreadId));
+  }
+
   return res[0];
 };
 
@@ -48,6 +57,7 @@ export const getThreadsWithUser = async ({
     .from(threads)
     .innerJoin(users, eq(threads.userId, users.id))
     .orderBy(desc(threads.createdAt))
+    .where(isNull(threads.parentThreadId))
     .limit(limit)
     .offset(skip);
   return res;

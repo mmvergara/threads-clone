@@ -5,7 +5,9 @@ import {
   SendIcon,
 } from "lucide-react";
 import type { Thread, User } from "~/.server/db/schema.server";
-import { since } from "~/utils/time";
+import { since } from "~/utils/formatters";
+import CreateThreadModal from "./create-thread-modal";
+import { useState } from "react";
 
 type Props = {
   thread: Thread;
@@ -13,6 +15,7 @@ type Props = {
 };
 
 const Thread = ({ thread, user }: Props) => {
+  const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
   const handleThreadClick = () => {
     console.log("Thread clicked");
   };
@@ -53,39 +56,46 @@ const Thread = ({ thread, user }: Props) => {
             </div>
           ))}
         </div>
-
+        <CreateThreadModal
+          isOpen={isReplyModalOpen}
+          setIsOpen={setIsReplyModalOpen}
+          parentThread={{
+            thread,
+            user,
+          }}
+        />
         <div className="flex gap-4 mt-3 text-zinc-500">
           <button
             onClick={(e) => e.stopPropagation()}
-            className="p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+            className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
           >
             <HeartIcon className="w-5 h-5" />
+            {thread.likes > 0 && <span>{thread.likes}</span>}
           </button>
+
           <button
-            onClick={(e) => e.stopPropagation()}
-            className="p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsReplyModalOpen(true);
+            }}
+            className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
           >
             <MessageCircleIcon className="w-5 h-5" />
+            {thread.replies > 0 && <span>{thread.replies}</span>}
           </button>
           <button
             onClick={(e) => e.stopPropagation()}
-            className="p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+            className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
           >
             <Repeat2Icon className="w-5 h-5" />
+            {thread.reposts > 0 && <span>{thread.reposts}</span>}
           </button>
           <button
             onClick={(e) => e.stopPropagation()}
-            className="p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+            className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
           >
             <SendIcon className="w-5 h-5" />
           </button>
-        </div>
-
-        {/* Thread Stats */}
-        <div className="mt-2 text-sm text-zinc-500">
-          <span>247 replies</span>
-          <span className="mx-1">·</span>
-          <span>1,024 likes</span>
         </div>
       </div>
     </div>

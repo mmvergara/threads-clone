@@ -1,19 +1,36 @@
 import { ImageUpIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { UploadButton } from "~/utils/uploadthing";
-import { Form } from "@remix-run/react";
+import { Form, useActionData } from "@remix-run/react";
+import { Thread, User } from "~/.server/db/schema.server";
+import { truncateTextEllipses } from "~/utils/formatters";
+import { toastActionData } from "~/utils/toast";
+import { ActionReturnType } from "~/.server/utils/action-utils";
 
 type Props = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  parentThread?: {
+    thread: Thread;
+    user: User;
+  };
 };
 
-const CreateThreadModal = ({ isOpen, setIsOpen }: Props) => {
+const CreateThreadModal = ({ isOpen, setIsOpen, parentThread }: Props) => {
   const uploadThingBtnRef = useRef<HTMLDivElement>(null);
   const [images, setImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  const actionData = useActionData() as ActionReturnType;
+  useEffect(() => {
+    if (!isOpen) return;
+    toastActionData(actionData, "createThread");
+    if (actionData?.success && actionData?.intent === "createThread") {
+      setIsOpen(false);
+    }
+  }, [actionData]);
 
   if (!isOpen) return null;
   return (
@@ -26,12 +43,43 @@ const CreateThreadModal = ({ isOpen, setIsOpen }: Props) => {
           >
             Cancel
           </button>
-          <h1 className="text-white font-semibold">New thread</h1>
+          <h1 className="text-white font-semibold">
+            {parentThread ? "Reply" : "New thread"}
+          </h1>
           <div className="w-20"></div>
         </div>
+
+        {parentThread && (
+          <div className="flex  gap-2 p-4">
+            <div className="flex flex-col items-center">
+              <img
+                src={parentThread.user.profileImageUrl}
+                alt="User avatar"
+                className="min-w-10 max-w-10 min-h-10 max-h-10 rounded-full"
+              />
+              <div className="w-0.5 grow mt-2 bg-zinc-800" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-white font-semibold">
+                {parentThread.user.displayName}
+              </span>
+              <span className="text-zinc-500">
+                {truncateTextEllipses(parentThread.thread.content, 200)}
+              </span>
+            </div>
+          </div>
+        )}
+
         <Form method="post" className="contents">
           <input type="hidden" name="intent" value="createThread" />
           <input type="hidden" name="images" value={JSON.stringify(images)} />
+          {parentThread && (
+            <input
+              type="hidden"
+              name="parentThreadId"
+              value={parentThread.thread.id}
+            />
+          )}
           <div className="p-4">
             <div className="flex gap-3">
               <div className="flex flex-col items-center">

@@ -1,24 +1,18 @@
 import Thread from "../components/thread";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { requireUser } from "~/.server/session/session";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
 import { ActionFunctionArgs } from "@remix-run/node";
-import { createThread, getThreadsWithUser } from "~/.server/services/thread";
-import {
-  ActionReturnType,
-  handleActionSuccess,
-  handleCatchErrorAction,
-} from "~/.server/utils/action-utils";
-import { useActionData, useLoaderData } from "@remix-run/react";
-import { toastActionData } from "~/utils/toast";
+import { getThreadsWithUser } from "~/.server/services/thread";
+import { handleCatchErrorAction } from "~/.server/utils/action-utils";
+import { useLoaderData } from "@remix-run/react";
 import { createThreadAction } from "~/.server/intent-actions/create-thread";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await requireUser(request);
   try {
     const threads = await getThreadsWithUser({ limit: 10, skip: 0 });
-    console.log(threads);
     return threads;
   } catch (error) {
     console.error(error);
@@ -46,15 +40,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 const ForYou = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const actionData = useActionData() as ActionReturnType;
   const threads = useLoaderData<typeof loader>();
-
-  useEffect(() => {
-    toastActionData(actionData, "createThread");
-    if (actionData?.success && actionData?.intent === "createThread") {
-      setIsOpen(false);
-    }
-  }, [actionData]);
 
   return (
     <div className="flex flex-col w-full">
