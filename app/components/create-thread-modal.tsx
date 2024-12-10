@@ -10,10 +10,11 @@ type Props = {
 };
 
 const CreateThreadModal = ({ isOpen, setIsOpen }: Props) => {
-  const [images, setImages] = useState<string[]>([]);
   const uploadThingBtnRef = useRef<HTMLDivElement>(null);
+  const [images, setImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-black/85 flex items-start justify-center p-4 pt-[10vh] overflow-y-auto z-50">

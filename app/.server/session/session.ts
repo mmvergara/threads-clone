@@ -35,5 +35,10 @@ export const requireUser = async (request: Request) => {
     console.log("No userId in session, redirecting to /auth/signin ====");
     throw redirect("/auth/signin");
   }
-  return userId;
+  const user = await getUserById(userId);
+  if (!user) {
+    console.log("No user found, redirecting to /auth/signin ====");
+    throw redirect("/auth/signin");
+  }
+  return user;
 };
