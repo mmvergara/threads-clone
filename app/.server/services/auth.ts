@@ -1,6 +1,6 @@
 import { generateID } from "~/utils/cuid.server";
 import { db } from "../db/drizzle.server";
-import { users } from "../db/schema.server";
+import { users } from "../db/schema";
 import { eq } from "drizzle-orm";
 
 type createUserParams = {

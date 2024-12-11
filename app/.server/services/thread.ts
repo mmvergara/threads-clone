@@ -1,5 +1,5 @@
 import { generateID } from "~/utils/cuid.server";
-import { threads, users } from "../db/schema.server";
+import { threads, users } from "../db/schema";
 import { db } from "../db/drizzle.server";
 import { desc, eq, getTableColumns, isNull, sql } from "drizzle-orm";
 
@@ -43,16 +43,19 @@ export const createThread = async ({
 type GetThreadsWithUserParams = {
   limit?: number;
   skip?: number;
+  userId: string;
 };
 
 export const getThreadsWithUser = async ({
   limit = 10,
   skip = 0,
+  userId,
 }: GetThreadsWithUserParams) => {
   const res = await db
     .select({
       thread: getTableColumns(threads),
       user: userWithoutPasswordHash,
+      isLiked: sql<boolean>`EXISTS (SELECT 1 FROM thread_likes WHERE thread_id = ${threads.id} AND user_id = ${userId})`,
     })
     .from(threads)
     .innerJoin(users, eq(threads.userId, users.id))
