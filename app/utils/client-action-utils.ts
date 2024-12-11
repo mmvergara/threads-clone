@@ -7,6 +7,8 @@ export enum Intent {
   UnlikeThread = "unlikeThread",
   UpdateProfileData = "updateProfileData",
   UpdateProfileImage = "updateProfileImage",
+  FollowUser = "followUser",
+  UnfollowUser = "unfollowUser",
 }
 
 export const useUniversalActionData = () => {
