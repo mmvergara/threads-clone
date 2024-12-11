@@ -1,16 +1,19 @@
-import { Link, useLocation } from "@remix-run/react";
+import { Form, Link, useLocation } from "@remix-run/react";
 import { User } from "~/.server/db/schema";
 import EditProfileModal from "./edit-profile-modal";
 import UploadProfileModal from "./upload-profile-image-modal";
 import { useState } from "react";
 import { cn } from "~/utils/formatters";
+import SubmitBtn from "./submit-btn";
+import { Intent } from "~/utils/client-action-utils";
 
 type Props = {
   user: User;
+  isCurrentUser: boolean;
+  isFollowed: boolean;
 };
-const ProfileHeader = ({ user }: Props) => {
+const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
   const location = useLocation();
-
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
@@ -25,7 +28,9 @@ const ProfileHeader = ({ user }: Props) => {
             <p className="text-white">@{user?.handle}</p>
             <p className="tAext-white mt-4">{user?.bio}</p>
             <div className="flex items-center gap-2 mt-4">
-              <span className="text-zinc-500 text-sm">85 followers</span>
+              <span className="text-zinc-500 text-sm">
+                {user?.followers} followers
+              </span>
             </div>
           </div>
           <img
@@ -36,14 +41,32 @@ const ProfileHeader = ({ user }: Props) => {
           />
         </div>
 
-        <div className="flex gap-2 mt-6">
-          <button
-            onClick={() => setIsEditProfileOpen(true)}
-            className="flex-1 px-4 py-1.5 border-[1px] font-bold border-zinc-600 rounded-lg text-white"
-          >
-            Edit profile
-          </button>
-        </div>
+        <Form method="post" className="flex gap-2 mt-6">
+          <input type="hidden" name="toFollowUserId" value={user.id} />
+          <input type="hidden" name="toUnfollowUserId" value={user.id} />
+          {isCurrentUser ? (
+            <button
+              onClick={() => setIsEditProfileOpen(true)}
+              className="flex-1 px-4 py-1.5 border-[1px] font-bold border-zinc-600 rounded-lg text-white"
+            >
+              Edit profile
+            </button>
+          ) : isFollowed ? (
+            <SubmitBtn
+              intent={Intent.UnfollowUser}
+              className="flex-1 px-4 py-1.5 border-[1px] font-bold border-zinc-600 rounded-lg text-white hover:text-red-500 hover:border-red-500 transition-colors"
+            >
+              Unfollow
+            </SubmitBtn>
+          ) : (
+            <SubmitBtn
+              intent={Intent.FollowUser}
+              className="flex-1 px-4 py-1.5 border-[1px] font-bold border-zinc-600 rounded-lg text-black bg-white"
+            >
+              Follow
+            </SubmitBtn>
+          )}
+        </Form>
       </div>
 
       <div className="flex mt-6 text-zinc-500 font-semibold">
