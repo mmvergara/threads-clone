@@ -9,19 +9,19 @@ const TopBar = () => {
   const links = [
     {
       name: "For you",
-      href: "/app",
+      href: "/",
     },
     {
       name: "Following",
-      href: "/app/following",
+      href: "/following",
     },
     {
       name: "Liked",
-      href: "/app/liked",
+      href: "/liked",
     },
     {
       name: "Saved",
-      href: "/app/saved",
+      href: "/saved",
     },
   ];
   return (

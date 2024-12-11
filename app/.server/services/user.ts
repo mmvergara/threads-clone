@@ -1,9 +1,16 @@
 import { db } from "../db/drizzle.server";
 import { users } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { eq, getTableColumns } from "drizzle-orm";
+const { passwordHash, ...userWithoutPasswordHash } = getTableColumns(users);
 
 export const getUserById = async (id: string) => {
-  const user = await db.select().from(users).where(eq(users.id, id)).limit(1);
+  const user = await db
+    .select({
+      ...userWithoutPasswordHash,
+    })
+    .from(users)
+    .where(eq(users.id, id))
+    .limit(1);
   return user[0];
 };
 

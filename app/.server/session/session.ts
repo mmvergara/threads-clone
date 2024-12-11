@@ -32,13 +32,13 @@ export const getUserIdFromSession = async (request: Request) => {
 export const requireUser = async (request: Request) => {
   const userId = await getUserIdFromSession(request);
   if (!userId) {
-    console.log("No userId in session, redirecting to /auth/signin ====");
-    throw redirect("/auth/signin");
+    console.log("No userId in session, redirecting to /signin ====");
+    throw redirect("/signin");
   }
   const user = await getUserById(userId);
   if (!user) {
-    console.log("No user found, redirecting to /auth/signin ====");
-    throw redirect("/auth/signin");
+    console.log("No user found, redirecting to /signin ====");
+    throw redirect("/signin");
   }
   return user;
 };

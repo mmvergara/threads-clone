@@ -1,4 +1,4 @@
-import { Form, Link, useActionData, useNavigate } from "@remix-run/react";
+import { Form, Link, useActionData } from "@remix-run/react";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -8,36 +8,30 @@ import { z } from "zod";
 import {
   ActionReturnType,
   handleActionError,
-  handleActionSuccess,
   handleCatchErrorAction,
 } from "~/.server/utils/action-utils";
 import bcrypt from "bcrypt";
 import {
-  createUser,
-  isEmailTaken,
-  isHandleTaken,
-} from "~/.server/services/auth";
+  getUserIdFromSession,
+  storeUserInSession,
+} from "~/.server/session/session";
+import { getUserByEmail, getUserById } from "~/.server/services/user";
 import { useEffect } from "react";
-import { getUserIdFromSession } from "~/.server/session/session";
 import { toastActionData } from "~/utils/toast";
-import { getUserById } from "~/.server/services/user";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserIdFromSession(request);
+  if (!userId) return null;
   const user = await getUserById(userId);
   if (user) {
-    console.log("User already logged in, redirecting to /app");
-    return redirect("/app");
+    console.log("User already logged in, redirecting to /");
+    return redirect("/");
   }
   return null;
 };
 
-const signUpSchema = z.object({
+const signInSchema = z.object({
   email: z.string().email("Please enter a valid email"),
-  handle: z
-    .string()
-    .min(3, "Handle must be 3 or more characters")
-    .max(20, "Handle must be 20 or less characters"),
   password: z.string().min(8, "Password must be 8 or more characters"),
 });
 
@@ -45,41 +39,34 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     const formData = await request.formData();
     const email = formData.get("email") as string;
-    const handle = formData.get("handle") as string;
     const password = formData.get("password") as string;
-    const valid = await signUpSchema.parseAsync({ email, handle, password });
 
-    const emailTaken = await isEmailTaken(valid.email);
-    if (emailTaken)
-      return handleActionError(["Email is already taken"], "signUp");
+    const valid = await signInSchema.parseAsync({ email, password });
 
-    const handleTaken = await isHandleTaken(valid.handle);
-    if (handleTaken)
-      return handleActionError(["Handle is already taken"], "signUp");
+    const user = await getUserByEmail(valid.email);
+    if (!user) return handleActionError(["Invalid Credentials"], "signIn");
 
-    const salt = await bcrypt.genSalt();
-    const passwordHash = await bcrypt.hash(password, salt);
+    const validPassword = await bcrypt.compare(password, user.passwordHash);
+    if (!validPassword)
+      return handleActionError(["Invalid Credentials"], "signIn");
 
-    await createUser({
-      email: valid.email,
-      handle: valid.handle,
-      passwordHash: passwordHash,
+    const sessionHeader = await storeUserInSession(user.id);
+    return redirect("/", {
+      headers: {
+        "Set-Cookie": sessionHeader,
+      },
     });
-    return handleActionSuccess("Successfully created account!", "signUp");
   } catch (error) {
-    return handleCatchErrorAction(error, "signUp");
+    return handleCatchErrorAction(error, "signIn");
   }
 };
 
-const ThreadsSignUp = () => {
+const ThreadsSignIn = () => {
   const actionData = useActionData() as ActionReturnType;
-  const navigate = useNavigate();
   useEffect(() => {
-    toastActionData(actionData, "signUp");
-    if (actionData?.success) {
-      navigate("/auth/signin");
-    }
+    toastActionData(actionData, "signIn");
   }, [actionData]);
+
   return (
     <div className="min-h-screen bg-[#101010] text-white flex items-center justify-center px-4">
       <div className="w-full max-w-sm rounded-lg shadow-lg p-6">
@@ -100,14 +87,6 @@ const ThreadsSignUp = () => {
             className="w-full text-sm p-4 bg-[#1E1E1E] rounded-xl focus:outline-none focus:ring-[1px] focus:ring-zinc-500 text-white placeholder-gray-400"
           />
           <input
-            type="text"
-            name="handle"
-            max={20}
-            placeholder="Handle (username)"
-            required
-            className="w-full text-sm p-4 bg-[#1E1E1E] rounded-xl focus:outline-none focus:ring-[1px] focus:ring-zinc-500 text-white placeholder-gray-400"
-          />
-          <input
             type="password"
             name="password"
             placeholder="Password"
@@ -118,17 +97,17 @@ const ThreadsSignUp = () => {
             type="submit"
             className="w-full py-3 bg-white text-black font-semibold rounded-xl hover:bg-blue-500 transition duration-300"
           >
-            Sign Up
+            Log In
           </button>
         </Form>
         <div className="text-center mt-6 space-y-4">
+          <a href="#" className="text-zinc-500 text-sm hover:underline">
+            Forgot password?
+          </a>
           <div className="flex items-center justify-center mt-4">
-            <span className="text-gray-500">Already have an account?</span>
-            <Link
-              to="/auth/signin"
-              className="ml-2 text-blue-500 hover:underline"
-            >
-              Log In
+            <span className="text-gray-500">Don't have an account?</span>
+            <Link to="/signup" className="ml-2 text-blue-500 hover:underline">
+              Sign up
             </Link>
           </div>
         </div>
@@ -137,4 +116,4 @@ const ThreadsSignUp = () => {
   );
 };
 
-export default ThreadsSignUp;
+export default ThreadsSignIn;

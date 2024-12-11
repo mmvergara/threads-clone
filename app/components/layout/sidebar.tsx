@@ -17,10 +17,10 @@ const Sidebar = () => {
         <AtSignIcon size={28} className="text-white" />
       </div>
       <div className="flex-1 flex flex-col gap-4 items-center justify-center">
-        <Link to="/app" className="hover:bg-[#171717] py-2.5 px-4 rounded-lg">
+        <Link to="/" className="hover:bg-[#171717] py-2.5 px-4 rounded-lg">
           <HomeIcon size={28} />
         </Link>
-        <Link to="/app" className="hover:bg-[#171717] py-2.5 px-4 rounded-lg">
+        <Link to="/" className="hover:bg-[#171717] py-2.5 px-4 rounded-lg">
           <SearchIcon size={28} />
         </Link>
         <button className="bg-[#171717] hover:text-white py-2.5 px-4 rounded-lg">
@@ -30,7 +30,7 @@ const Sidebar = () => {
           <HeartIcon size={28} />
         </button>
         <Link
-          to="/app/profile"
+          to="/profile"
           className="hover:bg-[#171717] py-2.5 px-4 rounded-lg"
         >
           <User2Icon size={28} />

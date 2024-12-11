@@ -1,3 +1,5 @@
+import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from "clsx";
 // Date to since
 export const since = (unixTimestamp: number) => {
   const now = new Date();
@@ -21,4 +23,8 @@ export const since = (unixTimestamp: number) => {
 export const truncateTextEllipses = (text: string, maxLength: number) => {
   if (text.length <= maxLength) return text;
   return text.slice(0, maxLength) + "...";
+};
+
+export const cn = (...inputs: ClassValue[]) => {
+  return twMerge(clsx(inputs));
 };

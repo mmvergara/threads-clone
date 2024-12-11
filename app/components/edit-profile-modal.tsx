@@ -24,7 +24,7 @@ const EditProfileModal = ({
   return (
     <div className={`fixed inset-0 bg-black/80 z-50 ${isOpen ? "" : "hidden"}`}>
       <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-[#101010] rounded-xl p-6 border-[1px] border-zinc-600">
-        <Form method="post" className="flex flex-col gap-6">
+        <Form method="post"  className="flex flex-col gap-6">
           <input type="hidden" name="intent" value="updateProfileData" />
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-white">Edit profile</h2>
