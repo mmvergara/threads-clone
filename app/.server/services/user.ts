@@ -1,6 +1,7 @@
+import { generateID } from "~/utils/cuid.server";
 import { db } from "../db/drizzle.server";
-import { users } from "../db/schema";
-import { eq, getTableColumns } from "drizzle-orm";
+import { userFollowers, users } from "../db/schema";
+import { and, eq, getTableColumns, sql } from "drizzle-orm";
 const { passwordHash, ...userWithoutPasswordHash } = getTableColumns(users);
 
 export const getUserById = async (id: string) => {
@@ -46,4 +47,63 @@ export const updateUserProfileImage = async (
 ) => {
   await db.update(users).set({ profileImageUrl }).where(eq(users.id, userId));
   return true;
+};
+
+export const followUser = async (
+  followerUserId: string,
+  toFollowUserId: string
+) => {
+  const id = generateID();
+  await db.transaction(async (tx) => {
+    await tx.insert(userFollowers).values({
+      id,
+      followedUserId: toFollowUserId,
+      followerUserId,
+    });
+
+    await tx
+      .update(users)
+      .set({ followers: sql`${users.followers} + 1` })
+      .where(eq(users.id, toFollowUserId));
+  });
+
+  return true;
+};
+
+export const unfollowUser = async (
+  followerUserId: string,
+  toUnfollowUserId: string
+) => {
+  await db.transaction(async (tx) => {
+    await tx
+      .delete(userFollowers)
+      .where(
+        and(
+          eq(userFollowers.followedUserId, toUnfollowUserId),
+          eq(userFollowers.followerUserId, followerUserId)
+        )
+      );
+    await tx
+      .update(users)
+      .set({ followers: sql`${users.followers} - 1` })
+      .where(eq(users.id, toUnfollowUserId));
+  });
+  return true;
+};
+
+export const isFollowedByUser = async (
+  currentUserId: string,
+  userId: string
+) => {
+  const user = await db
+    .select()
+    .from(userFollowers)
+    .where(
+      and(
+        eq(userFollowers.followedUserId, userId),
+        eq(userFollowers.followerUserId, currentUserId)
+      )
+    )
+    .limit(1);
+  return user.length > 0;
 };
