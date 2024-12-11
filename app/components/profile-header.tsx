@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@remix-run/react";
 import { User } from "~/.server/db/schema";
 import EditProfileModal from "./edit-profile-modal";
-import UploadProfileModal from "./upload-profile-modal";
+import UploadProfileModal from "./upload-profile-image-modal";
 import { useState } from "react";
 import { cn } from "~/utils/formatters";
 
