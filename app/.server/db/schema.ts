@@ -74,5 +74,33 @@ export const threadLikes = sqliteTable(
   }
 );
 
+export const userFollowers = sqliteTable(
+  "user_followers",
+  {
+    id: text("id").notNull().primaryKey(),
+    followedUserId: text("followed_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
+    followerUserId: text("follower_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
+    createdAt: integer("created_at", { mode: "number" })
+      .notNull()
+      .default(sql`(strftime('%s', 'now'))`),
+  },
+  (table) => {
+    return {
+      uniqueFollow: uniqueIndex("unique_follow_idx").on(
+        table.followedUserId,
+        table.followerUserId
+      ),
+    };
+  }
+);
+
 export type User = Omit<typeof users.$inferSelect, "passwordHash">;
 export type Thread = typeof threads.$inferSelect;
