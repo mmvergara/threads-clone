@@ -4,6 +4,7 @@ import {
   text,
   integer,
   AnySQLiteColumn,
+  uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 
 // User Table
@@ -44,6 +45,34 @@ export const threads = sqliteTable("threads", {
     .notNull()
     .default(sql`(strftime('%s', 'now'))`),
 });
+
+export const threadLikes = sqliteTable(
+  "thread_likes",
+  {
+    id: text("id").notNull().primaryKey(),
+    threadId: text("thread_id")
+      .notNull()
+      .references(() => threads.id, {
+        onDelete: "cascade",
+      }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
+    createdAt: integer("created_at", { mode: "number" })
+      .notNull()
+      .default(sql`(strftime('%s', 'now'))`),
+  },
+  (table) => {
+    return {
+      uniqueLike: uniqueIndex("unique_like_idx").on(
+        table.threadId,
+        table.userId
+      ),
+    };
+  }
+);
 
 export type User = Omit<typeof users.$inferSelect, "passwordHash">;
 export type Thread = typeof threads.$inferSelect;
