@@ -26,11 +26,29 @@ const uploadRouter = {
   // Define as many FileRoutes as you like, each with a unique routeSlug
   threadImageUploader: f({
     image: {
-      maxFileSize: "5MB",
+      maxFileSize: "4MB",
       maxFileCount: 5,
     },
   })
     // Set permissions and file types for this FileRoute
+    .middleware(async ({ event }) => {
+      // This code runs on your server before upload
+      const userId = await auth(event);
+
+      // If you throw, the user will not be able to upload
+      if (!userId) throw new UploadThingError("Unauthorized");
+
+      // Whatever is returned here is accessible in onUploadComplete as `metadata`
+      return {};
+    })
+    .onUploadComplete(async () => {}),
+
+  profileImageUploader: f({
+    image: {
+      maxFileSize: "4MB",
+      maxFileCount: 1,
+    },
+  })
     .middleware(async ({ event }) => {
       // This code runs on your server before upload
       const userId = await auth(event);
@@ -52,6 +70,6 @@ export const { action, loader } = createRouteHandler({
   router: uploadRouter,
   config: {
     logFormat: "pretty",
-    logLevel: "Error",
+     // logLevel: "Error",
   },
 });

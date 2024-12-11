@@ -19,18 +19,25 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       skip: 0,
       userId: user.id,
     });
-    return threads;
+    return {
+      threads,
+      user,
+    };
   } catch (error) {
     console.error(error);
-    return [];
+    return {
+      threads: [],
+      user: null,
+    };
   }
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
+  let intent: string = "";
   try {
     const user = await requireUser(request);
     const formData = await request.formData();
-    const intent = formData.get("intent") as string;
+    intent = formData.get("intent") as string;
 
     switch (intent) {
       case "createThread":
@@ -43,20 +50,19 @@ export const action = async ({ request }: ActionFunctionArgs) => {
         throw new Error("Invalid intent");
     }
   } catch (error) {
-    console.error(error);
-    return handleCatchErrorAction(error, "createThread");
+    return handleCatchErrorAction(error, intent);
   }
 };
 
 const ForYou = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const threads = useLoaderData<typeof loader>();
+  const { threads, user } = useLoaderData<Awaited<ReturnType<typeof loader>>>();
 
   return (
     <div className="flex flex-col w-full">
       <div className="flex items-center gap-3 px-6 py-4">
         <img
-          src="https://via.placeholder.com/40x40"
+          src={user?.profileImageUrl}
           alt="User avatar"
           className="w-10 h-10 rounded-full"
         />

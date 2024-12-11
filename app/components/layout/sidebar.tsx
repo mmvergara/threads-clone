@@ -1,3 +1,4 @@
+import { Link } from "@remix-run/react";
 import {
   AlignLeftIcon,
   AtSignIcon,
@@ -16,21 +17,24 @@ const Sidebar = () => {
         <AtSignIcon size={28} className="text-white" />
       </div>
       <div className="flex-1 flex flex-col gap-4 items-center justify-center">
-        <button className="hover:bg-[#171717] py-2.5 px-4 rounded-lg">
+        <Link to="/app" className="hover:bg-[#171717] py-2.5 px-4 rounded-lg">
           <HomeIcon size={28} />
-        </button>
-        <button className="hover:bg-[#171717] py-2.5 px-4 rounded-lg">
+        </Link>
+        <Link to="/app" className="hover:bg-[#171717] py-2.5 px-4 rounded-lg">
           <SearchIcon size={28} />
-        </button>
+        </Link>
         <button className="bg-[#171717] hover:text-white py-2.5 px-4 rounded-lg">
           <PlusIcon size={28} />
         </button>
         <button className="hover:bg-[#171717] py-2.5 px-4 rounded-lg">
           <HeartIcon size={28} />
         </button>
-        <button className="hover:bg-[#171717] py-2.5 px-4 rounded-lg">
+        <Link
+          to="/app/profile"
+          className="hover:bg-[#171717] py-2.5 px-4 rounded-lg"
+        >
           <User2Icon size={28} />
-        </button>
+        </Link>
       </div>{" "}
       <div className="flex flex-col gap-8 items-center justify-center pb-5">
         <PinIcon size={28} />

@@ -15,3 +15,28 @@ export const getUserByEmail = async (email: string) => {
     .limit(1);
   return user[0];
 };
+
+export const updateUserProfileData = async (
+  userId: string,
+  data: {
+    displayName: string;
+    bio: string;
+  }
+) => {
+  await db
+    .update(users)
+    .set({
+      displayName: data.displayName,
+      bio: data.bio,
+    })
+    .where(eq(users.id, userId));
+  return true;
+};
+
+export const updateUserProfileImage = async (
+  userId: string,
+  profileImageUrl: string
+) => {
+  await db.update(users).set({ profileImageUrl }).where(eq(users.id, userId));
+  return true;
+};
