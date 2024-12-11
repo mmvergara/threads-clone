@@ -17,14 +17,6 @@ const EditProfileModal = ({
 }) => {
   const actionData = useUniversalActionData();
   useEffect(() => {
-    console.log("actionData", actionData);
-    console.log("isOpen", isOpen);
-    console.log("Intent.UpdateProfileData", Intent.UpdateProfileData);
-    console.log(
-      "actionData?.success",
-      actionData?.success,
-      actionData?.intent === Intent.UpdateProfileData
-    );
     toastActionData(actionData, Intent.UpdateProfileData);
     if (
       actionData?.success &&
