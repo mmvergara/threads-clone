@@ -1,9 +1,11 @@
+import { Intent } from "~/utils/client-action-utils";
 import { handleActionSuccess } from "../utils/action-utils";
 import { createThread } from "./threads";
 
 export const createThreadAction = async (
   currentUserId: string,
-  formData: FormData
+  formData: FormData,
+  intent: Intent
 ) => {
   const content = formData.get("content") as string;
   const imagesUrlJsonString = formData.get("images") as string;
@@ -14,9 +16,5 @@ export const createThreadAction = async (
     imagesUrlJsonString,
     parentThreadId,
   });
-  return handleActionSuccess(
-    "Thread created successfully",
-    "createThread",
-    thread
-  );
+  return handleActionSuccess("Thread created", intent, thread);
 };
