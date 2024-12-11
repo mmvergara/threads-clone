@@ -22,6 +22,21 @@ npx drizzle-kit push
 npx drizzle-kit studio
 ```
 
+### Todo
+
+- Add validation on createThreadAction
+
+- Change the post btn ui the same as threads
+
+- Add logout functionality
+
+- Add search functionality, make sure to
+
+  - Search only threads that are not replies
+  - Dont show thread actions
+
+- Add repost functionality
+
 ---
 
 #### Thoughts upon developing (probably irrelevant)

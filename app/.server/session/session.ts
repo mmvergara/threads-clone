@@ -25,19 +25,16 @@ export const storeUserInSession = async (userId: string) => {
 export const getUserIdFromSession = async (request: Request) => {
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("userId") as string;
-  // console.log("userId", userId);
   return userId;
 };
 
 export const requireUser = async (request: Request) => {
   const userId = await getUserIdFromSession(request);
   if (!userId) {
-    console.log("No userId in session, redirecting to /signin ====");
     throw redirect("/signin");
   }
   const user = await getUserById(userId);
   if (!user) {
-    console.log("No user found, redirecting to /signin ====");
     throw redirect("/signin");
   }
   return user;

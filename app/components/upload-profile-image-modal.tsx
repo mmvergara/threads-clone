@@ -27,7 +27,6 @@ const UploadProfileImageModal = ({
       actionData?.success &&
       actionData?.intent === Intent.UpdateProfileImage
     ) {
-      console.log("Closing modal");
       setIsOpen(false);
     }
   }, [actionData]);

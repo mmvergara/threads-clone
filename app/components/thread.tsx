@@ -23,7 +23,6 @@ const Thread = ({ thread, user, isLiked }: Props) => {
   const handleThreadClick = () => {
     navigate(`/profile/${user.id}`);
   };
-
   return (
     <>
       <CreateThreadModal
@@ -55,9 +54,7 @@ const Thread = ({ thread, user, isLiked }: Props) => {
               <span className="font-semibold text-white">
                 {user.displayName}
               </span>
-              <time className="text-zinc-500">
-                {since(thread.createdAt)} ago
-              </time>
+              <time className="text-zinc-500">{since(thread.createdAt)}</time>
             </div>
             <div className="mt-1 text-white break-words w-full" role="text">
               {thread.content}

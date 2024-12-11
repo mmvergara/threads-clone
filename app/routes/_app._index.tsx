@@ -35,7 +35,6 @@ export const action = async ({ request }: ActionFunctionArgs) =>
 const ForYou = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { threads, user } = useLoaderData<Awaited<ReturnType<typeof loader>>>();
-
   return (
     <div className="flex flex-col w-full">
       <div className="flex items-center gap-3 px-6 py-4">

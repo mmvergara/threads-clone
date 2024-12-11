@@ -27,7 +27,6 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   if (!userId) return null;
   const user = await getUserById(userId);
   if (user) {
-    console.log("User already logged in, redirecting to /");
     return redirect("/");
   }
   return null;
