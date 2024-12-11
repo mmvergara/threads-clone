@@ -1,15 +1,15 @@
-import { createThread } from "../services/thread";
 import { handleActionSuccess } from "../utils/action-utils";
+import { createThread } from "./threads";
 
 export const createThreadAction = async (
-  userId: string,
+  currentUserId: string,
   formData: FormData
 ) => {
   const content = formData.get("content") as string;
   const imagesUrlJsonString = formData.get("images") as string;
   const parentThreadId = formData.get("parentThreadId") as string | undefined;
   const thread = await createThread({
-    userId,
+    userId: currentUserId,
     content,
     imagesUrlJsonString,
     parentThreadId,

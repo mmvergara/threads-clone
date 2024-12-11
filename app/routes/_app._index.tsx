@@ -4,12 +4,9 @@ import { requireUser } from "~/.server/session/session";
 import { useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
 import { ActionFunctionArgs } from "@remix-run/node";
-import { getThreadsWithUser } from "~/.server/services/thread";
-import { handleCatchErrorAction } from "~/.server/utils/action-utils";
+import { getThreadsWithUser } from "~/.server/services/threads";
 import { useLoaderData } from "@remix-run/react";
-import { createThreadAction } from "~/.server/intent-actions/create-thread";
-import { likeThreadAction } from "~/.server/intent-actions/like-thread";
-import { unlikeThreadAction } from "~/.server/intent-actions/unlike-thread";
+import { universalActionHandler } from "~/.server/action-handler";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await requireUser(request);
@@ -32,27 +29,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 };
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  let intent: string = "";
-  try {
-    const user = await requireUser(request);
-    const formData = await request.formData();
-    intent = formData.get("intent") as string;
-
-    switch (intent) {
-      case "createThread":
-        return createThreadAction(user.id, formData);
-      case "likeThread":
-        return likeThreadAction(user.id, formData);
-      case "unlikeThread":
-        return unlikeThreadAction(user.id, formData);
-      default:
-        throw new Error("Invalid intent");
-    }
-  } catch (error) {
-    return handleCatchErrorAction(error, intent);
-  }
-};
+export const action = async ({ request }: ActionFunctionArgs) =>
+  universalActionHandler(request);
 
 const ForYou = () => {
   const [isOpen, setIsOpen] = useState(false);

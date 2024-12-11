@@ -16,8 +16,8 @@ const MainLayout = () => {
       <Sidebar />
       <TopBar />
       <div className="flex-1 overflow-y-auto sm:pl-20 ">
-        <div className="mx-2">
-          <main className="flex mt-14 gap-4 overflow-hidden sm:border-[0.5px] border-t-[1px]  border-[#303030] sm:bg-[#181818] max-w-[650px] text-sm mx-auto sm:rounded-3xl">
+        <div className="sm:mx-2">
+          <main className="flex mt-14 gap-4 overflow-hidden sm:border-[1px] border-[#303030] sm:bg-[#181818] max-w-[640px] text-sm mx-auto sm:rounded-3xl">
             <Outlet />
           </main>
         </div>

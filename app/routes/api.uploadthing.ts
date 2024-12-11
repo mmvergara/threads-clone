@@ -1,6 +1,4 @@
 import { createUploadthing, type FileRouter } from "uploadthing/remix";
-import { UploadThingError } from "uploadthing/server";
-import { getUserIdFromSession } from "~/.server/session/session";
 
 const f = createUploadthing({
   errorFormatter(err) {
@@ -16,6 +14,9 @@ const f = createUploadthing({
   },
 });
 
+// TODO: Add middleware to check if user is logged in
+// TODO: Add middleware to check if user is logged in
+// TODO: Add middleware to check if user is logged in
 // TODO: Add middleware to check if user is logged in
 const uploadRouter = {
   threadImageUploader: f({

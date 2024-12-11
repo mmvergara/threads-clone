@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import { ActionReturnType } from "~/.server/utils/action-utils";
 import { toastActionData } from "~/utils/toast";
 import { UploadButton } from "~/utils/uploadthing";
+import SubmitBtn from "./submit-btn";
+import { Intent } from "~/utils/intents";
 
 const UploadImageModal = ({
   isOpen,
@@ -114,8 +116,8 @@ const UploadImageModal = ({
             )}
           </div>
 
-          <button
-            type="submit"
+          <SubmitBtn
+            intent={Intent.UpdateProfileImage}
             disabled={!uploadedImgUrl || isUploading}
             onClick={() => {
               formRef.current?.submit();
@@ -124,7 +126,7 @@ const UploadImageModal = ({
             className="w-full py-2 rounded-md hover:font-bold transition-all duration-300 bg-white text-black disabled:opacity-50 disabled:cursor-not-allowed mt-4"
           >
             Save
-          </button>
+          </SubmitBtn>
         </Form>
       </div>
     </div>

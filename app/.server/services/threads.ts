@@ -66,6 +66,24 @@ export const getThreadsWithUser = async ({
   return res;
 };
 
+export const getUserThreads = async ({
+  userId,
+  currentUserId,
+}: {
+  userId: string;
+  currentUserId: string;
+}) => {
+  const res = await db
+    .select({
+      thread: getTableColumns(threads),
+      isLiked: sql<boolean>`EXISTS (SELECT 1 FROM thread_likes WHERE thread_id = ${threads.id} AND user_id = ${currentUserId})`,
+    })
+    .from(threads)
+    .innerJoin(users, eq(threads.userId, users.id))
+    .where(eq(threads.userId, userId));
+  return res;
+};
+
 // export const threads = sqliteTable("threads", {
 //   id: text("id").notNull().primaryKey(),
 //   userId: text("user_id")

@@ -9,6 +9,7 @@ import { since } from "~/utils/formatters";
 import CreateThreadModal from "./create-thread-modal";
 import { useState } from "react";
 import { Form } from "@remix-run/react";
+import { Intent } from "~/utils/intents";
 
 type Props = {
   thread: Thread;
@@ -23,41 +24,49 @@ const Thread = ({ thread, user, isLiked }: Props) => {
   };
 
   return (
-    <div
+    <article
       onClick={handleThreadClick}
-      className="flex gap-4 px-6 py-4 border-[#303030] border-t-[0.5px] cursor-pointer"
+      className="flex gap-2 px-6 py-4 border-[#303030] border-t-[0.5px] cursor-pointer"
+      role="article"
+      aria-label={`Thread by ${user.displayName}`}
     >
-      <div className="flex-shrink-0">
+      <header className="flex-shrink-0">
         <img
           src={user.profileImageUrl}
-          alt="User avatar"
+          alt={`${user.displayName}'s profile picture`}
           className="w-10 h-10 rounded-full"
         />
-      </div>
+      </header>
 
-      <div className="flex-1 w-[calc(100%-50px)]">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="font-semibold text-white">{user.displayName}</span>
-          <span className="text-zinc-500">{since(thread.createdAt)} ago</span>
-        </div>
-        <div className="mt-1 text-white break-words w-full">
-          {thread.content}
-        </div>
+      <div className="flex-1 w-[calc(100%-50px)">
+        <section className="ml-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-semibold text-white">{user.displayName}</span>
+            <time className="text-zinc-500">{since(thread.createdAt)} ago</time>
+          </div>
+          <div className="mt-1 text-white break-words w-full" role="text">
+            {thread.content}
+          </div>
 
-        <div className="flex flex-wrap gap-2 mt-3">
-          {JSON.parse(thread.imageUrls as string).map((imageUrl: string) => (
-            <div
-              key={imageUrl}
-              className="relative group border-2 rounded-xl border-zinc-700"
-            >
-              <img
-                src={imageUrl}
-                alt="Thread image"
-                className="w-[150px] h-[150px] object-cover rounded-md"
-              />
-            </div>
-          ))}
-        </div>
+          <section
+            className="flex flex-wrap gap-2 mt-3"
+            aria-label="Thread images"
+          >
+            {JSON.parse(thread.imageUrls as string).map((imageUrl: string) => (
+              <div
+                key={imageUrl}
+                className="relative group border-2 rounded-xl border-zinc-700"
+              >
+                <img
+                  src={imageUrl}
+                  alt="Thread attachment"
+                  className="w-[150px] h-[150px] object-cover rounded-md"
+                />
+              </div>
+            ))}
+          </section>
+        </section>
+
         <CreateThreadModal
           isOpen={isReplyModalOpen}
           setIsOpen={setIsReplyModalOpen}
@@ -66,31 +75,28 @@ const Thread = ({ thread, user, isLiked }: Props) => {
             user,
           }}
         />
-        <div className="flex gap-4 mt-3 text-zinc-500">
+
+        <footer className="flex text-zinc-500">
           <Form method="post">
-            {isLiked ? (
-              <input type="hidden" name="intent" value="unlikeThread" />
-            ) : (
-              <input type="hidden" name="intent" value="likeThread" />
-            )}
+            <input
+              type="hidden"
+              name="intent"
+              value={isLiked ? Intent.UnlikeThread : Intent.LikeThread}
+            />
             <input type="hidden" name="threadId" value={thread.id} />
 
-            {isLiked ? (
-              <button
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 p-2 text-red-500 rounded-full hover:bg-zinc-800 hover:scale-105  transition-colors"
-              >
-                <HeartIcon className="w-5 h-5 " fill="red" />
-                {thread.likes > 0 && <span>{thread.likes}</span>}
-              </button>
-            ) : (
-              <button
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:scale-105 hover:text-white transition-colors"
-              >
-                <HeartIcon className="w-5 h-5" />
-              </button>
-            )}
+            <button
+              onClick={(e) => e.stopPropagation()}
+              className={`flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:scale-105 transition-colors
+                ${isLiked ? "text-red-500" : "hover:text-white"}`}
+              aria-label={isLiked ? "Unlike thread" : "Like thread"}
+              aria-pressed={isLiked}
+            >
+              <HeartIcon className="w-5 h-5" fill={isLiked ? "red" : "none"} />
+              {thread.likes > 0 && (
+                <span aria-label={`${thread.likes} likes`}>{thread.likes}</span>
+              )}
+            </button>
           </Form>
 
           <button
@@ -99,26 +105,39 @@ const Thread = ({ thread, user, isLiked }: Props) => {
               setIsReplyModalOpen(true);
             }}
             className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+            aria-label="Reply to thread"
           >
             <MessageCircleIcon className="w-5 h-5" />
-            {thread.replies > 0 && <span>{thread.replies}</span>}
+            {thread.replies > 0 && (
+              <span aria-label={`${thread.replies} replies`}>
+                {thread.replies}
+              </span>
+            )}
           </button>
+
           <button
             onClick={(e) => e.stopPropagation()}
             className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+            aria-label="Repost thread"
           >
             <Repeat2Icon className="w-5 h-5" />
-            {thread.reposts > 0 && <span>{thread.reposts}</span>}
+            {thread.reposts > 0 && (
+              <span aria-label={`${thread.reposts} reposts`}>
+                {thread.reposts}
+              </span>
+            )}
           </button>
+
           <button
             onClick={(e) => e.stopPropagation()}
             className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+            aria-label="Share thread"
           >
             <SendIcon className="w-5 h-5" />
           </button>
-        </div>
+        </footer>
       </div>
-    </div>
+    </article>
   );
 };
 

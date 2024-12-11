@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import { User } from "~/.server/db/schema";
 import { ActionReturnType } from "~/.server/utils/action-utils";
 import { toastActionData } from "~/utils/toast";
+import SubmitBtn from "./submit-btn";
+import { Intent } from "~/utils/intents";
 
 const EditProfileModal = ({
   isOpen,
@@ -24,7 +26,7 @@ const EditProfileModal = ({
   return (
     <div className={`fixed inset-0 bg-black/80 z-50 ${isOpen ? "" : "hidden"}`}>
       <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-[#101010] rounded-xl p-6 border-[1px] border-zinc-600">
-        <Form method="post"  className="flex flex-col gap-6">
+        <Form method="post" className="flex flex-col gap-6">
           <input type="hidden" name="intent" value="updateProfileData" />
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-white">Edit profile</h2>
@@ -62,12 +64,12 @@ const EditProfileModal = ({
             </div>
           </div>
 
-          <button
-            type="submit"
+          <SubmitBtn
+            intent={Intent.UpdateProfileData}
             className="w-full py-3 text-md font-semibold bg-white text-black rounded-lg mt-4"
           >
             Done
-          </button>
+          </SubmitBtn>
         </Form>
       </div>
     </div>

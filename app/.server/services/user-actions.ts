@@ -1,8 +1,5 @@
 import { handleActionSuccess } from "../utils/action-utils";
-import {
-  updateUserProfileData,
-  updateUserProfileImage,
-} from "../services/user";
+import { updateUserProfileData, updateUserProfileImage } from "./user";
 
 export const updateProfileDataAction = async (
   userId: string,

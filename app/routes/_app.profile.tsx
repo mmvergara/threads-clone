@@ -9,14 +9,10 @@ import {
   ShouldRevalidateFunction,
   useLoaderData,
 } from "@remix-run/react";
-import {
-  updateProfileDataAction,
-  updateProfileImgAction,
-} from "~/.server/intent-actions/update-profile";
-import { handleCatchErrorAction } from "~/.server/utils/action-utils";
 import { getUserById } from "~/.server/services/user";
 import { User } from "~/.server/db/schema";
 import ProfileHeader from "~/components/profile-header";
+import { universalActionHandler } from "~/.server/action-handler";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);
@@ -50,28 +46,11 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
   return currentParams.userId !== nextParams.userId;
 };
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  let intent: string = "";
-  try {
-    const user = await requireUser(request);
-    const formData = await request.formData();
-    intent = formData.get("intent") as string;
-    switch (intent) {
-      case "updateProfileData":
-        return updateProfileDataAction(user.id, formData);
-      case "updateProfileImage":
-        return updateProfileImgAction(user.id, formData);
-      default:
-        throw new Error("Invalid intent");
-    }
-  } catch (error) {
-    return handleCatchErrorAction(error, intent);
-  }
-};
+export const action = async ({ request }: ActionFunctionArgs) =>
+  universalActionHandler(request);
 
 const ProfilePageLayout = () => {
   const user = useLoaderData() as User;
-
   return (
     <div className="flex flex-col w-full">
       <ProfileHeader user={user} />
