@@ -4,24 +4,14 @@ import {
   redirect,
 } from "@remix-run/node";
 import { requireUser } from "~/.server/session/session";
-import {
-  Outlet,
-  ShouldRevalidateFunction,
-  useLoaderData,
-} from "@remix-run/react";
+import { Outlet, ShouldRevalidateFunction } from "@remix-run/react";
 import { getUserById } from "~/.server/services/user";
-import { User } from "~/.server/db/schema";
-import ProfileHeader from "~/components/profile-header";
 import { universalActionHandler } from "~/.server/action-handler";
-import { Intent, useUniversalActionData } from "~/utils/client-action-utils";
-import { useEffect } from "react";
-import { toastActionData } from "~/utils/toast";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);
   const requestUrl = new URL(request.url);
   const profilePath = requestUrl.pathname;
-  console.log("profilePath", profilePath);
 
   // If the path is exactly "/profile", redirect to current user's profile
   if (profilePath === "/profile") {
@@ -30,7 +20,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   // Determine which profile to load
   const profileId = params.userId || currentUser.id;
-  console.log("profileId", profileId);
+
   // Fetch the user to be displayed
   const user = await getUserById(profileId);
 
@@ -39,7 +29,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
     return redirect("/");
   }
 
-  return user;
+  return null;
 };
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({
@@ -53,10 +43,8 @@ export const action = async ({ request }: ActionFunctionArgs) =>
   universalActionHandler(request);
 
 const ProfilePageLayout = () => {
-  const user = useLoaderData() as User;
   return (
     <div className="flex flex-col w-full">
-      <ProfileHeader user={user} />
       <Outlet />
     </div>
   );
