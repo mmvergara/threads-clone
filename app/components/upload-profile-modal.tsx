@@ -8,8 +8,7 @@ import { ActionReturnType } from "~/.server/utils/action-utils";
 import { toastActionData } from "~/utils/toast";
 import { UploadButton } from "~/utils/uploadthing";
 import SubmitBtn from "./submit-btn";
-import { Intent } from "~/utils/intents";
-
+import { Intent } from "~/utils/client-action-utils";
 const UploadImageModal = ({
   isOpen,
   setIsOpen,

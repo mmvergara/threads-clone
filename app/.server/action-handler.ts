@@ -1,4 +1,4 @@
-import { Intent } from "~/utils/intents";
+import { Intent } from "~/utils/client-action-utils";
 import {
   likeThreadAction,
   unlikeThreadAction,
@@ -10,8 +10,6 @@ import {
 } from "./services/user-actions";
 import { requireUser } from "./session/session";
 import { handleCatchErrorAction } from "./utils/action-utils";
-
-
 
 export const universalActionHandler = async (request: Request) => {
   let intent: string = "";

@@ -2,13 +2,12 @@ import { ImageUpIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { UploadButton } from "~/utils/uploadthing";
-import { Form, useActionData } from "@remix-run/react";
+import { Form } from "@remix-run/react";
 import { Thread, User } from "~/.server/db/schema";
 import { truncateTextEllipses } from "~/utils/formatters";
 import { toastActionData } from "~/utils/toast";
-import { ActionReturnType } from "~/.server/utils/action-utils";
 import SubmitBtn from "./submit-btn";
-import { Intent } from "~/utils/intents";
+import { Intent, useUniversalActionData } from "~/utils/client-action-utils";
 
 type Props = {
   isOpen: boolean;
@@ -25,11 +24,11 @@ const CreateThreadModal = ({ isOpen, setIsOpen, parentThread }: Props) => {
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const actionData = useActionData() as ActionReturnType;
+  const actionData = useUniversalActionData();
   useEffect(() => {
     if (!isOpen) return;
-    toastActionData(actionData, "createThread");
-    if (actionData?.success && actionData?.intent === "createThread") {
+    toastActionData(actionData, Intent.CreateThread);
+    if (actionData?.success && actionData?.intent === Intent.CreateThread) {
       setIsOpen(false);
     }
   }, [actionData]);

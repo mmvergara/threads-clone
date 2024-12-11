@@ -1,5 +1,5 @@
 import React from "react";
-import { Intent } from "~/utils/intents";
+import { Intent } from "~/utils/client-action-utils";
 
 interface SubmitBtnProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   intent: Intent;

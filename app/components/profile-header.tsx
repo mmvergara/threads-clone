@@ -1,4 +1,4 @@
-import { Link, useLocation, useParams } from "@remix-run/react";
+import { Link, useLocation } from "@remix-run/react";
 import { User } from "~/.server/db/schema";
 import EditProfileModal from "./edit-profile-modal";
 import UploadProfileModal from "./upload-profile-modal";
@@ -23,7 +23,7 @@ const ProfileHeader = ({ user }: Props) => {
               {user?.displayName}
             </h1>
             <p className="text-white">@{user?.handle}</p>
-            <p className="text-white mt-4">{user?.bio}</p>
+            <p className="tAext-white mt-4">{user?.bio}</p>
             <div className="flex items-center gap-2 mt-4">
               <span className="text-zinc-500 text-sm">85 followers</span>
             </div>

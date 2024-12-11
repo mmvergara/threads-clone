@@ -5,7 +5,7 @@ import { User } from "~/.server/db/schema";
 import { ActionReturnType } from "~/.server/utils/action-utils";
 import { toastActionData } from "~/utils/toast";
 import SubmitBtn from "./submit-btn";
-import { Intent } from "~/utils/intents";
+import { Intent } from "~/utils/client-action-utils";
 
 const EditProfileModal = ({
   isOpen,

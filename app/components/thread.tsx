@@ -9,7 +9,7 @@ import { since } from "~/utils/formatters";
 import CreateThreadModal from "./create-thread-modal";
 import { useState } from "react";
 import { Form } from "@remix-run/react";
-import { Intent } from "~/utils/intents";
+import { Intent } from "~/utils/client-action-utils";
 
 type Props = {
   thread: Thread;
