@@ -13,6 +13,9 @@ import { getUserById } from "~/.server/services/user";
 import { User } from "~/.server/db/schema";
 import ProfileHeader from "~/components/profile-header";
 import { universalActionHandler } from "~/.server/action-handler";
+import { Intent, useUniversalActionData } from "~/utils/client-action-utils";
+import { useEffect } from "react";
+import { toastActionData } from "~/utils/toast";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);
