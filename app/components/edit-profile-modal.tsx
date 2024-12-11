@@ -2,10 +2,9 @@ import { Form } from "@remix-run/react";
 import { useActionData } from "@remix-run/react";
 import { useEffect } from "react";
 import { User } from "~/.server/db/schema";
-import { ActionReturnType } from "~/.server/utils/action-utils";
 import { toastActionData } from "~/utils/toast";
 import SubmitBtn from "./submit-btn";
-import { Intent } from "~/utils/client-action-utils";
+import { Intent, useUniversalActionData } from "~/utils/client-action-utils";
 
 const EditProfileModal = ({
   isOpen,
@@ -16,10 +15,21 @@ const EditProfileModal = ({
   setIsOpen: (open: boolean) => void;
   user: User;
 }) => {
-  const actionData = useActionData() as ActionReturnType;
+  const actionData = useUniversalActionData();
   useEffect(() => {
-    toastActionData(actionData, "updateProfileData");
-    if (actionData?.success) {
+    console.log("actionData", actionData);
+    console.log("isOpen", isOpen);
+    console.log("Intent.UpdateProfileData", Intent.UpdateProfileData);
+    console.log(
+      "actionData?.success",
+      actionData?.success,
+      actionData?.intent === Intent.UpdateProfileData
+    );
+    toastActionData(actionData, Intent.UpdateProfileData);
+    if (
+      actionData?.success &&
+      actionData?.intent === Intent.UpdateProfileData
+    ) {
       setIsOpen(false);
     }
   }, [actionData]);
@@ -27,7 +37,6 @@ const EditProfileModal = ({
     <div className={`fixed inset-0 bg-black/80 z-50 ${isOpen ? "" : "hidden"}`}>
       <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-[#101010] rounded-xl p-6 border-[1px] border-zinc-600">
         <Form method="post" className="flex flex-col gap-6">
-          <input type="hidden" name="intent" value="updateProfileData" />
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold text-white">Edit profile</h2>
             <button
