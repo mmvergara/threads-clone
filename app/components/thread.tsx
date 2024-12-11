@@ -4,17 +4,19 @@ import {
   Repeat2Icon,
   SendIcon,
 } from "lucide-react";
-import type { Thread, User } from "~/.server/db/schema.server";
+import type { Thread, User } from "~/.server/db/schema";
 import { since } from "~/utils/formatters";
 import CreateThreadModal from "./create-thread-modal";
 import { useState } from "react";
+import { Form } from "@remix-run/react";
 
 type Props = {
   thread: Thread;
   user: User;
+  isLiked: boolean;
 };
 
-const Thread = ({ thread, user }: Props) => {
+const Thread = ({ thread, user, isLiked }: Props) => {
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
   const handleThreadClick = () => {
     console.log("Thread clicked");
@@ -65,13 +67,31 @@ const Thread = ({ thread, user }: Props) => {
           }}
         />
         <div className="flex gap-4 mt-3 text-zinc-500">
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
-          >
-            <HeartIcon className="w-5 h-5" />
-            {thread.likes > 0 && <span>{thread.likes}</span>}
-          </button>
+          <Form method="post">
+            {isLiked ? (
+              <input type="hidden" name="intent" value="unlikeThread" />
+            ) : (
+              <input type="hidden" name="intent" value="likeThread" />
+            )}
+            <input type="hidden" name="threadId" value={thread.id} />
+
+            {isLiked ? (
+              <button
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 p-2 text-red-500 rounded-full hover:bg-zinc-800 hover:scale-105  transition-colors"
+              >
+                <HeartIcon className="w-5 h-5 " fill="red" />
+                {thread.likes > 0 && <span>{thread.likes}</span>}
+              </button>
+            ) : (
+              <button
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:scale-105 hover:text-white transition-colors"
+              >
+                <HeartIcon className="w-5 h-5" />
+              </button>
+            )}
+          </Form>
 
           <button
             onClick={(e) => {

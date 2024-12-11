@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { UploadButton } from "~/utils/uploadthing";
 import { Form, useActionData } from "@remix-run/react";
-import { Thread, User } from "~/.server/db/schema.server";
+import { Thread, User } from "~/.server/db/schema";
 import { truncateTextEllipses } from "~/utils/formatters";
 import { toastActionData } from "~/utils/toast";
 import { ActionReturnType } from "~/.server/utils/action-utils";

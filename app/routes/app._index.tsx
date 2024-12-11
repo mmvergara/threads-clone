@@ -8,11 +8,17 @@ import { getThreadsWithUser } from "~/.server/services/thread";
 import { handleCatchErrorAction } from "~/.server/utils/action-utils";
 import { useLoaderData } from "@remix-run/react";
 import { createThreadAction } from "~/.server/intent-actions/create-thread";
+import { likeThreadAction } from "~/.server/intent-actions/like-thread";
+import { unlikeThreadAction } from "~/.server/intent-actions/unlike-thread";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  await requireUser(request);
+  const user = await requireUser(request);
   try {
-    const threads = await getThreadsWithUser({ limit: 10, skip: 0 });
+    const threads = await getThreadsWithUser({
+      limit: 10,
+      skip: 0,
+      userId: user.id,
+    });
     return threads;
   } catch (error) {
     console.error(error);
@@ -29,6 +35,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     switch (intent) {
       case "createThread":
         return createThreadAction(user.id, formData);
+      case "likeThread":
+        return likeThreadAction(user.id, formData);
+      case "unlikeThread":
+        return unlikeThreadAction(user.id, formData);
       default:
         throw new Error("Invalid intent");
     }
@@ -69,6 +79,7 @@ const ForYou = () => {
           key={thread.thread.id}
           thread={thread.thread}
           user={thread.user}
+          isLiked={thread.isLiked}
         />
       ))}
     </div>
