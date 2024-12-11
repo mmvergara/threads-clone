@@ -7,6 +7,7 @@ export const toastActionData = (
 ) => {
   if (intents.includes(data?.intent || "")) {
     data.message?.forEach((message) => {
+      if (message == "") return;
       data.success ? toast.success(message) : toast.error(message);
     });
   }
