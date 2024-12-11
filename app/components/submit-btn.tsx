@@ -9,7 +9,7 @@ const SubmitBtn: React.FC<SubmitBtnProps> = ({ intent, ...props }) => {
   const { name, type, ...buttonProps } = props;
   return (
     <button type="submit" name="intent" value={intent} {...buttonProps}>
-      Submit
+      {props.children}
     </button>
   );
 };
