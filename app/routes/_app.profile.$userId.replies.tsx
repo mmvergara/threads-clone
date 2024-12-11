@@ -1,13 +1,52 @@
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { getUserById, isFollowedByUser } from "~/.server/services/user";
+import { getUserThreads } from "~/.server/services/threads";
 import { useState } from "react";
-
+import ProfileHeader from "~/components/profile-header";
+import { requireUser } from "~/.server/session/session";
+import Thread from "~/components/thread";
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
+  const currentUser = await requireUser(request);
+  const userId = params.userId!;
+  const user = await getUserById(userId);
+  const isFollowed = await isFollowedByUser(currentUser.id, userId);
+  const replyThreads = await getUserThreads({
+    userId,
+    currentUserId: currentUser.id,
+  });
+  return {
+    replyThreads,
+    user,
+    isFollowed,
+    isCurrentUser: currentUser.id === userId,
+  };
+};
 const ProfileRepliesPage = () => {
-  const [isThreadModalOpen, setIsThreadModalOpen] = useState(false);
+  const { replyThreads, user, isFollowed, isCurrentUser } =
+    useLoaderData<Awaited<ReturnType<typeof loader>>>();
 
   return (
     <>
-      <div className="flex flex-col gap-4 mt-4">
-        <div className="text-center text-zinc-500 py-8">Profile replies</div>
-      </div>
+      <ProfileHeader
+        isFollowed={isFollowed}
+        user={user}
+        isCurrentUser={isCurrentUser}
+      />
+      {replyThreads.length === 0 ? (
+        <div className="text-center text-zinc-500 py-8">No replies yet</div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {replyThreads.map((thread) => (
+            <Thread
+              key={thread.thread.id}
+              user={user}
+              thread={thread.thread}
+              isLiked={thread.isLiked}
+            />
+          ))}
+        </div>
+      )}
     </>
   );
 };
