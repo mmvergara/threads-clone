@@ -19,15 +19,15 @@ export const universalActionHandler = async (request: Request) => {
     intent = formData.get("intent") as string;
     switch (intent) {
       case Intent.CreateThread:
-        return createThreadAction(currentUser.id, formData);
+        return createThreadAction(currentUser.id, formData, intent);
       case Intent.LikeThread:
-        return likeThreadAction(currentUser.id, formData);
+        return likeThreadAction(currentUser.id, formData, intent);
       case Intent.UnlikeThread:
-        return unlikeThreadAction(currentUser.id, formData);
+        return unlikeThreadAction(currentUser.id, formData, intent);
       case Intent.UpdateProfileData:
-        return updateProfileDataAction(currentUser.id, formData);
+        return updateProfileDataAction(currentUser.id, formData, intent);
       case Intent.UpdateProfileImage:
-        return updateProfileImgAction(currentUser.id, formData);
+        return updateProfileImgAction(currentUser.id, formData, intent);
       default:
         throw new Error("Invalid intent");
     }
