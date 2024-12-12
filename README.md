@@ -28,7 +28,7 @@ npx drizzle-kit studio
 
 - [x] Change the post btn ui the same as threads
 
-- Add logout functionality
+- [x] Add logout functionality
 
 - Add search functionality, make sure to
 
