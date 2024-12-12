@@ -3,7 +3,7 @@ import CreateThreadModal from "~/components/create-thread-modal";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { getUserThreads } from "~/.server/services/threads";
 import { requireUser } from "~/.server/session/session";
-import { useLoaderData } from "@remix-run/react";
+import { MetaFunction, useLoaderData } from "@remix-run/react";
 import Thread from "~/components/thread";
 import { getUserById, isFollowedByUser } from "~/.server/services/user";
 import { universalActionHandler } from "~/.server/action-handler";
@@ -30,6 +30,16 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   };
 };
 
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [
+    { title: `Threads by ${data?.user?.handle}` },
+    {
+      name: "description",
+      content: `Threads by ${data?.user?.handle}`,
+    },
+  ];
+};
+
 const ProfilePage = () => {
   const [isCreateThreadModalOpen, setIsCreateThreadModalOpen] = useState(false);
   const { threads, user, isFollowed, isCurrentUser } =
@@ -43,7 +53,7 @@ const ProfilePage = () => {
       />
       {isCurrentUser && (
         <>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 border-b-[1px] border-zinc-700">
             <div className="flex items-center gap-3 px-6 py-4">
               <img
                 src={user.profileImageUrl}
