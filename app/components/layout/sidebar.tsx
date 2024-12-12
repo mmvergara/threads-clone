@@ -12,7 +12,7 @@ import {
 
 const Sidebar = () => {
   return (
-    <div className="hidden sm:flex fixed h-full flex-col justify-between w-[5rem] text-[#4d4d4d] py-4 bg-[#0a0a0a] ">
+    <div className="hidden sm:flex fixed h-full flex-col z-50 justify-between w-[5rem] text-[#4d4d4d] py-4 bg-[#0a0a0a] ">
       <div className="flex items-center justify-center">
         <AtSignIcon size={28} className="text-white" />
       </div>
