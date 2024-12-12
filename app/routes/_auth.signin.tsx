@@ -1,4 +1,4 @@
-import { Form, Link, useActionData } from "@remix-run/react";
+import { Form, Link, MetaFunction, useActionData } from "@remix-run/react";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -18,6 +18,16 @@ import {
 import { getUserByEmail, getUserById } from "~/.server/services/user";
 import { useEffect } from "react";
 import { toastActionData } from "~/utils/toast";
+
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Sign In" },
+    {
+      name: "description",
+      content: "Sign in to your account",
+    },
+  ];
+};
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const userId = await getUserIdFromSession(request);
