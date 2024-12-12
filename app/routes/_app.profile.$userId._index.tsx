@@ -31,7 +31,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 };
 
 const ProfilePage = () => {
-  const [isThreadModalOpen, setIsThreadModalOpen] = useState(false);
+  const [isCreateThreadModalOpen, setIsCreateThreadModalOpen] = useState(false);
   const { threads, user, isFollowed, isCurrentUser } =
     useLoaderData<Awaited<ReturnType<typeof loader>>>();
   return (
@@ -51,22 +51,23 @@ const ProfilePage = () => {
                 className="w-10 h-10 rounded-full"
               />
               <button
-                onClick={() => setIsThreadModalOpen(true)}
-                className="flex-1 text-left text-zinc-500 text-lg"
+                onClick={() => setIsCreateThreadModalOpen(true)}
+                className="flex-1 ml-2 text-left text-zinc-500 text-sm cursor-text"
               >
                 What's new?
               </button>
               <button
-                onClick={() => setIsThreadModalOpen(true)}
-                className={`px-4 py-2 rounded-full bg-zinc-800 text-zinc-500`}
+                onClick={() => setIsCreateThreadModalOpen(true)}
+                className="px-4 py-2 rounded-xl text-white border-[1px] border-zinc-700"
               >
                 Post
               </button>
             </div>
           </div>
           <CreateThreadModal
-            isOpen={isThreadModalOpen}
-            setIsOpen={setIsThreadModalOpen}
+            isOpen={isCreateThreadModalOpen}
+            setIsOpen={setIsCreateThreadModalOpen}
+            currentUser={user}
           />
         </>
       )}
