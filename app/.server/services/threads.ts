@@ -6,8 +6,10 @@ import {
   desc,
   eq,
   getTableColumns,
+  ilike,
   isNotNull,
   isNull,
+  like,
   sql,
 } from "drizzle-orm";
 
@@ -111,7 +113,26 @@ export const getUserReplyThreads = async ({
   return res;
 };
 
-// export const threads = sqliteTable("threads", {
+export const searchThreads = async ({
+  currentUserId,
+  searchQuery,
+}: {
+  currentUserId: string;
+  searchQuery: string;
+}) => {
+  const res = await db
+    .select({
+      thread: getTableColumns(threads),
+      user: userWithoutPasswordHash,
+      isLiked: sql<boolean>`EXISTS (SELECT 1 FROM thread_likes WHERE thread_id = ${threads.id} AND user_id = ${currentUserId})`,
+    })
+    .from(threads)
+    .innerJoin(users, eq(threads.userId, users.id))
+    .where(like(sql`UPPER(${threads.content})`, `%${searchQuery}%`));
+  return res;
+};
+
+// export const threads = sqlit eTable("threads", {
 //   id: text("id").notNull().primaryKey(),
 //   userId: text("user_id")
 //     .notNull()
