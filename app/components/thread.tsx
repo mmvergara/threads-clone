@@ -28,6 +28,7 @@ const Thread = ({ thread, user, isLiked }: Props) => {
       <CreateThreadModal
         isOpen={isReplyModalOpen}
         setIsOpen={setIsReplyModalOpen}
+        currentUser={user}
         parentThread={{
           thread,
           user,
@@ -36,7 +37,7 @@ const Thread = ({ thread, user, isLiked }: Props) => {
 
       <article
         onClick={handleThreadClick}
-        className="flex gap-2 px-6 py-4 border-[#3d3d3d] border-t-[0.5px] cursor-pointer"
+        className="flex gap-2 px-6 py-4 border-[#3d3d3d] border-t-[1px] cursor-pointer"
         role="article"
         aria-label={`Thread by ${user.displayName}`}
       >
@@ -73,7 +74,7 @@ const Thread = ({ thread, user, isLiked }: Props) => {
                     <img
                       src={imageUrl}
                       alt="Thread attachment"
-                      className="w-[150px] h-[150px] object-cover rounded-md"
+                      className="w-[150px] h-[150px] object-cover rounded-xl"
                     />
                   </div>
                 )
@@ -81,7 +82,7 @@ const Thread = ({ thread, user, isLiked }: Props) => {
             </section>
           </section>
 
-          <footer className="flex text-zinc-500">
+          <footer className="flex text-zinc-500 mt-2">
             <Form method="post">
               <input
                 type="hidden"
