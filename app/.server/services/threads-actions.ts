@@ -28,7 +28,6 @@ export const createThreadAction = async (
       images: formData.get("images"),
       parentThreadId: formData.get("parentThreadId"),
     });
-
   const thread = await createThread({
     userId: currentUserId,
     content,
