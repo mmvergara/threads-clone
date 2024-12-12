@@ -12,13 +12,19 @@ import { Intent, useUniversalActionData } from "~/utils/client-action-utils";
 type Props = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  currentUser: User;
   parentThread?: {
     thread: Thread;
     user: User;
   };
 };
 
-const CreateThreadModal = ({ isOpen, setIsOpen, parentThread }: Props) => {
+const CreateThreadModal = ({
+  isOpen,
+  setIsOpen,
+  currentUser,
+  parentThread,
+}: Props) => {
   const uploadThingBtnRef = useRef<HTMLDivElement>(null);
   const [images, setImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -36,12 +42,12 @@ const CreateThreadModal = ({ isOpen, setIsOpen, parentThread }: Props) => {
   if (!isOpen) return null;
   return (
     <div
-      className="fixed inset-0 bg-black/85 flex items-start justify-center p-4 pt-[10vh] overflow-y-auto z-50"
+      className="fixed inset-0 bg-black/85 rounded-3xl flex items-start justify-center p-4 pt-[10vh] overflow-y-auto z-50"
       role="dialog"
       aria-labelledby="modal-title"
       aria-modal="true"
     >
-      <div className="w-full max-w-xl bg-[#181818] border-[0.8px] border-zinc-700 rounded-3xl my-8">
+      <div className="w-full max-w-xl bg-[#181818] border-[1px] border-zinc-700 rounded-3xl my-8">
         <header className="flex items-center justify-between p-6 py-4 text-base border-b border-zinc-800">
           <button
             onClick={() => setIsOpen(false)}
@@ -87,7 +93,7 @@ const CreateThreadModal = ({ isOpen, setIsOpen, parentThread }: Props) => {
             />
           )}
           <article className="p-4">
-            <div className="flex gap-3">
+            <div className="flex gap-1">
               <div className="flex flex-col items-center">
                 <img
                   src="https://via.placeholder.com/40x40"
@@ -101,40 +107,44 @@ const CreateThreadModal = ({ isOpen, setIsOpen, parentThread }: Props) => {
               </div>
 
               <div className="flex-1">
-                <div className="text-white font-semibold">itscrownie</div>
-                <textarea
-                  name="content"
-                  placeholder="What's new?"
-                  className="w-full flex-1 bg-transparent text-white placeholder-zinc-500 mt-2 resize-none focus:outline-none text-sm mb-2"
-                  rows={1}
-                  style={{ height: "auto" }}
-                  onInput={(e) => {
-                    const target = e.target as HTMLTextAreaElement;
-                    target.style.height = "auto";
-                    target.style.height = `${target.scrollHeight}px`;
-                  }}
-                  aria-label="Thread content"
-                />
-
-                {images.length > 0 && (
-                  <div
-                    className="flex flex-wrap gap-2 mb-3"
-                    aria-label="Uploaded images"
-                  >
-                    {images.map((image, index) => (
-                      <div
-                        key={index}
-                        className="relative group border-2 rounded-xl border-zinc-700"
-                      >
-                        <img
-                          src={image}
-                          alt={`Upload ${index + 1}`}
-                          className="w-[150px] h-[150px] object-cover rounded-md"
-                        />
-                      </div>
-                    ))}
+                <div className="ml-2.5">
+                  <div className="text-white font-semibold">
+                    {currentUser?.displayName}
                   </div>
-                )}
+                  <textarea
+                    name="content"
+                    placeholder="What's new?"
+                    className="w-full flex-1 bg-transparent text-white placeholder-zinc-500 mt-2 resize-none focus:outline-none text-sm mb-2"
+                    rows={1}
+                    style={{ height: "auto" }}
+                    onInput={(e) => {
+                      const target = e.target as HTMLTextAreaElement;
+                      target.style.height = "auto";
+                      target.style.height = `${target.scrollHeight}px`;
+                    }}
+                    aria-label="Thread content"
+                  />
+
+                  {images.length > 0 && (
+                    <div
+                      className="flex flex-wrap gap-2 mb-3"
+                      aria-label="Uploaded images"
+                    >
+                      {images.map((image, index) => (
+                        <div
+                          key={index}
+                          className="relative group border-2 rounded-xl border-zinc-700"
+                        >
+                          <img
+                            src={image}
+                            alt={`Upload ${index + 1}`}
+                            className="w-[150px] h-[150px] object-cover rounded-xl"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 <button
                   type="button"
