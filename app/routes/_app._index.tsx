@@ -29,6 +29,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   }
 };
 
+export const meta = () => {
+  return [{ title: "Threads Clone" }];
+};
+
 export const action = async ({ request }: ActionFunctionArgs) =>
   universalActionHandler(request);
 
