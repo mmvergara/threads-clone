@@ -22,6 +22,13 @@ export const storeUserInSession = async (userId: string) => {
   return header;
 };
 
+export const removeUserFromSession = async () => {
+  const session = await getSession();
+  session.unset("userId");
+  const header = await commitSession(session);
+  return header;
+};
+
 export const getUserIdFromSession = async (request: Request) => {
   const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("userId") as string;
