@@ -9,6 +9,7 @@ export enum Intent {
   UpdateProfileImage = "updateProfileImage",
   FollowUser = "followUser",
   UnfollowUser = "unfollowUser",
+  Logout = "logout",
 }
 
 export const useUniversalActionData = () => {
