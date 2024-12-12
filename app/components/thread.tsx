@@ -15,9 +15,10 @@ type Props = {
   thread: Thread;
   user: User;
   isLiked: boolean;
+  withoutActions?: boolean;
 };
 
-const Thread = ({ thread, user, isLiked }: Props) => {
+const Thread = ({ thread, user, isLiked, withoutActions }: Props) => {
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
   const navigate = useNavigate();
   const handleThreadClick = () => {
@@ -82,71 +83,73 @@ const Thread = ({ thread, user, isLiked }: Props) => {
             </section>
           </section>
 
-          <footer className="flex text-zinc-500 mt-2">
-            <Form method="post">
-              <input
-                type="hidden"
-                name="intent"
-                value={isLiked ? Intent.UnlikeThread : Intent.LikeThread}
-              />
-              <input type="hidden" name="threadId" value={thread.id} />
+          {!withoutActions && (
+            <footer className="flex text-zinc-500 mt-2">
+              <Form method="post">
+                <input
+                  type="hidden"
+                  name="intent"
+                  value={isLiked ? Intent.UnlikeThread : Intent.LikeThread}
+                />
+                <input type="hidden" name="threadId" value={thread.id} />
+
+                <button
+                  onClick={(e) => e.stopPropagation()}
+                  className={`flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:scale-105 transition-colors
+                ${isLiked ? "text-red-500" : "hover:text-white"}`}
+                  aria-label={isLiked ? "Unlike thread" : "Like thread"}
+                  aria-pressed={isLiked}
+                >
+                  <HeartIcon
+                    className="w-5 h-5"
+                    fill={isLiked ? "red" : "none"}
+                  />
+                  {thread.likes > 0 && (
+                    <span aria-label={`${thread.likes} likes`}>
+                      {thread.likes}
+                    </span>
+                  )}
+                </button>
+              </Form>
 
               <button
-                onClick={(e) => e.stopPropagation()}
-                className={`flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:scale-105 transition-colors
-                ${isLiked ? "text-red-500" : "hover:text-white"}`}
-                aria-label={isLiked ? "Unlike thread" : "Like thread"}
-                aria-pressed={isLiked}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsReplyModalOpen(true);
+                }}
+                className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+                aria-label="Reply to thread"
               >
-                <HeartIcon
-                  className="w-5 h-5"
-                  fill={isLiked ? "red" : "none"}
-                />
-                {thread.likes > 0 && (
-                  <span aria-label={`${thread.likes} likes`}>
-                    {thread.likes}
+                <MessageCircleIcon className="w-5 h-5" />
+                {thread.replies > 0 && (
+                  <span aria-label={`${thread.replies} replies`}>
+                    {thread.replies}
                   </span>
                 )}
               </button>
-            </Form>
 
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsReplyModalOpen(true);
-              }}
-              className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
-              aria-label="Reply to thread"
-            >
-              <MessageCircleIcon className="w-5 h-5" />
-              {thread.replies > 0 && (
-                <span aria-label={`${thread.replies} replies`}>
-                  {thread.replies}
-                </span>
-              )}
-            </button>
+              <button
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+                aria-label="Repost thread"
+              >
+                <Repeat2Icon className="w-5 h-5" />
+                {thread.reposts > 0 && (
+                  <span aria-label={`${thread.reposts} reposts`}>
+                    {thread.reposts}
+                  </span>
+                )}
+              </button>
 
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
-              aria-label="Repost thread"
-            >
-              <Repeat2Icon className="w-5 h-5" />
-              {thread.reposts > 0 && (
-                <span aria-label={`${thread.reposts} reposts`}>
-                  {thread.reposts}
-                </span>
-              )}
-            </button>
-
-            <button
-              onClick={(e) => e.stopPropagation()}
-              className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
-              aria-label="Share thread"
-            >
-              <SendIcon className="w-5 h-5" />
-            </button>
-          </footer>
+              <button
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+                aria-label="Share thread"
+              >
+                <SendIcon className="w-5 h-5" />
+              </button>
+            </footer>
+          )}
         </div>
       </article>
     </>
