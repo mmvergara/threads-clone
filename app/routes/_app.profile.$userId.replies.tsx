@@ -1,8 +1,7 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { MetaFunction, useLoaderData } from "@remix-run/react";
 import { getUserById, isFollowedByUser } from "~/.server/services/user";
 import { getUserThreads } from "~/.server/services/threads";
-import { useState } from "react";
 import ProfileHeader from "~/components/profile-header";
 import { requireUser } from "~/.server/session/session";
 import Thread from "~/components/thread";
@@ -22,6 +21,17 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     isCurrentUser: currentUser.id === userId,
   };
 };
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  return [
+    { title: `Replies by ${data?.user?.handle}` },
+    {
+      name: "description",
+      content: `Replies by ${data?.user?.handle}`,
+    },
+  ];
+};
+
 const ProfileRepliesPage = () => {
   const { replyThreads, user, isFollowed, isCurrentUser } =
     useLoaderData<Awaited<ReturnType<typeof loader>>>();
