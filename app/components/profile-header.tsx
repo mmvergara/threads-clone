@@ -18,8 +18,8 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   return (
-    <section className="">
-      <div className="px-6 py-10">
+    <section>
+      <div className="px-6 pt-10">
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <h1 className="text-xl font-bold text-white">
@@ -69,7 +69,7 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
         </Form>
       </div>
 
-      <div className="flex mt-6 text-zinc-500 font-semibold">
+      <div className="flex mt-4 text-zinc-500 font-semibold">
         <Link
           to={`/profile/${user.id}`}
           className={cn(
