@@ -24,9 +24,9 @@ npx drizzle-kit studio
 
 ### Todo
 
-- Add validation on createThreadAction
+- [x] Add validation on createThreadAction
 
-- Change the post btn ui the same as threads
+- [x] Change the post btn ui the same as threads
 
 - Add logout functionality
 
