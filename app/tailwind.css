@@ -10,3 +10,27 @@ body {
     color-scheme: dark;
   }
 }
+
+/* Modern scrollbar styling */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: rgba(161, 161, 170, 0.3); /* zinc-400 with opacity */
+  border-radius: 20px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(161, 161, 170, 0.5);
+}
+
+/* For Firefox */
+.scrollbar-custom {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(161, 161, 170, 0.3) transparent;
+}
