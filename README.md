@@ -32,8 +32,9 @@ npx drizzle-kit studio
 
 - Add search functionality, make sure to
 
-  - Search only threads that are not replies
-  - Dont show thread actions
+  - [x] Search only threads that are not replies
+  - [x] Dont show thread actions
+  - [ ] add meta tags for search
 
 - Add repost functionality
 
