@@ -33,7 +33,7 @@ export const action = async ({ request }: ActionFunctionArgs) =>
   universalActionHandler(request);
 
 const ForYou = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isCreateThreadModalOpen, setIsCreateThreadModalOpen] = useState(false);
   const { threads, user } = useLoaderData<Awaited<ReturnType<typeof loader>>>();
   return (
     <div className="flex flex-col w-full">
@@ -44,19 +44,25 @@ const ForYou = () => {
           className="w-10 h-10 rounded-full"
         />
         <button
-          onClick={() => setIsOpen(true)}
-          className="flex-1 text-left text-zinc-500 text-lg"
+          onClick={() => setIsCreateThreadModalOpen(true)}
+          className="flex-1 ml-2 text-left text-zinc-500 text-sm cursor-text"
         >
           What's new?
         </button>
         <button
-          onClick={() => setIsOpen(true)}
-          className={`px-4 py-2 rounded-full bg-zinc-800 text-zinc-500`}
+          onClick={() => setIsCreateThreadModalOpen(true)}
+          className="px-4 py-2 rounded-xl text-white border-[1px] border-zinc-700"
         >
           Post
         </button>
       </div>
-      <CreateThreadModal isOpen={isOpen} setIsOpen={setIsOpen} />
+      {user && (
+        <CreateThreadModal
+          isOpen={isCreateThreadModalOpen}
+          setIsOpen={setIsCreateThreadModalOpen}
+          currentUser={user}
+        />
+      )}
       {threads.map((thread) => (
         <Thread
           key={thread.thread.id}
