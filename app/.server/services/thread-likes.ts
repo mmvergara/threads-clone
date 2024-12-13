@@ -2,7 +2,7 @@ import { generateID } from "~/utils/cuid.server";
 import { db } from "../db/drizzle.server";
 import { eq, sql } from "drizzle-orm";
 import { and } from "drizzle-orm";
-import { threadLikes, threads } from "../db/schema";
+import { threadLikes, threadReposts, threads } from "../db/schema";
 
 export async function likeThread(threadId: string, userId: string) {
   const id = generateID();
@@ -44,4 +44,52 @@ export async function hasUserLikedThread(threadId: string, userId: string) {
     )
     .limit(1);
   return like.length > 0;
+}
+
+export async function repostThread(threadId: string, userId: string) {
+  await db.transaction(async (tx) => {
+    const id = generateID();
+    await tx.insert(threadReposts).values({
+      id,
+      threadId,
+      repostingUserId: userId,
+    });
+    await tx
+      .update(threads)
+      .set({ reposts: sql`${threads.reposts} + 1` })
+      .where(eq(threads.id, threadId));
+  });
+  return true;
+}
+
+export async function unrepostThread(threadId: string, userId: string) {
+  await db.transaction(async (tx) => {
+    await tx
+      .delete(threadReposts)
+      .where(
+        and(
+          eq(threadReposts.threadId, threadId),
+          eq(threadReposts.repostingUserId, userId)
+        )
+      );
+    await tx
+      .update(threads)
+      .set({ reposts: sql`${threads.reposts} - 1` })
+      .where(eq(threads.id, threadId));
+  });
+  return true;
+}
+
+export async function hasUserRepostedThread(threadId: string, userId: string) {
+  const repost = await db
+    .select()
+    .from(threadReposts)
+    .where(
+      and(
+        eq(threadReposts.threadId, threadId),
+        eq(threadReposts.repostingUserId, userId)
+      )
+    )
+    .limit(1);
+  return repost.length > 0;
 }
