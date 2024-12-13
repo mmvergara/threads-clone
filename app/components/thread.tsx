@@ -3,6 +3,8 @@ import {
   MessageCircleIcon,
   Repeat2Icon,
   SendIcon,
+  MoreHorizontalIcon,
+  TrashIcon,
 } from "lucide-react";
 import type { Thread, User } from "~/.server/db/schema";
 import { cn, since } from "~/utils/formatters";
@@ -12,6 +14,7 @@ import { Form, useNavigate } from "@remix-run/react";
 import { Intent, useUniversalActionData } from "~/utils/client-action-utils";
 import SubmitBtn from "./submit-btn";
 import { toastActionData } from "~/utils/toast";
+import { useClickOutside } from "~/hooks/useClickOutside";
 
 type Props = {
   thread: Thread;
@@ -23,6 +26,10 @@ type Props = {
 };
 
 const ThreadContent = ({ thread, user }: { thread: Thread; user: User }) => {
+  const [isDeleteDropdownOpen, setIsDeleteDropdownOpen] = useState(false);
+  const deleteDropdownRef = useClickOutside(() =>
+    setIsDeleteDropdownOpen(false)
+  );
   const images = JSON.parse(thread.imageUrls as string) as string[];
 
   return (
@@ -31,6 +38,38 @@ const ThreadContent = ({ thread, user }: { thread: Thread; user: User }) => {
         <div className="flex items-center gap-2">
           <span className="font-semibold text-white">{user.displayName}</span>
           <time className="text-zinc-500">{since(thread.createdAt)}</time>
+        </div>
+        <div className="relative">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsDeleteDropdownOpen((o) => !o);
+            }}
+            className="p-1 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+            aria-label="Thread options"
+          >
+            <MoreHorizontalIcon className="w-5 h-5" />
+          </button>
+
+          {isDeleteDropdownOpen && (
+            <div
+              ref={deleteDropdownRef}
+              className="absolute top-full right-0 z-10 w-48 bg-[#171717] rounded-xl border-[1px] text-white border-[#303030] shadow-lg"
+            >
+              <div className="p-2">
+                <Form method="post">
+                  <input type="hidden" name="threadId" value={thread.id} />
+                  <SubmitBtn
+                    intent={Intent.DeleteThread}
+                    className="w-full flex gap-2 items-center p-4 hover:bg-[#252525] rounded-lg text-red-500"
+                  >
+                    <TrashIcon className="w-5 h-5" />
+                    Delete
+                  </SubmitBtn>
+                </Form>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <div className="mt-1 text-white break-words w-full" role="text">
@@ -73,6 +112,9 @@ const ThreadActions = ({
 }) => {
   const data = useUniversalActionData();
   const [isRepostDropdownOpen, setIsRepostDropdownOpen] = useState(false);
+  const repostDropdownRef = useClickOutside(() =>
+    setIsRepostDropdownOpen(false)
+  );
 
   useEffect(() => {
     if (isRepostDropdownOpen) {
@@ -139,7 +181,10 @@ const ThreadActions = ({
         </button>
 
         {isRepostDropdownOpen && (
-          <div className="absolute bottom-full left-0 z-10 w-48 bg-[#171717] rounded-xl border-[1px] text-white border-[#303030] shadow-lg">
+          <div
+            ref={repostDropdownRef}
+            className="absolute bottom-full left-0 z-10 w-48 bg-[#171717] rounded-xl border-[1px] text-white border-[#303030] shadow-lg"
+          >
             <div className="p-2">
               <Form method="post">
                 <input type="hidden" name="threadId" value={thread.id} />
