@@ -7,7 +7,6 @@ import {
   uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 
-// User Table
 export const users = sqliteTable("users", {
   id: text("id").notNull().primaryKey(),
   handle: text("handle").unique().notNull(),
@@ -69,6 +68,34 @@ export const threadLikes = sqliteTable(
       uniqueLike: uniqueIndex("unique_like_idx").on(
         table.threadId,
         table.userId
+      ),
+    };
+  }
+);
+
+export const threadReposts = sqliteTable(
+  "thread_reposts",
+  {
+    id: text("id").notNull().primaryKey(),
+    threadId: text("thread_id")
+      .notNull()
+      .references(() => threads.id, {
+        onDelete: "cascade",
+      }),
+    repostingUserId: text("reposting_user_id")
+      .notNull()
+      .references(() => users.id, {
+        onDelete: "cascade",
+      }),
+    createdAt: integer("created_at", { mode: "number" })
+      .notNull()
+      .default(sql`(strftime('%s', 'now'))`),
+  },
+  (table) => {
+    return {
+      uniqueRepost: uniqueIndex("unique_repost_idx").on(
+        table.threadId,
+        table.repostingUserId
       ),
     };
   }
