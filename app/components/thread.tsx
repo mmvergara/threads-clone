@@ -16,15 +16,6 @@ import SubmitBtn from "./submit-btn";
 import { toastActionData } from "~/utils/toast";
 import { useClickOutside } from "~/hooks/useClickOutside";
 
-type Props = {
-  thread: Thread;
-  user: User;
-  isLiked: boolean;
-  isReposted: boolean;
-  withoutActions?: boolean;
-  repostedByUser?: User;
-};
-
 const ThreadContent = ({ thread, user }: { thread: Thread; user: User }) => {
   const [isDeleteDropdownOpen, setIsDeleteDropdownOpen] = useState(false);
   const deleteDropdownRef = useClickOutside(() =>
@@ -217,6 +208,15 @@ const ThreadActions = ({
   );
 };
 
+type Props = {
+  thread: Thread;
+  user: User;
+  isLiked: boolean;
+  isReposted: boolean;
+  withoutActions?: boolean;
+  repostedByUser?: User;
+  isMainThread?: boolean;
+};
 const Thread = ({
   thread,
   user,
@@ -224,12 +224,14 @@ const Thread = ({
   isReposted,
   withoutActions,
   repostedByUser,
+  isMainThread,
 }: Props) => {
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleThreadClick = () => {
-    navigate(`/profile/${user.id}`);
+    if (thread.parentThreadId) return;
+    navigate(`/threads/${thread.id}`);
   };
 
   return (
@@ -242,7 +244,10 @@ const Thread = ({
       />
       <article
         onClick={handleThreadClick}
-        className="flex gap-2 flex-col px-6 py-4 border-[#3d3d3d] border-t-[1px] cursor-pointer"
+        className={cn(
+          "flex gap-2 flex-col px-6 py-4 cursor-pointer relative",
+          isMainThread && "border-b border-zinc-800"
+        )}
         role="article"
         aria-label={`Thread by ${user.displayName}`}
       >
@@ -253,7 +258,7 @@ const Thread = ({
           </p>
         )}
         <div className="flex gap-2">
-          <header className="flex-shrink-0">
+          <header className="flex-shrink-0 relative">
             <img
               src={user.profileImageUrl}
               alt={`${user.displayName}'s profile picture`}

@@ -53,7 +53,7 @@ export const deleteThreadAction = async (
     );
   }
 
-  await deleteThread(threadId);
+  await deleteThread(threadId, thread.parentThreadId ?? undefined);
 
   return handleActionSuccess("Thread deleted", intent);
 };

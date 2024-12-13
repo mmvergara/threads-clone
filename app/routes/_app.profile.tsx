@@ -15,7 +15,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   // If the path is exactly "/profile", redirect to current user's profile
   if (profilePath === "/profile") {
-    return redirect(`/profile/${currentUser.id}`);
+    throw redirect(`/profile/${currentUser.id}`);
   }
 
   // Determine which profile to load
@@ -26,7 +26,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   // If no user is found, redirect to home
   if (!user) {
-    return redirect("/");
+    throw redirect("/");
   }
 
   return null;

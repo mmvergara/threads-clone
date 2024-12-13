@@ -1,5 +1,5 @@
 import { generateID } from "~/utils/cuid.server";
-import { threadReposts, threads, users } from "../db/schema";
+import { threadLikes, threadReposts, threads, users } from "../db/schema";
 import { db } from "../db/drizzle.server";
 import {
   and,
@@ -50,8 +50,19 @@ export const createThread = async ({
   return res[0];
 };
 
-export const deleteThread = async (threadId: string) => {
-  await db.delete(threads).where(eq(threads.id, threadId));
+export const deleteThread = async (
+  threadId: string,
+  parentThreadId?: string
+) => {
+  await db.transaction(async (tx) => {
+    await tx.delete(threads).where(eq(threads.id, threadId));
+    if (parentThreadId) {
+      await tx
+        .update(threads)
+        .set({ replies: sql`${threads.replies} - 1` })
+        .where(eq(threads.id, parentThreadId));
+    }
+  });
 };
 
 export const getThreadById = async (threadId: string) => {
@@ -152,4 +163,115 @@ export const searchThreads = async ({
     .innerJoin(users, eq(threads.userId, users.id))
     .where(like(sql`UPPER(${threads.content})`, `%${searchQuery}%`));
   return res;
+};
+
+type NestedThread = {
+  id: string;
+  createdAt: number;
+  userId: string;
+  content: string;
+  imageUrls: unknown;
+  likes: number;
+  replies: number;
+  reposts: number;
+  childThreads: NestedThread[] | null;
+};
+
+export const getThreadWithNestedReplies = async (
+  threadId: string,
+  currentUserId?: string
+) => {
+  const fetchThreadsRecursively = async (
+    parentId: string
+  ): Promise<NestedThread[]> => {
+    const childThreads = await db
+      .select({
+        id: threads.id,
+        createdAt: threads.createdAt,
+        userId: threads.userId,
+        content: threads.content,
+        imageUrls: threads.imageUrls,
+        likes: threads.likes,
+        parentThreadId: threads.parentThreadId,
+        replies: threads.replies,
+        reposts: threads.reposts,
+        user: { ...userWithoutPasswordHash },
+        isLiked: sql<boolean>`CASE WHEN ${threadLikes.id} IS NOT NULL THEN 1 ELSE 0 END`,
+        isReposted: sql<boolean>`CASE WHEN ${threadReposts.id} IS NOT NULL THEN 1 ELSE 0 END`,
+        childThreads: sql<any[]>`null`, // Placeholder for nested threads
+      })
+      .from(threads)
+      .leftJoin(users, eq(threads.userId, users.id))
+      .leftJoin(
+        threadLikes,
+        and(
+          eq(threadLikes.threadId, threads.id),
+          currentUserId ? eq(threadLikes.userId, currentUserId) : sql`1=1`
+        )
+      )
+      .leftJoin(
+        threadReposts,
+        and(
+          eq(threadReposts.threadId, threads.id),
+          currentUserId
+            ? eq(threadReposts.repostingUserId, currentUserId)
+            : sql`1=1`
+        )
+      )
+      .where(eq(threads.parentThreadId, parentId));
+
+    // Recursively fetch child threads for each thread
+    for (const thread of childThreads) {
+      thread.childThreads = await fetchThreadsRecursively(thread.id);
+    }
+
+    return childThreads;
+  };
+
+  // Fetch the main thread first
+  const mainThread = await db
+    .select({
+      id: threads.id,
+      createdAt: threads.createdAt,
+      userId: threads.userId,
+      content: threads.content,
+      imageUrls: threads.imageUrls,
+      likes: threads.likes,
+      replies: threads.replies,
+      reposts: threads.reposts,
+      parentThreadId: threads.parentThreadId,
+      user: { ...userWithoutPasswordHash },
+      isLiked: sql<boolean>`CASE WHEN ${threadLikes.id} IS NOT NULL THEN 1 ELSE 0 END`,
+      isReposted: sql<boolean>`CASE WHEN ${threadReposts.id} IS NOT NULL THEN 1 ELSE 0 END`,
+      childThreads: sql<any[]>`null`, // Placeholder for nested threads
+    })
+    .from(threads)
+    .leftJoin(users, eq(threads.userId, users.id))
+    .leftJoin(
+      threadLikes,
+      and(
+        eq(threadLikes.threadId, threads.id),
+        currentUserId ? eq(threadLikes.userId, currentUserId) : sql`1=1`
+      )
+    )
+    .leftJoin(
+      threadReposts,
+      and(
+        eq(threadReposts.threadId, threads.id),
+        currentUserId
+          ? eq(threadReposts.repostingUserId, currentUserId)
+          : sql`1=1`
+      )
+    )
+    .where(eq(threads.id, threadId))
+    .get();
+
+  if (!mainThread) {
+    return null;
+  }
+
+  // Fetch child threads recursively
+  mainThread.childThreads = await fetchThreadsRecursively(threadId);
+
+  return mainThread;
 };

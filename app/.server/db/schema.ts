@@ -35,7 +35,10 @@ export const threads = sqliteTable("threads", {
   content: text("content").notNull(),
   imageUrls: text("image_urls", { mode: "json" }).notNull(),
   parentThreadId: text("parent_thread_id").references(
-    (): AnySQLiteColumn => threads.id
+    (): AnySQLiteColumn => threads.id,
+    {
+      onDelete: "cascade",
+    }
   ),
   likes: integer("likes").notNull().default(0),
   replies: integer("replies").notNull().default(0),
