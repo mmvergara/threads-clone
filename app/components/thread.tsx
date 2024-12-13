@@ -7,23 +7,37 @@ import {
 import type { Thread, User } from "~/.server/db/schema";
 import { since } from "~/utils/formatters";
 import CreateThreadModal from "./create-thread-modal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, useNavigate } from "@remix-run/react";
-import { Intent } from "~/utils/client-action-utils";
+import { Intent, useUniversalActionData } from "~/utils/client-action-utils";
+import SubmitBtn from "./submit-btn";
+import { toastActionData } from "~/utils/toast";
 
 type Props = {
   thread: Thread;
   user: User;
   isLiked: boolean;
   withoutActions?: boolean;
+  repostedByUser?: User;
 };
 
 const Thread = ({ thread, user, isLiked, withoutActions }: Props) => {
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
+  const [isRepostDropdownOpen, setIsRepostDropdownOpen] = useState(false);
+  const data = useUniversalActionData();
   const navigate = useNavigate();
   const handleThreadClick = () => {
     navigate(`/profile/${user.id}`);
   };
+
+  const images = JSON.parse(thread.imageUrls as string) as string[];
+
+  useEffect(() => {
+    toastActionData(data, Intent.RepostThread);
+    if (!data) return;
+    setIsRepostDropdownOpen(false);
+  }, [data]);
+
   return (
     <>
       <CreateThreadModal
@@ -62,12 +76,12 @@ const Thread = ({ thread, user, isLiked, withoutActions }: Props) => {
               {thread.content}
             </div>
 
-            <section
-              className="flex flex-wrap gap-2 mt-3"
-              aria-label="Thread images"
-            >
-              {JSON.parse(thread.imageUrls as string).map(
-                (imageUrl: string) => (
+            {images.length > 0 && (
+              <section
+                className="flex flex-wrap gap-2 mt-2 mb-2"
+                aria-label="Thread images"
+              >
+                {images.map((imageUrl: string) => (
                   <div
                     key={imageUrl}
                     className="relative group border-2 rounded-xl border-zinc-700"
@@ -78,13 +92,13 @@ const Thread = ({ thread, user, isLiked, withoutActions }: Props) => {
                       className="w-[150px] h-[150px] object-cover rounded-xl"
                     />
                   </div>
-                )
-              )}
-            </section>
+                ))}
+              </section>
+            )}
           </section>
 
           {!withoutActions && (
-            <footer className="flex text-zinc-500 mt-2">
+            <footer className="flex text-zinc-500">
               <Form method="post">
                 <input
                   type="hidden"
@@ -127,19 +141,44 @@ const Thread = ({ thread, user, isLiked, withoutActions }: Props) => {
                   </span>
                 )}
               </button>
+              <div className="relative">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsRepostDropdownOpen(!isRepostDropdownOpen);
+                  }}
+                  className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
+                  aria-label="Repost options"
+                >
+                  <Repeat2Icon className="w-5 h-5" />
+                  {thread.reposts > 0 && (
+                    <span aria-label={`${thread.reposts} reposts`}>
+                      {thread.reposts}
+                    </span>
+                  )}
+                </button>
 
-              <button
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
-                aria-label="Repost thread"
-              >
-                <Repeat2Icon className="w-5 h-5" />
-                {thread.reposts > 0 && (
-                  <span aria-label={`${thread.reposts} reposts`}>
-                    {thread.reposts}
-                  </span>
+                {isRepostDropdownOpen && (
+                  <div className="absolute bottom-full left-0 z-10 w-48 bg-[#171717] rounded-xl border-[1px] text-white border-[#303030] shadow-lg">
+                    <div className="p-2">
+                      <Form method="post">
+                        <input
+                          type="hidden"
+                          name="threadId"
+                          value={thread.id}
+                        />
+                        <SubmitBtn
+                          intent={Intent.RepostThread}
+                          className="w-full flex gap-2 items-center p-4 hover:bg-[#252525] rounded-lg"
+                        >
+                          <Repeat2Icon className="w-5 h-5" />
+                          Repost
+                        </SubmitBtn>
+                      </Form>
+                    </div>
+                  </div>
                 )}
-              </button>
+              </div>
 
               <button
                 onClick={(e) => e.stopPropagation()}
