@@ -3,15 +3,17 @@ import { ActionReturnType } from "~/.server/utils/action-utils";
 
 export enum Intent {
   CreateThread = "createThread",
+  DeleteThread = "deleteThread",
 
   UpdateProfileData = "updateProfileData",
   UpdateProfileImage = "updateProfileImage",
+
   FollowUser = "followUser",
   UnfollowUser = "unfollowUser",
 
   LikeThread = "likeThread",
   UnlikeThread = "unlikeThread",
-  
+
   RepostThread = "repostThread",
   UnrepostThread = "unrepostThread",
   Logout = "logout",
