@@ -5,7 +5,7 @@ import {
   SendIcon,
 } from "lucide-react";
 import type { Thread, User } from "~/.server/db/schema";
-import { since } from "~/utils/formatters";
+import { cn, since } from "~/utils/formatters";
 import CreateThreadModal from "./create-thread-modal";
 import { useEffect, useState } from "react";
 import { Form, useNavigate } from "@remix-run/react";
@@ -17,13 +17,22 @@ type Props = {
   thread: Thread;
   user: User;
   isLiked: boolean;
+  isReposted: boolean;
   withoutActions?: boolean;
   repostedByUser?: User;
 };
 
-const Thread = ({ thread, user, isLiked, withoutActions }: Props) => {
+const Thread = ({
+  thread,
+  user,
+  isLiked,
+  isReposted,
+  withoutActions,
+  repostedByUser,
+}: Props) => {
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
   const [isRepostDropdownOpen, setIsRepostDropdownOpen] = useState(false);
+  const [isOptionsDropdownOpen, setIsOptionsDropdownOpen] = useState(false);
   const data = useUniversalActionData();
   const navigate = useNavigate();
   const handleThreadClick = () => {
@@ -33,7 +42,9 @@ const Thread = ({ thread, user, isLiked, withoutActions }: Props) => {
   const images = JSON.parse(thread.imageUrls as string) as string[];
 
   useEffect(() => {
-    toastActionData(data, Intent.RepostThread);
+    if (isRepostDropdownOpen) {
+      toastActionData(data, Intent.RepostThread, Intent.UnrepostThread);
+    }
     if (!data) return;
     setIsRepostDropdownOpen(false);
   }, [data]);
@@ -66,11 +77,13 @@ const Thread = ({ thread, user, isLiked, withoutActions }: Props) => {
 
         <div className="flex-1 w-[calc(100%-50px)">
           <section className="ml-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-semibold text-white">
-                {user.displayName}
-              </span>
-              <time className="text-zinc-500">{since(thread.createdAt)}</time>
+            <div className="flex flex-wrap items-center gap-2 justify-between">
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-white">
+                  {user.displayName}
+                </span>
+                <time className="text-zinc-500">{since(thread.createdAt)}</time>
+              </div>
             </div>
             <div className="mt-1 text-white break-words w-full" role="text">
               {thread.content}
@@ -145,12 +158,14 @@ const Thread = ({ thread, user, isLiked, withoutActions }: Props) => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    setIsRepostDropdownOpen(!isRepostDropdownOpen);
+                    setIsRepostDropdownOpen((o) => !o);
                   }}
                   className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
                   aria-label="Repost options"
                 >
-                  <Repeat2Icon className="w-5 h-5" />
+                  <Repeat2Icon
+                    className={cn("w-5 h-5", isReposted && "text-red-500")}
+                  />
                   {thread.reposts > 0 && (
                     <span aria-label={`${thread.reposts} reposts`}>
                       {thread.reposts}
@@ -168,18 +183,26 @@ const Thread = ({ thread, user, isLiked, withoutActions }: Props) => {
                           value={thread.id}
                         />
                         <SubmitBtn
-                          intent={Intent.RepostThread}
+                          intent={
+                            isReposted
+                              ? Intent.UnrepostThread
+                              : Intent.RepostThread
+                          }
                           className="w-full flex gap-2 items-center p-4 hover:bg-[#252525] rounded-lg"
                         >
-                          <Repeat2Icon className="w-5 h-5" />
-                          Repost
+                          <Repeat2Icon
+                            className={cn(
+                              "w-5 h-5",
+                              isReposted && "text-red-500"
+                            )}
+                          />
+                          {isReposted ? "Remove" : "Repost"}
                         </SubmitBtn>
                       </Form>
                     </div>
                   </div>
                 )}
               </div>
-
               <button
                 onClick={(e) => e.stopPropagation()}
                 className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
