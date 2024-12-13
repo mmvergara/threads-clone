@@ -59,20 +59,22 @@ const ThreadReplies = ({
   level?: number;
 }) => {
   return (
-    <div className="relative">
+    <section className="relative" aria-label="Thread replies">
       {replies.map((reply, index) => {
         const isFirstLevel = level === 0;
         return (
-          <div key={reply.id} className={cn("relative pl-8")}>
+          <article key={reply.id} className={cn("relative pl-8")}>
             {reply.childThreads.length > 0 && (
               <div
-                className={
-                  "absolute left-[74px] top-10 h-[] bottom-0 w-[3px] bg-zinc-800"
-                }
+                className="absolute left-[74px] top-10 h-[] bottom-0 w-[3px] bg-zinc-800"
+                aria-hidden="true"
               />
             )}
             {!isFirstLevel && (
-              <div className="absolute left-[43px] top-[2.1rem] h-[3px] bottom-0 w-[14px] bg-zinc-800" />
+              <div 
+                className="absolute left-[43px] top-[2.1rem] h-[3px] bottom-0 w-[14px] bg-zinc-800" 
+                aria-hidden="true"
+              />
             )}
             <Thread
               thread={reply}
@@ -87,10 +89,10 @@ const ThreadReplies = ({
                 level={level + 1}
               />
             )}
-          </div>
+          </article>
         );
       })}
-    </div>
+    </section>
   );
 };
 
@@ -98,22 +100,29 @@ const ThreadPage = () => {
   const { thread, user } = useLoaderData<typeof loader>();
 
   if (!thread) {
-    return <div className="p-4 text-white">Thread not found</div>;
+    return (
+      <main className="p-4 text-white" role="main">
+        <p>Thread not found</p>
+      </main>
+    );
   }
 
   return (
-    <div className="flex w-full flex-col">
-      <Thread
-        thread={thread}
-        user={thread.user!}
-        isLiked={thread.isLiked}
-        isReposted={thread.isReposted}
-        isMainThread={true}
-      />
-      {thread.childThreads && thread.childThreads.length > 0 && (
-        <ThreadReplies replies={thread.childThreads} currentUser={user} />
-      )}
-    </div>
+    <main className="flex w-full flex-col" role="main">
+      <h1 className="sr-only">Thread Details</h1>
+      <article>
+        <Thread
+          thread={thread}
+          user={thread.user!}
+          isLiked={thread.isLiked}
+          isReposted={thread.isReposted}
+          isMainThread={true}
+        />
+        {thread.childThreads && thread.childThreads.length > 0 && (
+          <ThreadReplies replies={thread.childThreads} currentUser={user} />
+        )}
+      </article>
+    </main>
   );
 };
 

@@ -32,6 +32,8 @@ npx drizzle-kit studio
 
 - Remix has a straightforward logic, only took me a few days to understand the concepts of Remix.
 
+- Tried implementing proper html semantics and accessibility like aria-labels, etc.
+
 - I like drizzle better than prisma.
 
 - They kinda stick to web standards, so it's easy to understand.

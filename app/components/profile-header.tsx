@@ -18,36 +18,52 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
   return (
-    <section>
+    <header role="banner" aria-label="Profile header">
       <div className="px-6 pt-10">
         <div className="flex justify-between items-start">
           <div className="flex-1">
             <h1 className="text-xl font-bold text-white">
               {user?.displayName}
             </h1>
-            <p className="text-white">@{user?.handle}</p>
-            <p className="tAext-white mt-4">{user?.bio}</p>
+            <p className="text-white" aria-label="Username">@{user?.handle}</p>
+            <p className="text-white mt-4" aria-label="Bio">{user?.bio}</p>
             <div className="flex items-center gap-2 mt-4">
-              <span className="text-zinc-500 text-sm">
+              <span className="text-zinc-500 text-sm" aria-label="Follower count">
                 {user?.followers} followers
               </span>
             </div>
           </div>
-          <img
-            src={user.profileImageUrl || "https://via.placeholder.com/40x40"}
-            alt="Profile Image"
-            className="w-20 h-20 rounded-full cursor-pointer hover:opacity-80 transition-opacity"
+          <button
             onClick={() => setIsUploadModalOpen(true)}
-          />
+            className="w-20 h-20 rounded-full hover:opacity-80 transition-opacity"
+            aria-label="Change profile picture"
+          >
+            <img
+              src={user.profileImageUrl || "https://via.placeholder.com/40x40"}
+              alt={`${user.displayName}'s profile picture`}
+              className="w-full h-full rounded-full"
+            />
+          </button>
         </div>
 
         <Form method="post" className="flex gap-2 mt-6">
-          <input type="hidden" name="toFollowUserId" value={user.id} />
-          <input type="hidden" name="toUnfollowUserId" value={user.id} />
+          <input 
+            type="hidden" 
+            name="toFollowUserId" 
+            value={user.id}
+            aria-hidden="true"
+          />
+          <input 
+            type="hidden" 
+            name="toUnfollowUserId" 
+            value={user.id}
+            aria-hidden="true"
+          />
           {isCurrentUser ? (
             <button
               onClick={() => setIsEditProfileOpen(true)}
               className="flex-1 px-4 py-1.5 border-[1px] font-bold border-zinc-600 rounded-lg text-white"
+              aria-label="Edit profile"
             >
               Edit profile
             </button>
@@ -55,6 +71,7 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
             <SubmitBtn
               intent={Intent.UnfollowUser}
               className="flex-1 px-4 py-1.5 border-[1px] font-bold border-zinc-600 rounded-lg text-white hover:text-red-500 hover:border-red-500 transition-colors"
+              aria-label="Unfollow user"
             >
               Unfollow
             </SubmitBtn>
@@ -62,6 +79,7 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
             <SubmitBtn
               intent={Intent.FollowUser}
               className="flex-1 px-4 py-1.5 border-[1px] font-bold border-zinc-600 rounded-lg text-black bg-white"
+              aria-label="Follow user"
             >
               Follow
             </SubmitBtn>
@@ -69,7 +87,7 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
         </Form>
       </div>
 
-      <div className="flex mt-4 text-zinc-500 font-semibold">
+      <nav className="flex mt-4 text-zinc-500 font-semibold" aria-label="Profile sections">
         <Link
           to={`/profile/${user.id}`}
           className={cn(
@@ -78,6 +96,7 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
               ? "border-white text-white"
               : "border-zinc-700"
           )}
+          aria-current={location.pathname.endsWith(`/${user.id}`) ? "page" : undefined}
         >
           Threads
         </Link>
@@ -89,6 +108,7 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
               ? "border-white text-white"
               : "border-zinc-700"
           )}
+          aria-current={location.pathname.endsWith("/replies") ? "page" : undefined}
         >
           Replies
         </Link>
@@ -100,10 +120,11 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
               ? "border-white text-white"
               : "border-zinc-700"
           )}
+          aria-current={location.pathname.endsWith("/reposts") ? "page" : undefined}
         >
           Reposts
         </Link>
-      </div>
+      </nav>
 
       <EditProfileModal
         isOpen={isEditProfileOpen}
@@ -114,7 +135,7 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
         isOpen={isUploadModalOpen}
         setIsOpen={setIsUploadModalOpen}
       />
-    </section>
+    </header>
   );
 };
 

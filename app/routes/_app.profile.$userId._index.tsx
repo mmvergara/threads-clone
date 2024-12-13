@@ -46,30 +46,34 @@ const ProfilePage = () => {
   const { threads, user, isFollowed, isCurrentUser, currentUser } =
     useLoaderData<Awaited<ReturnType<typeof loader>>>();
   return (
-    <>
+    <main role="main" aria-label="Profile page">
       <ProfileHeader
         user={user}
         isCurrentUser={isCurrentUser}
         isFollowed={isFollowed}
       />
       {isCurrentUser && (
-        <>
+        <section aria-label="Create new thread">
           <div className="flex flex-col gap-4 border-b-[1px] border-zinc-700">
             <div className="flex items-center gap-3 px-6 py-4">
               <img
                 src={user.profileImageUrl}
-                alt="User avatar"
+                alt={`${user.displayName}'s profile picture`}
                 className="w-10 h-10 rounded-full"
               />
               <button
                 onClick={() => setIsCreateThreadModalOpen(true)}
                 className="flex-1 ml-2 text-left text-zinc-500 text-sm cursor-text"
+                aria-label="Create new thread"
+                role="button"
               >
                 What's new?
               </button>
               <button
                 onClick={() => setIsCreateThreadModalOpen(true)}
                 className="px-4 py-2 rounded-xl text-white border-[1px] border-zinc-700"
+                aria-label="Create post"
+                role="button"
               >
                 Post
               </button>
@@ -80,24 +84,27 @@ const ProfilePage = () => {
             setIsOpen={setIsCreateThreadModalOpen}
             currentUser={user}
           />
-        </>
+        </section>
       )}
-      {threads.length === 0 ? (
-        <div className="text-center text-zinc-500 py-8">No threads yet</div>
-      ) : (
-        <div className="flex flex-col">
-          {threads.map((thread) => (
-            <Thread
-              key={thread.thread.id}
-              user={user}
-              thread={thread.thread}
-              isLiked={thread.isLiked}
-              isReposted={thread.isReposted}
-            />
-          ))}
-        </div>
-      )}
-    </>
+      <section aria-label="User threads">
+        {threads.length === 0 ? (
+          <p className="text-center text-zinc-500 py-8" role="status">No threads yet</p>
+        ) : (
+          <div className="flex flex-col" role="feed" aria-label="User threads">
+            {threads.map((thread) => (
+              <article key={thread.thread.id}>
+                <Thread
+                  user={user}
+                  thread={thread.thread}
+                  isLiked={thread.isLiked}
+                  isReposted={thread.isReposted}
+                />
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
   );
 };
 

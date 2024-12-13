@@ -6,6 +6,7 @@ import ProfileHeader from "~/components/profile-header";
 import { requireUser } from "~/.server/session/session";
 import Thread from "~/components/thread";
 import { universalActionHandler } from "~/.server/action-handler";
+
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);
   const userId = params.userId!;
@@ -42,28 +43,35 @@ const ProfileRepliesPage = () => {
     useLoaderData<Awaited<ReturnType<typeof loader>>>();
 
   return (
-    <>
-      <ProfileHeader
-        isFollowed={isFollowed}
-        user={user}
-        isCurrentUser={isCurrentUser}
-      />
-      {replyThreads.length === 0 ? (
-        <div className="text-center text-zinc-500 py-8">No replies yet</div>
-      ) : (
-        <div className="flex flex-col">
-          {replyThreads.map((thread) => (
-            <Thread
-              key={thread.thread.id}
-              user={user}
-              thread={thread.thread}
-              isLiked={thread.isLiked}
-              isReposted={thread.isReposted}
-            />
-          ))}
-        </div>
-      )}
-    </>
+    <main role="main" aria-label={`${user.handle}'s replies`}>
+      <header>
+        <ProfileHeader
+          isFollowed={isFollowed}
+          user={user}
+          isCurrentUser={isCurrentUser}
+        />
+      </header>
+      <section aria-label="Reply threads">
+        {replyThreads.length === 0 ? (
+          <p className="text-center text-zinc-500 py-8" role="status">
+            No replies yet
+          </p>
+        ) : (
+          <div className="flex flex-col" role="feed" aria-label="Reply threads">
+            {replyThreads.map((thread) => (
+              <article key={thread.thread.id}>
+                <Thread
+                  user={user}
+                  thread={thread.thread}
+                  isLiked={thread.isLiked}
+                  isReposted={thread.isReposted}
+                />
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+    </main>
   );
 };
 

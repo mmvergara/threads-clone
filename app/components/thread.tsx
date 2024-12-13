@@ -26,7 +26,7 @@ const ThreadContent = ({ thread, user }: { thread: Thread; user: User }) => {
   const navigate = useNavigate();
 
   return (
-    <section className="ml-2">
+    <section className="ml-2" aria-label="Thread content">
       <div className="flex flex-wrap items-center gap-2 justify-between">
         <div
           className="flex items-center gap-2"
@@ -34,9 +34,12 @@ const ThreadContent = ({ thread, user }: { thread: Thread; user: User }) => {
             e.stopPropagation();
             navigate(`/profile/${user.id}`);
           }}
+          role="button"
+          tabIndex={0}
+          aria-label={`View ${user.displayName}'s profile`}
         >
           <span className="font-semibold text-white">{user.displayName}</span>
-          <time className="text-zinc-500">{since(thread.createdAt)}</time>
+          <time dateTime={thread.createdAt.toString()} className="text-zinc-500">{since(thread.createdAt)}</time>
         </div>
         <div className="relative">
           <button
@@ -46,23 +49,27 @@ const ThreadContent = ({ thread, user }: { thread: Thread; user: User }) => {
             }}
             className="p-1 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
             aria-label="Thread options"
+            aria-expanded={isDeleteDropdownOpen}
+            aria-haspopup="true"
           >
-            <MoreHorizontalIcon className="w-5 h-5" />
+            <MoreHorizontalIcon className="w-5 h-5" aria-hidden="true" />
           </button>
 
           {isDeleteDropdownOpen && (
             <div
               ref={deleteDropdownRef}
               className="absolute top-full right-0 z-10 w-48 bg-[#171717] rounded-xl border-[1px] text-white border-[#303030] shadow-lg"
+              role="menu"
             >
               <div className="p-2">
                 <Form method="post">
-                  <input type="hidden" name="threadId" value={thread.id} />
+                  <input type="hidden" name="threadId" value={thread.id} aria-hidden="true" />
                   <SubmitBtn
                     intent={Intent.DeleteThread}
                     className="w-full flex gap-2 items-center p-4 hover:bg-[#252525] rounded-lg text-red-500"
+                    role="menuitem"
                   >
-                    <TrashIcon className="w-5 h-5" />
+                    <TrashIcon className="w-5 h-5" aria-hidden="true" />
                     Delete
                   </SubmitBtn>
                 </Form>
@@ -71,9 +78,9 @@ const ThreadContent = ({ thread, user }: { thread: Thread; user: User }) => {
           )}
         </div>
       </div>
-      <div className="mt-1 text-white break-words w-full" role="text">
+      <p className="mt-1 text-white break-words w-full">
         {thread.content}
-      </div>
+      </p>
 
       {images.length > 0 && (
         <section
@@ -126,14 +133,15 @@ const ThreadActions = ({
   }, [data]);
 
   return (
-    <footer className="flex text-zinc-500">
+    <footer className="flex text-zinc-500" aria-label="Thread actions">
       <Form method="post">
         <input
           type="hidden"
           name="intent"
           value={isLiked ? Intent.UnlikeThread : Intent.LikeThread}
+          aria-hidden="true"
         />
-        <input type="hidden" name="threadId" value={thread.id} />
+        <input type="hidden" name="threadId" value={thread.id} aria-hidden="true" />
         <button
           onClick={(e) => e.stopPropagation()}
           className={`flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:scale-105 transition-colors
@@ -141,9 +149,9 @@ const ThreadActions = ({
           aria-label={isLiked ? "Unlike thread" : "Like thread"}
           aria-pressed={isLiked}
         >
-          <HeartIcon className="w-5 h-5" fill={isLiked ? "red" : "none"} />
+          <HeartIcon className="w-5 h-5" fill={isLiked ? "red" : "none"} aria-hidden="true" />
           {thread.likes > 0 && (
-            <span aria-label={`${thread.likes} likes`}>{thread.likes}</span>
+            <span>{thread.likes}</span>
           )}
         </button>
       </Form>
@@ -156,9 +164,9 @@ const ThreadActions = ({
         className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
         aria-label="Reply to thread"
       >
-        <MessageCircleIcon className="w-5 h-5" />
+        <MessageCircleIcon className="w-5 h-5" aria-hidden="true" />
         {thread.replies > 0 && (
-          <span aria-label={`${thread.replies} replies`}>{thread.replies}</span>
+          <span>{thread.replies}</span>
         )}
       </button>
 
@@ -170,14 +178,15 @@ const ThreadActions = ({
           }}
           className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
           aria-label="Repost options"
+          aria-expanded={isRepostDropdownOpen}
+          aria-haspopup="true"
         >
           <Repeat2Icon
             className={cn("w-5 h-5", isReposted && "text-red-500")}
+            aria-hidden="true"
           />
           {thread.reposts > 0 && (
-            <span aria-label={`${thread.reposts} reposts`}>
-              {thread.reposts}
-            </span>
+            <span>{thread.reposts}</span>
           )}
         </button>
 
@@ -185,18 +194,21 @@ const ThreadActions = ({
           <div
             ref={repostDropdownRef}
             className="absolute bottom-full left-0 z-10 w-48 bg-[#171717] rounded-xl border-[1px] text-white border-[#303030] shadow-lg"
+            role="menu"
           >
             <div className="p-2">
               <Form method="post">
-                <input type="hidden" name="threadId" value={thread.id} />
+                <input type="hidden" name="threadId" value={thread.id} aria-hidden="true" />
                 <SubmitBtn
                   intent={
                     isReposted ? Intent.UnrepostThread : Intent.RepostThread
                   }
                   className="w-full flex gap-2 items-center p-4 hover:bg-[#252525] rounded-lg"
+                  role="menuitem"
                 >
                   <Repeat2Icon
                     className={cn("w-5 h-5", isReposted && "text-red-500")}
+                    aria-hidden="true"
                   />
                   {isReposted ? "Remove" : "Repost"}
                 </SubmitBtn>
@@ -215,7 +227,7 @@ const ThreadActions = ({
         className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
         aria-label="Share thread"
       >
-        <SendIcon className="w-5 h-5" />
+        <SendIcon className="w-5 h-5" aria-hidden="true" />
       </button>
     </footer>
   );
@@ -230,6 +242,7 @@ type Props = {
   repostedByUser?: User;
   isMainThread?: boolean;
 };
+
 const Thread = ({
   thread,
   user,
@@ -263,11 +276,12 @@ const Thread = ({
         )}
         role="article"
         aria-label={`Thread by ${user.displayName}`}
+        tabIndex={0}
       >
         {repostedByUser && (
           <p className="ml-6 text-zinc-400 flex items-center gap-2">
-            <Repeat2Icon className="w-4 h-4" />
-            Reposted by {repostedByUser?.displayName}
+            <Repeat2Icon className="w-4 h-4" aria-hidden="true" />
+            <span>Reposted by {repostedByUser?.displayName}</span>
           </p>
         )}
         <div className="flex gap-2">
@@ -277,6 +291,9 @@ const Thread = ({
               e.stopPropagation();
               navigate(`/profile/${user.id}`);
             }}
+            role="button"
+            tabIndex={0}
+            aria-label={`View ${user.displayName}'s profile`}
           >
             <img
               src={user.profileImageUrl}
@@ -285,7 +302,7 @@ const Thread = ({
             />
           </header>
 
-          <div className="flex-1 w-[calc(100%-50px)">
+          <div className="flex-1 w-[calc(100%-50px)]">
             <ThreadContent thread={thread} user={user} />
 
             {!withoutActions && (

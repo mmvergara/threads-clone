@@ -31,29 +31,45 @@ const SearchPage = () => {
   }, [search]);
 
   return (
-    <div className="flex flex-col w-full">
-      <div className="flex items-center gap-3 m-6 p-3 px-6 bg-[#0a0a0a] mb-4.5 rounded-2xl border-[1px] border-zinc-800 text-white">
-        <SearchIcon size={16} className="text-zinc-500" />
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="flex-1 bg-transparent outline-none"
-          placeholder="Search"
-        />
-      </div>
-      <div className="flex flex-col w-full">
-        {threads.map((thread) => (
-          <Thread
-            isReposted={false}
-            thread={thread.thread}
-            user={thread.user}
-            isLiked={thread.isLiked}
-            withoutActions
+    <main className="flex flex-col w-full" role="main">
+      <header className="flex flex-col w-full" role="banner">
+        <h1 className="sr-only">Search Threads</h1>
+        <form role="search" className="flex items-center gap-3 m-6 p-3 px-6 bg-[#0a0a0a] mb-4.5 rounded-2xl border-[1px] border-zinc-800 text-white">
+          <SearchIcon size={16} className="text-zinc-500" aria-hidden="true" />
+          <label htmlFor="search-input" className="sr-only">Search threads</label>
+          <input
+            id="search-input"
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="flex-1 bg-transparent outline-none"
+            placeholder="Search"
+            autoComplete="off"
+            aria-label="Search threads"
           />
-        ))}
-      </div>
-    </div>
+        </form>
+      </header>
+
+      <section aria-label="Search results" className="flex flex-col w-full">
+        {threads.length === 0 ? (
+          <p className="text-center text-zinc-500 p-4">No threads found</p>
+        ) : (
+          <ul className="flex flex-col w-full" role="list">
+            {threads.map((thread) => (
+              <li key={thread.thread.id}>
+                <Thread
+                  isReposted={false}
+                  thread={thread.thread}
+                  user={thread.user}
+                  isLiked={thread.isLiked}
+                  withoutActions
+                />
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </main>
   );
 };
 

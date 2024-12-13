@@ -67,7 +67,7 @@ const CreateThreadModal = ({
             <div className="flex flex-col items-center">
               <img
                 src={parentThread.user.profileImageUrl}
-                alt={`${parentThread.user.displayName}'s avatar`}
+                alt={`${parentThread.user.displayName}'s profile`}
                 className="min-w-10 max-w-10 min-h-10 max-h-10 rounded-full"
               />
               <div className="w-0.5 grow mt-2 bg-zinc-800" aria-hidden="true" />
@@ -96,8 +96,8 @@ const CreateThreadModal = ({
             <div className="flex gap-1">
               <div className="flex flex-col items-center">
                 <img
-                  src="https://via.placeholder.com/40x40"
-                  alt="User avatar"
+                  src={currentUser.profileImageUrl}
+                  alt={`${currentUser.displayName}'s profile`}
                   className="w-10 h-10 rounded-full"
                 />
                 <div
@@ -111,24 +111,32 @@ const CreateThreadModal = ({
                   <div className="text-white font-semibold">
                     {currentUser?.displayName}
                   </div>
-                  <textarea
-                    name="content"
-                    placeholder="What's new?"
-                    className="w-full flex-1 bg-transparent text-white placeholder-zinc-500 mt-2 resize-none focus:outline-none text-sm mb-2"
-                    rows={1}
-                    style={{ height: "auto" }}
-                    onInput={(e) => {
-                      const target = e.target as HTMLTextAreaElement;
-                      target.style.height = "auto";
-                      target.style.height = `${target.scrollHeight}px`;
-                    }}
-                    aria-label="Thread content"
-                  />
+                  <div className="relative">
+                    <label htmlFor="thread-content" className="sr-only">
+                      Thread content
+                    </label>
+                    <textarea
+                      id="thread-content"
+                      name="content"
+                      placeholder="What's new?"
+                      className="w-full flex-1 bg-transparent text-white placeholder-zinc-500 mt-2 resize-none focus:outline-none text-sm mb-2"
+                      rows={1}
+                      style={{ height: "auto" }}
+                      onInput={(e) => {
+                        const target = e.target as HTMLTextAreaElement;
+                        target.style.height = "auto";
+                        target.style.height = `${target.scrollHeight}px`;
+                      }}
+                      aria-required="true"
+                      autoComplete="off"
+                    />
+                  </div>
 
                   {images.length > 0 && (
                     <div
                       className="flex flex-wrap gap-2 mb-3"
                       aria-label="Uploaded images"
+                      role="region"
                     >
                       {images.map((image, index) => (
                         <div
@@ -137,7 +145,7 @@ const CreateThreadModal = ({
                         >
                           <img
                             src={image}
-                            alt={`Upload ${index + 1}`}
+                            alt={`Uploaded content ${index + 1}`}
                             className="w-[150px] h-[150px] object-cover rounded-xl"
                           />
                         </div>
@@ -158,9 +166,10 @@ const CreateThreadModal = ({
                     <ImageUpIcon
                       size={16}
                       className="text-zinc-500 group-hover:text-white bg-gra"
+                      aria-hidden="true"
                     />
                     {isUploading && (
-                      <div className="flex flex-col gap-1 pl-2">
+                      <div className="flex flex-col gap-1 pl-2" role="status">
                         <span className="text-zinc-500">
                           Uploading... {progress}%
                         </span>
@@ -202,13 +211,14 @@ const CreateThreadModal = ({
 
             <div className="flex gap-3 mt-4 pl-3">
               <img
-                src="https://via.placeholder.com/40x40"
-                alt="User avatar"
+                src={currentUser.profileImageUrl}
+                alt={`${currentUser.displayName}'s profile`}
                 className="w-4 h-4 rounded-full"
               />
               <button
                 className="text-zinc-500 text-sm hover:cursor-not-allowed"
                 aria-disabled="true"
+                disabled
               >
                 Add to thread
               </button>

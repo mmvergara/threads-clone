@@ -38,26 +38,30 @@ const ForYou = () => {
   const [isCreateThreadModalOpen, setIsCreateThreadModalOpen] = useState(false);
   const { threads, user } = useLoaderData<Awaited<ReturnType<typeof loader>>>();
   return (
-    <div className="flex flex-col w-full">
-      <div className="flex items-center gap-3 px-6 py-4">
+    <main className="flex flex-col w-full" role="main">
+      <header className="flex items-center gap-3 px-6 py-4" role="banner">
         <img
           src={user?.profileImageUrl}
-          alt="User avatar"
+          alt={`${user?.displayName}'s profile picture`}
           className="w-10 h-10 rounded-full"
         />
         <button
           onClick={() => setIsCreateThreadModalOpen(true)}
           className="flex-1 ml-2 text-left text-zinc-500 text-sm cursor-text"
+          aria-label="Create new thread"
+          role="button"
         >
           What's new?
         </button>
         <button
           onClick={() => setIsCreateThreadModalOpen(true)}
           className="px-4 py-2 rounded-xl text-white border-[1px] border-zinc-700"
+          aria-label="Create post"
+          role="button"
         >
           Post
         </button>
-      </div>
+      </header>
       {user && (
         <CreateThreadModal
           isOpen={isCreateThreadModalOpen}
@@ -65,16 +69,19 @@ const ForYou = () => {
           currentUser={user}
         />
       )}
-      {threads.map((thread) => (
-        <Thread
-          key={thread.thread.id}
-          thread={thread.thread}
-          user={thread.user}
-          isLiked={thread.isLiked}
-          isReposted={thread.isReposted}
-        />
-      ))}
-    </div>
+      <section aria-label="Thread feed">
+        {threads.map((thread) => (
+          <article key={thread.thread.id}>
+            <Thread
+              thread={thread.thread}
+              user={thread.user}
+              isLiked={thread.isLiked}
+              isReposted={thread.isReposted}
+            />
+          </article>
+        ))}
+      </section>
+    </main>
   );
 };
 

@@ -26,51 +26,66 @@ const EditProfileModal = ({
     }
   }, [actionData]);
   return (
-    <div className={`fixed inset-0 bg-black/80 z-50 ${isOpen ? "" : "hidden"}`}>
+    <div 
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      className={`fixed inset-0 bg-black/80 z-50 ${isOpen ? "" : "hidden"}`}
+    >
       <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-[#101010] rounded-xl p-6 border-[1px] border-zinc-600">
         <Form method="post" className="flex flex-col gap-6">
-          <div className="flex justify-between items-center">
-            <h2 className="text-xl font-bold text-white">Edit profile</h2>
+          <header className="flex justify-between items-center">
+            <h1 id="modal-title" className="text-xl font-bold text-white">Edit profile</h1>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
               className="text-white"
+              aria-label="Close modal"
             >
-              ✕
+              <span aria-hidden="true">✕</span>
             </button>
-          </div>
+          </header>
 
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-white mb-2">Display name</h3>
-              <div className="flex items-center gap-2">
+          <main className="space-y-6">
+            <fieldset>
+              <div>
+                <label htmlFor="displayName" className="text-white mb-2 block">Display name</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    id="displayName"
+                    type="text"
+                    placeholder="Enter display name"
+                    className="bg-zinc-900 text-white p-2 rounded-lg w-full"
+                    defaultValue={user?.displayName}
+                    name="displayName"
+                    aria-required="true"
+                    autoComplete="name"
+                  />
+                </div>
+              </div>
+              <div>
+                <label htmlFor="bio" className="text-white mb-2 block">Bio</label>
                 <input
+                  id="bio"
                   type="text"
                   placeholder="Write bio"
                   className="bg-zinc-900 text-white p-2 rounded-lg w-full"
-                  defaultValue={user?.displayName}
-                  name="displayName"
+                  defaultValue={user?.bio}
+                  name="bio"
+                  aria-required="true"
                 />
               </div>
-            </div>{" "}
-            <div>
-              <h3 className="text-white mb-2">Bio</h3>
-              <input
-                type="text"
-                placeholder="Write bio"
-                className="bg-zinc-900 text-white p-2 rounded-lg w-full"
-                defaultValue={user?.bio}
-                name="bio"
-              />
-            </div>
-          </div>
+            </fieldset>
+          </main>
 
-          <SubmitBtn
-            intent={Intent.UpdateProfileData}
-            className="w-full py-3 text-md font-semibold bg-white text-black rounded-lg mt-4"
-          >
-            Done
-          </SubmitBtn>
+          <footer>
+            <SubmitBtn
+              intent={Intent.UpdateProfileData}
+              className="w-full py-3 text-md font-semibold bg-white text-black rounded-lg mt-4"
+            >
+              Done
+            </SubmitBtn>
+          </footer>
         </Form>
       </div>
     </div>

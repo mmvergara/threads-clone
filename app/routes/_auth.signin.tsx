@@ -77,51 +77,82 @@ const ThreadsSignIn = () => {
   }, [actionData]);
 
   return (
-    <div className="min-h-screen bg-[#101010] text-white flex items-center justify-center px-4">
+    <main className="min-h-screen bg-[#101010] text-white flex items-center justify-center px-4" role="main">
       <div className="w-full max-w-sm rounded-lg shadow-lg p-6">
-        <div className="text-center mb-8">
+        <header className="text-center mb-8">
           <h1 className="text-4xl font-bold tracking-tight text-white">
             Threads
           </h1>
-          <p className="text-zinc-400 mt-2">
+          <p className="text-zinc-400 mt-2" aria-label="Description">
             Not really, this is just a clone.
           </p>
-        </div>
-        <Form method="post" className="space-y-2">
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
-            className="w-full text-sm p-4 bg-[#1E1E1E] rounded-xl focus:outline-none focus:ring-[1px] focus:ring-zinc-500 text-white placeholder-gray-400"
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-            className="w-full text-sm p-4 bg-[#1E1E1E] rounded-xl focus:outline-none focus:ring-[1px] focus:ring-zinc-500 text-white placeholder-gray-400"
-          />
-          <button
-            type="submit"
-            className="w-full py-3 bg-white text-black font-semibold rounded-xl hover:bg-blue-500 transition duration-300"
+        </header>
+
+        <section aria-label="Sign in form">
+          <Form method="post" className="space-y-2">
+            <fieldset>
+              <legend className="sr-only">Sign in credentials</legend>
+              
+              <div className="mb-4">
+                <label htmlFor="email" className="sr-only">Email</label>
+                <input
+                  id="email"
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  required
+                  aria-required="true"
+                  autoComplete="email"
+                  className="w-full text-sm p-4 bg-[#1E1E1E] rounded-xl focus:outline-none focus:ring-[1px] focus:ring-zinc-500 text-white placeholder-gray-400"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="password" className="sr-only">Password</label>
+                <input
+                  id="password"
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  required
+                  aria-required="true"
+                  autoComplete="current-password"
+                  className="w-full text-sm p-4 bg-[#1E1E1E] rounded-xl focus:outline-none focus:ring-[1px] focus:ring-zinc-500 text-white placeholder-gray-400"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="w-full py-3 bg-white text-black font-semibold rounded-xl hover:bg-blue-500 transition duration-300"
+                aria-label="Sign in"
+              >
+                Log In
+              </button>
+            </fieldset>
+          </Form>
+        </section>
+
+        <footer className="text-center mt-6 space-y-4">
+          <a 
+            href="#" 
+            className="text-zinc-500 text-sm hover:underline"
+            aria-label="Reset password"
           >
-            Log In
-          </button>
-        </Form>
-        <div className="text-center mt-6 space-y-4">
-          <a href="#" className="text-zinc-500 text-sm hover:underline">
             Forgot password?
           </a>
           <div className="flex items-center justify-center mt-4">
             <span className="text-gray-500">Don't have an account?</span>
-            <Link to="/signup" className="ml-2 text-blue-500 hover:underline">
+            <Link 
+              to="/signup" 
+              className="ml-2 text-blue-500 hover:underline"
+              aria-label="Go to sign up page"
+            >
               Sign up
             </Link>
           </div>
-        </div>
+        </footer>
       </div>
-    </div>
+    </main>
   );
 };
 
