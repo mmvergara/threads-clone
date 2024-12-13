@@ -26,6 +26,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
     threads,
     user,
     isFollowed,
+    currentUser,
     isCurrentUser: currentUser.id === userId,
   };
 };
@@ -42,7 +43,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 const ProfilePage = () => {
   const [isCreateThreadModalOpen, setIsCreateThreadModalOpen] = useState(false);
-  const { threads, user, isFollowed, isCurrentUser } =
+  const { threads, user, isFollowed, isCurrentUser, currentUser } =
     useLoaderData<Awaited<ReturnType<typeof loader>>>();
   return (
     <>
@@ -84,13 +85,14 @@ const ProfilePage = () => {
       {threads.length === 0 ? (
         <div className="text-center text-zinc-500 py-8">No threads yet</div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col">
           {threads.map((thread) => (
             <Thread
               key={thread.thread.id}
               user={user}
               thread={thread.thread}
               isLiked={thread.isLiked}
+              isReposted={thread.isReposted}
             />
           ))}
         </div>
