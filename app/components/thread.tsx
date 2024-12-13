@@ -104,11 +104,13 @@ const ThreadActions = ({
   isLiked,
   isReposted,
   setIsReplyModalOpen,
+  repostedByUser,
 }: {
   thread: Thread;
   isLiked: boolean;
   isReposted: boolean;
   setIsReplyModalOpen: (value: boolean) => void;
+  repostedByUser?: User;
 }) => {
   const data = useUniversalActionData();
   const [isRepostDropdownOpen, setIsRepostDropdownOpen] = useState(false);
@@ -224,7 +226,6 @@ const Thread = ({
   repostedByUser,
 }: Props) => {
   const [isReplyModalOpen, setIsReplyModalOpen] = useState(false);
-  const data = useUniversalActionData();
   const navigate = useNavigate();
 
   const handleThreadClick = () => {
@@ -239,32 +240,39 @@ const Thread = ({
         currentUser={user}
         parentThread={{ thread, user }}
       />
-
       <article
         onClick={handleThreadClick}
-        className="flex gap-2 px-6 py-4 border-[#3d3d3d] border-t-[1px] cursor-pointer"
+        className="flex gap-2 flex-col px-6 py-4 border-[#3d3d3d] border-t-[1px] cursor-pointer"
         role="article"
         aria-label={`Thread by ${user.displayName}`}
       >
-        <header className="flex-shrink-0">
-          <img
-            src={user.profileImageUrl}
-            alt={`${user.displayName}'s profile picture`}
-            className="w-10 h-10 rounded-full"
-          />
-        </header>
-
-        <div className="flex-1 w-[calc(100%-50px)">
-          <ThreadContent thread={thread} user={user} />
-
-          {!withoutActions && (
-            <ThreadActions
-              thread={thread}
-              isLiked={isLiked}
-              isReposted={isReposted}
-              setIsReplyModalOpen={setIsReplyModalOpen}
+        {repostedByUser && (
+          <p className="ml-6 text-zinc-400 flex items-center gap-2">
+            <Repeat2Icon className="w-4 h-4" />
+            Reposted by {repostedByUser?.displayName}
+          </p>
+        )}
+        <div className="flex gap-2">
+          <header className="flex-shrink-0">
+            <img
+              src={user.profileImageUrl}
+              alt={`${user.displayName}'s profile picture`}
+              className="w-10 h-10 rounded-full"
             />
-          )}
+          </header>
+
+          <div className="flex-1 w-[calc(100%-50px)">
+            <ThreadContent thread={thread} user={user} />
+
+            {!withoutActions && (
+              <ThreadActions
+                thread={thread}
+                isLiked={isLiked}
+                isReposted={isReposted}
+                setIsReplyModalOpen={setIsReplyModalOpen}
+              />
+            )}
+          </div>
         </div>
       </article>
     </>

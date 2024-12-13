@@ -1,5 +1,5 @@
 import { generateID } from "~/utils/cuid.server";
-import { threads, users } from "../db/schema";
+import { threadReposts, threads, users } from "../db/schema";
 import { db } from "../db/drizzle.server";
 import {
   and,
@@ -102,6 +102,17 @@ export const getUserThreads = async ({
     .from(threads)
     .innerJoin(users, eq(threads.userId, users.id))
     .where(eq(threads.userId, userId));
+  return res;
+};
+
+export const getUserReposts = async ({ userId }: { userId: string }) => {
+  const res = await db
+    .select({
+      thread: getTableColumns(threads),
+    })
+    .from(threads)
+    .innerJoin(threadReposts, eq(threads.id, threadReposts.threadId))
+    .where(eq(threadReposts.repostingUserId, userId));
   return res;
 };
 

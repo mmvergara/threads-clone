@@ -32,7 +32,7 @@ const SearchPage = () => {
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex items-center gap-3 m-6 p-3 px-6 bg-[#0a0a0a] mb-2 rounded-2xl border-[1px] border-zinc-800 text-white">
+      <div className="flex items-center gap-3 m-6 p-3 px-6 bg-[#0a0a0a] mb-4.5 rounded-2xl border-[1px] border-zinc-800 text-white">
         <SearchIcon size={16} className="text-zinc-500" />
         <input
           type="text"
@@ -45,6 +45,7 @@ const SearchPage = () => {
       <div className="flex flex-col w-full">
         {threads.map((thread) => (
           <Thread
+            isReposted={false}
             thread={thread.thread}
             user={thread.user}
             isLiked={thread.isLiked}
