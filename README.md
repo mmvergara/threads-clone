@@ -24,18 +24,6 @@ npx drizzle-kit studio
 
 ### Todo
 
-- [x] Add validation on createThreadAction
-
-- [x] Change the post btn ui the same as threads
-
-- [x] Add logout functionality
-
-- Add search functionality, make sure to
-
-  - [x] Search only threads that are not replies
-  - [x] Dont show thread actions
-  - [ ] add meta tags for search
-
 - Add repost functionality
 
 ---
@@ -48,5 +36,5 @@ npx drizzle-kit studio
 
 - They kinda stick to web standards, so it's easy to understand.
 
-- No middlewares, so we have to check for user session in every route for security :<.
+- No middlewares, so we have to check for user session in every route for authorization.
   > https://remix.run/docs/en/1.19.3/pages/faq#how-can-i-have-a-parent-route-loader-validate-the-user-and-protect-all-child-routes
