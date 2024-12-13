@@ -66,6 +66,7 @@ export const getThreadsWithUser = async ({
       thread: getTableColumns(threads),
       user: userWithoutPasswordHash,
       isLiked: sql<boolean>`EXISTS (SELECT 1 FROM thread_likes WHERE thread_id = ${threads.id} AND user_id = ${userId})`,
+      isReposted: sql<boolean>`EXISTS (SELECT 1 FROM thread_reposts WHERE thread_id = ${threads.id} AND reposting_user_id = ${userId})`,
     })
     .from(threads)
     .innerJoin(users, eq(threads.userId, users.id))
@@ -87,6 +88,7 @@ export const getUserThreads = async ({
     .select({
       thread: getTableColumns(threads),
       isLiked: sql<boolean>`EXISTS (SELECT 1 FROM thread_likes WHERE thread_id = ${threads.id} AND user_id = ${currentUserId})`,
+      isReposted: sql<boolean>`EXISTS (SELECT 1 FROM thread_reposts WHERE thread_id = ${threads.id} AND reposting_user_id = ${currentUserId})`,
     })
     .from(threads)
     .innerJoin(users, eq(threads.userId, users.id))
@@ -131,4 +133,3 @@ export const searchThreads = async ({
     .where(like(sql`UPPER(${threads.content})`, `%${searchQuery}%`));
   return res;
 };
-
