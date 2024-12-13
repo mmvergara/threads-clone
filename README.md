@@ -24,7 +24,7 @@ npx drizzle-kit studio
 
 ### Todo
 
-- Add repost functionality
+- Create following page that shows all the threads of the users that the current user follows.
 
 ---
 

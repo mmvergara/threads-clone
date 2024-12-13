@@ -11,7 +11,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const searchQuery = url.searchParams.get("q") || "";
   if (!searchQuery) {
-    const threads = await getThreadsWithUser({ userId: user.id, limit: 5 });
+    const threads = await getThreadsWithUser({ userId: user.id });
     return threads;
   }
   const threads = await searchThreads({

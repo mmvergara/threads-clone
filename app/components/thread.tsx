@@ -10,11 +10,12 @@ import type { Thread, User } from "~/.server/db/schema";
 import { cn, since } from "~/utils/formatters";
 import CreateThreadModal from "./create-thread-modal";
 import { useEffect, useState } from "react";
-import { Form, useNavigate } from "@remix-run/react";
+import { Form,  useNavigate } from "@remix-run/react";
 import { Intent, useUniversalActionData } from "~/utils/client-action-utils";
 import SubmitBtn from "./submit-btn";
 import { toastActionData } from "~/utils/toast";
 import { useClickOutside } from "~/hooks/useClickOutside";
+import { toast } from "react-toastify";
 
 const ThreadContent = ({ thread, user }: { thread: Thread; user: User }) => {
   const [isDeleteDropdownOpen, setIsDeleteDropdownOpen] = useState(false);
@@ -22,11 +23,18 @@ const ThreadContent = ({ thread, user }: { thread: Thread; user: User }) => {
     setIsDeleteDropdownOpen(false)
   );
   const images = JSON.parse(thread.imageUrls as string) as string[];
+  const navigate = useNavigate();
 
   return (
     <section className="ml-2">
       <div className="flex flex-wrap items-center gap-2 justify-between">
-        <div className="flex items-center gap-2">
+        <div
+          className="flex items-center gap-2"
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(`/profile/${user.id}`);
+          }}
+        >
           <span className="font-semibold text-white">{user.displayName}</span>
           <time className="text-zinc-500">{since(thread.createdAt)}</time>
         </div>
@@ -198,7 +206,12 @@ const ThreadActions = ({
         )}
       </div>
       <button
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+          const url = `${window.location.host}/threads/${thread.id}`;
+          navigator.clipboard.writeText(url);
+          toast.success("Link copied to clipboard");
+        }}
         className="flex items-center gap-1 p-2 rounded-full hover:bg-zinc-800 hover:text-white transition-colors"
         aria-label="Share thread"
       >
@@ -258,7 +271,13 @@ const Thread = ({
           </p>
         )}
         <div className="flex gap-2">
-          <header className="flex-shrink-0 relative">
+          <header
+            className="flex-shrink-0 relative"
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate(`/profile/${user.id}`);
+            }}
+          >
             <img
               src={user.profileImageUrl}
               alt={`${user.displayName}'s profile picture`}

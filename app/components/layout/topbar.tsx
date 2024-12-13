@@ -1,11 +1,11 @@
 import { CheckIcon } from "lucide-react";
-import { Link } from "@remix-run/react";
+import { Link, useLocation } from "@remix-run/react";
 import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 
 const TopBar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+  const location = useLocation();
   const links = [
     {
       name: "For you",
@@ -16,17 +16,15 @@ const TopBar = () => {
       href: "/following",
     },
     {
-      name: "Liked",
-      href: "/liked",
-    },
-    {
-      name: "Saved",
-      href: "/saved",
+      name: "Search",
+      href: "/search",
     },
   ];
   return (
     <div className="flex fixed w-full z-40 bg-[#0a0a0a] flex-row items-center justify-center gap-4 p-3 border-b-[1px] sm:border-none border-[#3d3d3d]">
-      <button className="font-bold mb-1 ml-2">For you</button>
+      <button className="font-bold mb-1 ml-2">
+        {links.find((link) => link.href === location.pathname)?.name}
+      </button>
       <div className="relative">
         <button
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -45,7 +43,7 @@ const TopBar = () => {
                   onClick={() => setIsDropdownOpen(false)}
                 >
                   {link.name}
-                  <CheckIcon size={28} />
+                  {location.pathname === link.href && <CheckIcon size={28} />}
                 </Link>
               ))}
             </ol>

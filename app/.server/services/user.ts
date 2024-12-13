@@ -91,6 +91,17 @@ export const unfollowUser = async (
   return true;
 };
 
+export const getFollowedUsers = async (userId: string): Promise<string[]> => {
+  const res = await db
+    .select({
+      followedUserId: userFollowers.followedUserId,
+    })
+    .from(userFollowers)
+    .where(eq(userFollowers.followerUserId, userId));
+
+  return res.map((item) => item.followedUserId);
+};
+
 export const isFollowedByUser = async (
   currentUserId: string,
   userId: string

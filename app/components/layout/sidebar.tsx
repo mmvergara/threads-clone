@@ -10,17 +10,15 @@ import {
   User2Icon,
 } from "lucide-react";
 import { useState } from "react";
-import SubmitBtn from "../submit-btn";
-import { Intent } from "~/utils/client-action-utils";
 
 const Sidebar = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
     <div className="hidden sm:flex fixed h-full flex-col z-50 justify-between w-[5rem] text-[#4d4d4d] py-4 bg-[#0a0a0a] ">
-      <div className="flex items-center justify-center">
+      <Link to="/" className="flex items-center justify-center">
         <AtSignIcon size={28} className="text-white" />
-      </div>
+      </Link>
       <div className="flex-1 flex flex-col gap-4 items-center justify-center">
         <Link to="/" className="hover:bg-[#171717] py-2.5 px-4 rounded-lg">
           <HomeIcon size={28} />
@@ -34,9 +32,12 @@ const Sidebar = () => {
         <button className="bg-[#171717] hover:text-white py-2.5 px-4 rounded-lg">
           <PlusIcon size={28} />
         </button>
-        <button className="hover:bg-[#171717] py-2.5 px-4 rounded-lg">
+        <Link
+          to="/following"
+          className="hover:bg-[#171717] py-2.5 px-4 rounded-lg"
+        >
           <HeartIcon size={28} />
-        </button>
+        </Link>
         <Link
           to="/profile"
           className="hover:bg-[#171717] py-2.5 px-4 rounded-lg"

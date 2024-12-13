@@ -1,10 +1,11 @@
-import { LoaderFunctionArgs } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { MetaFunction, useLoaderData } from "@remix-run/react";
 import { getUserById, isFollowedByUser } from "~/.server/services/user";
 import { getUserThreads } from "~/.server/services/threads";
 import ProfileHeader from "~/components/profile-header";
 import { requireUser } from "~/.server/session/session";
 import Thread from "~/components/thread";
+import { universalActionHandler } from "~/.server/action-handler";
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);
   const userId = params.userId!;
@@ -32,6 +33,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
     },
   ];
 };
+
+export const action = async ({ request }: ActionFunctionArgs) =>
+  universalActionHandler(request);
 
 const ProfileRepliesPage = () => {
   const { replyThreads, user, isFollowed, isCurrentUser, currentUser } =

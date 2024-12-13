@@ -4,15 +4,18 @@ import { requireUser } from "~/.server/session/session";
 import { useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
 import { ActionFunctionArgs } from "@remix-run/node";
-import { getThreadsWithUser } from "~/.server/services/threads";
+import { getFollowedUsersThreads } from "~/.server/services/threads";
 import { useLoaderData } from "@remix-run/react";
 import { universalActionHandler } from "~/.server/action-handler";
+import { getFollowedUsers } from "~/.server/services/user";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await requireUser(request);
   try {
-    const threads = await getThreadsWithUser({
-      userId: user.id,
+    const followedUserIds = await getFollowedUsers(user.id);
+    const threads = await getFollowedUsersThreads({
+      currentUserId: user.id,
+      followedUserIds,
     });
     return {
       threads,

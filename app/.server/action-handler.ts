@@ -4,7 +4,7 @@ import {
   repostThreadAction,
   unlikeThreadAction,
   unrepostThreadAction,
-} from "./services/thread-likes-actions";
+} from "./services/thread-interaction-actions";
 import {
   createThreadAction,
   deleteThreadAction,
@@ -45,7 +45,6 @@ export const universalActionHandler = async (request: Request) => {
       case Intent.UnfollowUser:
         return await unfollowUserAction(currentUser.id, formData, intent);
       case Intent.RepostThread:
-        console.log("reposting thread");
         return await repostThreadAction(currentUser.id, formData, intent);
       case Intent.UnrepostThread:
         return await unrepostThreadAction(currentUser.id, formData, intent);

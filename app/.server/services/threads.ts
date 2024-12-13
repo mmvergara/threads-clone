@@ -6,7 +6,7 @@ import {
   desc,
   eq,
   getTableColumns,
-  ilike,
+  inArray,
   isNotNull,
   isNull,
   like,
@@ -71,14 +71,10 @@ export const getThreadById = async (threadId: string) => {
 };
 
 type GetThreadsWithUserParams = {
-  limit?: number;
-  skip?: number;
   userId: string;
 };
 
 export const getThreadsWithUser = async ({
-  limit = 10,
-  skip = 0,
   userId,
 }: GetThreadsWithUserParams) => {
   const res = await db
@@ -92,8 +88,30 @@ export const getThreadsWithUser = async ({
     .innerJoin(users, eq(threads.userId, users.id))
     .orderBy(desc(threads.createdAt))
     .where(isNull(threads.parentThreadId))
-    .limit(limit)
-    .offset(skip);
+    .limit(15);
+  return res;
+};
+
+export const getFollowedUsersThreads = async ({
+  currentUserId,
+  followedUserIds,
+}: {
+  currentUserId: string;
+  followedUserIds: string[];
+}) => {
+  const res = await db
+    .select({
+      thread: getTableColumns(threads),
+      user: userWithoutPasswordHash,
+      isLiked: sql<boolean>`EXISTS (SELECT 1 FROM thread_likes WHERE thread_id = ${threads.id} AND user_id = ${currentUserId})`,
+      isReposted: sql<boolean>`EXISTS (SELECT 1 FROM thread_reposts WHERE thread_id = ${threads.id} AND reposting_user_id = ${currentUserId})`,
+    })
+    .from(threads)
+    .innerJoin(users, eq(threads.userId, users.id))
+    .where(inArray(threads.userId, followedUserIds))
+    .orderBy(desc(threads.createdAt))
+    .limit(15);
+
   return res;
 };
 
@@ -195,7 +213,7 @@ export const getThreadWithNestedReplies = async (
         parentThreadId: threads.parentThreadId,
         replies: threads.replies,
         reposts: threads.reposts,
-        user: { ...userWithoutPasswordHash },
+        user: userWithoutPasswordHash,
         isLiked: sql<boolean>`CASE WHEN ${threadLikes.id} IS NOT NULL THEN 1 ELSE 0 END`,
         isReposted: sql<boolean>`CASE WHEN ${threadReposts.id} IS NOT NULL THEN 1 ELSE 0 END`,
         childThreads: sql<any[]>`null`, // Placeholder for nested threads
