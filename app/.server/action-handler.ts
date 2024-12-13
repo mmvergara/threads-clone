@@ -1,7 +1,9 @@
 import { Intent } from "~/utils/client-action-utils";
 import {
   likeThreadAction,
+  repostThreadAction,
   unlikeThreadAction,
+  unrepostThreadAction,
 } from "./services/thread-likes-actions";
 import { createThreadAction } from "./services/threads-actions";
 import {
@@ -37,6 +39,11 @@ export const universalActionHandler = async (request: Request) => {
         return await followUserAction(currentUser.id, formData, intent);
       case Intent.UnfollowUser:
         return await unfollowUserAction(currentUser.id, formData, intent);
+      case Intent.RepostThread:
+        console.log("reposting thread");
+        return await repostThreadAction(currentUser.id, formData, intent);
+      case Intent.UnrepostThread:
+        return await unrepostThreadAction(currentUser.id, formData, intent);
       default:
         throw new Error("Invalid intent");
     }
