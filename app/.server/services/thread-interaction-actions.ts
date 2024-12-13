@@ -4,7 +4,7 @@ import {
   repostThread,
   unlikeThread,
   unrepostThread,
-} from "./thread-likes";
+} from "./thread-interactions";
 import { handleActionError, handleActionSuccess } from "../utils/action-utils";
 import { Intent } from "~/utils/client-action-utils";
 
