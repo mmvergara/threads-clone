@@ -73,6 +73,7 @@ const ForYou = () => {
           thread={thread.thread}
           user={thread.user}
           isLiked={thread.isLiked}
+          isReposted={thread.isReposted}
         />
       ))}
     </div>
