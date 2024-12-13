@@ -50,6 +50,15 @@ export const createThread = async ({
   return res[0];
 };
 
+export const deleteThread = async (threadId: string) => {
+  await db.delete(threads).where(eq(threads.id, threadId));
+};
+
+export const getThreadById = async (threadId: string) => {
+  const res = await db.select().from(threads).where(eq(threads.id, threadId));
+  return res[0];
+};
+
 type GetThreadsWithUserParams = {
   limit?: number;
   skip?: number;

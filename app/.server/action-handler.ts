@@ -5,7 +5,10 @@ import {
   unlikeThreadAction,
   unrepostThreadAction,
 } from "./services/thread-likes-actions";
-import { createThreadAction } from "./services/threads-actions";
+import {
+  createThreadAction,
+  deleteThreadAction,
+} from "./services/threads-actions";
 import {
   followUserAction,
   unfollowUserAction,
@@ -27,6 +30,8 @@ export const universalActionHandler = async (request: Request) => {
     switch (intent) {
       case Intent.CreateThread:
         return await createThreadAction(currentUser.id, formData, intent);
+      case Intent.DeleteThread:
+        return await deleteThreadAction(currentUser.id, formData, intent);
       case Intent.LikeThread:
         return await likeThreadAction(currentUser.id, formData, intent);
       case Intent.UnlikeThread:

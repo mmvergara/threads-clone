@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { Intent } from "~/utils/client-action-utils";
-import { handleActionSuccess } from "../utils/action-utils";
-import { createThread } from "./threads";
+import { handleActionError, handleActionSuccess } from "../utils/action-utils";
+import { createThread, deleteThread, getThreadById } from "./threads";
 
 const createThreadSchema = z.object({
   content: z.string().min(1, "Content is required"),
@@ -35,4 +35,25 @@ export const createThreadAction = async (
     parentThreadId: parentThreadId ?? undefined,
   });
   return handleActionSuccess("Thread created", intent, thread);
+};
+
+export const deleteThreadAction = async (
+  currentUserId: string,
+  formData: FormData,
+  intent: Intent
+) => {
+  const threadId = formData.get("threadId") as string;
+
+  const thread = await getThreadById(threadId);
+
+  if (thread.userId !== currentUserId) {
+    return handleActionError(
+      ["You are not allowed to delete this thread"],
+      intent
+    );
+  }
+
+  await deleteThread(threadId);
+
+  return handleActionSuccess("Thread deleted", intent);
 };
