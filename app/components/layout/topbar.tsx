@@ -23,11 +23,11 @@ const TopBar = () => {
 
   return (
     <header className="flex fixed w-full z-40 bg-[#0a0a0a] flex-row items-center justify-center gap-4 p-3 border-b-[1px] sm:border-none border-[#3d3d3d]">
-      <nav role="navigation" aria-label="Main navigation">
+      <nav role="navigation" aria-label="Main navigation" className="flex gap-2">
         <h1 className="font-bold mb-1 ml-2">
           {links.find((link) => link.href === location.pathname)?.name}
         </h1>
-        
+
         <div className="relative">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -36,14 +36,11 @@ const TopBar = () => {
             aria-haspopup="true"
             aria-label="Navigation menu"
           >
-            <ChevronDownIcon 
-              size={16} 
-              aria-hidden="true"
-            />
+            <ChevronDownIcon size={16} aria-hidden="true" />
           </button>
 
           {isDropdownOpen && (
-            <div 
+            <div
               className="absolute right-[-120px] mt-2 z-10 w-64 bg-[#171717] rounded-xl border-[1px] border-[#303030] shadow-lg"
               role="menu"
               aria-orientation="vertical"
@@ -56,12 +53,14 @@ const TopBar = () => {
                       to={link.href}
                       onClick={() => setIsDropdownOpen(false)}
                       role="menuitem"
-                      aria-current={location.pathname === link.href ? "page" : undefined}
+                      aria-current={
+                        location.pathname === link.href ? "page" : undefined
+                      }
                     >
                       {link.name}
                       {location.pathname === link.href && (
-                        <CheckIcon 
-                          size={28} 
+                        <CheckIcon
+                          size={28}
                           aria-hidden="true"
                           aria-label="Current page"
                         />

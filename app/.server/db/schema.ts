@@ -16,7 +16,7 @@ export const users = sqliteTable("users", {
   bio: text("bio").notNull().default("Wow, such empty!"),
   profileImageUrl: text("profile_image_url")
     .notNull()
-    .default("https://via.placeholder.com/300x300"),
+    .default("https://robohash.org/threads"),
   followers: integer("followers").notNull().default(0),
   following: integer("following").notNull().default(0),
   isVerified: integer("is_verified", { mode: "boolean" })
