@@ -33,6 +33,18 @@ npx drizzle-kit studio
 
 ---
 
+### Screenshots
+
+![Screenshot 1](./screenshots/1.png)
+![Screenshot 2](./screenshots/2.png)
+![Screenshot 3](./screenshots/3.png)
+![Screenshot 4](./screenshots/4.png)
+![Screenshot 5](./screenshots/5.png)
+![Screenshot 6](./screenshots/6.png)
+![Screenshot 7](./screenshots/7.png)
+![Screenshot 8](./screenshots/8.png)
+![Screenshot 9](./screenshots/9.png)
+
 #### Thoughts upon developing (probably irrelevant)
 
 - Remix has a straightforward logic, only took me a few days to understand the concepts of Remix.
