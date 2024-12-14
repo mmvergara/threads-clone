@@ -24,11 +24,11 @@ touch local.db
 # Push schema to local.db
 npx drizzle-kit push
 
-# Open studio
-npx drizzle-kit studio
-
 # Run
 npm run dev
+
+# Open studio for database visualization
+npx drizzle-kit studio
 ```
 
 ---

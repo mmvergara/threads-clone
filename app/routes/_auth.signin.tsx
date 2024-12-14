@@ -77,7 +77,10 @@ const ThreadsSignIn = () => {
   }, [actionData]);
 
   return (
-    <main className="min-h-screen bg-[#101010] text-white flex items-center justify-center px-4" role="main">
+    <main
+      className="min-h-screen bg-[#101010] text-white flex items-center justify-center px-4"
+      role="main"
+    >
       <div className="w-full max-w-sm rounded-lg shadow-lg p-6">
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold tracking-tight text-white">
@@ -92,9 +95,11 @@ const ThreadsSignIn = () => {
           <Form method="post" className="space-y-2">
             <fieldset>
               <legend className="sr-only">Sign in credentials</legend>
-              
+
               <div className="mb-4">
-                <label htmlFor="email" className="sr-only">Email</label>
+                <label htmlFor="email" className="sr-only">
+                  Email
+                </label>
                 <input
                   id="email"
                   type="email"
@@ -108,7 +113,9 @@ const ThreadsSignIn = () => {
               </div>
 
               <div className="mb-4">
-                <label htmlFor="password" className="sr-only">Password</label>
+                <label htmlFor="password" className="sr-only">
+                  Password
+                </label>
                 <input
                   id="password"
                   type="password"
@@ -133,17 +140,10 @@ const ThreadsSignIn = () => {
         </section>
 
         <footer className="text-center mt-6 space-y-4">
-          <a 
-            href="#" 
-            className="text-zinc-500 text-sm hover:underline"
-            aria-label="Reset password"
-          >
-            Forgot password?
-          </a>
           <div className="flex items-center justify-center mt-4">
             <span className="text-gray-500">Don't have an account?</span>
-            <Link 
-              to="/signup" 
+            <Link
+              to="/signup"
               className="ml-2 text-blue-500 hover:underline"
               aria-label="Go to sign up page"
             >
