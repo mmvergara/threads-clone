@@ -11,16 +11,24 @@
 
 ### Installation
 
+Fill in the .env file with the correct values.
+then
+
 ```bash
+# Install dependencies
 npm install
-npm run dev
 
-
-# npx drizzle-orm
-# npx -D drizzle-kit
+# Create local.db
 touch local.db
+
+# Push schema to local.db
 npx drizzle-kit push
+
+# Open studio
 npx drizzle-kit studio
+
+# Run
+npm run dev
 ```
 
 ---
