@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, redirect } from "@remix-run/node";
+import { LoaderFunctionArgs, redirect, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { getThreadWithNestedReplies } from "~/.server/services/threads";
 import { requireUser } from "~/.server/session/session";
@@ -71,8 +71,8 @@ const ThreadReplies = ({
               />
             )}
             {!isFirstLevel && (
-              <div 
-                className="absolute left-[43px] top-[2.1rem] h-[3px] bottom-0 w-[14px] bg-zinc-800" 
+              <div
+                className="absolute left-[43px] top-[2.1rem] h-[3px] bottom-0 w-[14px] bg-zinc-800"
                 aria-hidden="true"
               />
             )}
@@ -124,6 +124,39 @@ const ThreadPage = () => {
       </article>
     </main>
   );
+};
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data?.thread) {
+    return [{ title: "Thread" }];
+  }
+
+  const threadContent = data.thread.content;
+  const authorName = data.thread.user?.displayName || "Unknown User";
+
+  return [
+    { title: `${authorName}'s Thread | Your App Name` },
+    {
+      description:
+        threadContent.length > 160
+          ? `${threadContent.substring(0, 157)}...`
+          : threadContent,
+    },
+    { "og:title": `${authorName}'s Thread | Your App Name` },
+    {
+      "og:description":
+        threadContent.length > 160
+          ? `${threadContent.substring(0, 157)}...`
+          : threadContent,
+    },
+    { "twitter:title": `${authorName}'s Thread | Your App Name` },
+    {
+      "twitter:description":
+        threadContent.length > 160
+          ? `${threadContent.substring(0, 157)}...`
+          : threadContent,
+    },
+  ];
 };
 
 export default ThreadPage;

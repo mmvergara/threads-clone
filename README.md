@@ -22,10 +22,6 @@ npx drizzle-kit push
 npx drizzle-kit studio
 ```
 
-### Todo
-
-- Create following page that shows all the threads of the users that the current user follows.
-
 ---
 
 #### Thoughts upon developing (probably irrelevant)

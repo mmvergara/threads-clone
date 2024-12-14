@@ -2,6 +2,7 @@ import {
   LoaderFunctionArgs,
   ActionFunctionArgs,
   redirect,
+  MetaFunction,
 } from "@remix-run/node";
 import { requireUser } from "~/.server/session/session";
 import { Outlet, ShouldRevalidateFunction } from "@remix-run/react";
@@ -13,23 +14,18 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const requestUrl = new URL(request.url);
   const profilePath = requestUrl.pathname;
 
-  // If the path is exactly "/profile", redirect to current user's profile
   if (profilePath === "/profile") {
     throw redirect(`/profile/${currentUser.id}`);
   }
 
-  // Determine which profile to load
   const profileId = params.userId || currentUser.id;
-
-  // Fetch the user to be displayed
   const user = await getUserById(profileId);
 
-  // If no user is found, redirect to home
   if (!user) {
     throw redirect("/");
   }
 
-  return null;
+  return { user };
 };
 
 export const shouldRevalidate: ShouldRevalidateFunction = ({
@@ -41,6 +37,28 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
 export const action = async ({ request }: ActionFunctionArgs) =>
   universalActionHandler(request);
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data?.user) {
+    return [
+      { title: "Profile Not Found" },
+      { name: "description", content: "Profile page not found" },
+    ];
+  }
+
+  return [
+    { title: `${data.user.displayName}'s Profile` },
+    {
+      name: "description",
+      content: `View ${data.user.displayName}'s profile and activities`,
+    },
+    { property: "og:title", content: `${data.user.displayName}'s Profile` },
+    {
+      property: "og:description",
+      content: `View ${data.user.displayName}'s profile and activities`,
+    },
+  ];
+};
 
 const ProfilePageLayout = () => {
   return (
