@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { MetaFunction, useLoaderData } from "@remix-run/react";
 import { getUserById, isFollowedByUser } from "~/.server/services/user";
-import { getUserThreads } from "~/.server/services/threads";
+import { getUserReplyThreads } from "~/.server/services/threads";
 import ProfileHeader from "~/components/profile-header";
 import { requireUser } from "~/.server/session/session";
 import Thread from "~/components/thread";
@@ -12,7 +12,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const userId = params.userId!;
   const user = await getUserById(userId);
   const isFollowed = await isFollowedByUser(currentUser.id, userId);
-  const replyThreads = await getUserThreads({
+  const replyThreads = await getUserReplyThreads({
     userId,
     currentUserId: currentUser.id,
   });
@@ -64,7 +64,7 @@ const ProfileRepliesPage = () => {
                   user={user}
                   thread={thread.thread}
                   isLiked={thread.isLiked}
-                  isReposted={thread.isReposted}
+                  isReposted={false}
                 />
               </article>
             ))}

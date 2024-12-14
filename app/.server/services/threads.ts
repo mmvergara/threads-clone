@@ -130,7 +130,8 @@ export const getUserThreads = async ({
     })
     .from(threads)
     .innerJoin(users, eq(threads.userId, users.id))
-    .where(eq(threads.userId, userId));
+    .orderBy(desc(threads.createdAt))
+    .where(and(eq(threads.userId, userId), isNull(threads.parentThreadId)));
   return res;
 };
 
@@ -158,9 +159,7 @@ export const getUserReplyThreads = async ({
       isLiked: sql<boolean>`EXISTS (SELECT 1 FROM thread_likes WHERE thread_id = ${threads.id} AND user_id = ${currentUserId})`,
     })
     .from(threads)
-    .where(
-      and(eq(threads.parentThreadId, userId), isNotNull(threads.parentThreadId))
-    );
+    .where(isNotNull(threads.parentThreadId));
   return res;
 };
 
