@@ -18,6 +18,7 @@ npm run dev
 
 # npx drizzle-orm
 # npx -D drizzle-kit
+touch local.db
 npx drizzle-kit push
 npx drizzle-kit studio
 ```
