@@ -1,5 +1,7 @@
 {
   "name": "threads-clone",
+  "author": "mmvergara",
+  "license": "MIT",
   "private": true,
   "sideEffects": false,
   "type": "module",
