@@ -1,6 +1,16 @@
-# Threads Clone
+Created: Dec 8, 2024
 
-- Created: Dec 8, 2024
+<h1 align="center">Threads Clone</h1>
+
+<p align="center">
+<img src="./screenshots/logo.png" height="200">
+</p>
+
+<p align="center">
+Simple Threads Clone with Remix and Drizzle
+</p>
+
+---
 
 ### Stack
 
