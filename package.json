@@ -16,7 +16,7 @@
     "@libsql/client": "^0.14.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "@remix-run/node": "^2.15.0",
-    "@remix-run/react": "^2.15.0",
+    "@remix-run/react": "^2.15.2",
     "@remix-run/serve": "^2.15.0",
     "@uploadthing/react": "^7.1.2",
     "bcrypt": "^5.1.1",
