@@ -4,7 +4,7 @@ import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { getUserThreads } from "~/.server/services/threads";
 import { requireUser } from "~/.server/session/session";
 import { MetaFunction, useLoaderData } from "@remix-run/react";
-import Thread from "~/components/thread";
+import Thread from "~/components/thread/thread";
 import { getUserById, isFollowedByUser } from "~/.server/services/user";
 import { universalActionHandler } from "~/.server/action-handler";
 import ProfileHeader from "~/components/profile-header";
@@ -88,7 +88,9 @@ const ProfilePage = () => {
       )}
       <section aria-label="User threads">
         {threads.length === 0 ? (
-          <p className="text-center text-zinc-500 py-8" role="status">No threads yet</p>
+          <p className="text-center text-zinc-500 py-8" role="status">
+            No threads yet
+          </p>
         ) : (
           <div className="flex flex-col" role="feed" aria-label="User threads">
             {threads.map((thread) => (

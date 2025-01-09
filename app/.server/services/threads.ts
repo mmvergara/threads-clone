@@ -16,13 +16,13 @@ import {
 const { passwordHash, ...userWithoutPasswordHash } = getTableColumns(users);
 
 type CreateThreadParams = {
-  userId: string;
+  currentUserId: string;
   content: string;
   imagesUrlJsonString: string;
   parentThreadId?: string;
 };
 export const createThread = async ({
-  userId,
+  currentUserId,
   content,
   imagesUrlJsonString,
   parentThreadId,
@@ -32,7 +32,7 @@ export const createThread = async ({
     .insert(threads)
     .values({
       id,
-      userId,
+      userId: currentUserId,
       content,
       imageUrls: imagesUrlJsonString,
       parentThreadId: parentThreadId || null,
@@ -70,19 +70,17 @@ export const getThreadById = async (threadId: string) => {
   return res[0];
 };
 
-type GetThreadsWithUserParams = {
-  userId: string;
-};
-
 export const getThreadsWithUser = async ({
-  userId,
-}: GetThreadsWithUserParams) => {
+  currentUserId,
+}: {
+  currentUserId: string;
+}) => {
   const res = await db
     .select({
       thread: getTableColumns(threads),
       user: userWithoutPasswordHash,
-      isLiked: sql<boolean>`EXISTS (SELECT 1 FROM thread_likes WHERE thread_id = ${threads.id} AND user_id = ${userId})`,
-      isReposted: sql<boolean>`EXISTS (SELECT 1 FROM thread_reposts WHERE thread_id = ${threads.id} AND reposting_user_id = ${userId})`,
+      isLiked: sql<boolean>`EXISTS (SELECT 1 FROM thread_likes WHERE thread_id = ${threads.id} AND user_id = ${currentUserId})`,
+      isReposted: sql<boolean>`EXISTS (SELECT 1 FROM thread_reposts WHERE thread_id = ${threads.id} AND reposting_user_id = ${currentUserId})`,
     })
     .from(threads)
     .innerJoin(users, eq(threads.userId, users.id))

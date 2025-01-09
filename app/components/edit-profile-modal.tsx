@@ -1,5 +1,4 @@
 import { Form } from "@remix-run/react";
-import { useActionData } from "@remix-run/react";
 import { useEffect } from "react";
 import { User } from "~/.server/db/schema";
 import { toastActionData } from "~/utils/toast";
@@ -26,7 +25,7 @@ const EditProfileModal = ({
     }
   }, [actionData]);
   return (
-    <div 
+    <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
@@ -35,7 +34,9 @@ const EditProfileModal = ({
       <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-[#101010] rounded-xl p-6 border-[1px] border-zinc-600">
         <Form method="post" className="flex flex-col gap-6">
           <header className="flex justify-between items-center">
-            <h1 id="modal-title" className="text-xl font-bold text-white">Edit profile</h1>
+            <h1 id="modal-title" className="text-xl font-bold text-white">
+              Edit profile
+            </h1>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
@@ -49,7 +50,9 @@ const EditProfileModal = ({
           <main className="space-y-6">
             <fieldset>
               <div>
-                <label htmlFor="displayName" className="text-white mb-2 block">Display name</label>
+                <label htmlFor="displayName" className="text-white mb-2 block">
+                  Display name
+                </label>
                 <div className="flex items-center gap-2">
                   <input
                     id="displayName"
@@ -64,7 +67,9 @@ const EditProfileModal = ({
                 </div>
               </div>
               <div>
-                <label htmlFor="bio" className="text-white mb-2 block">Bio</label>
+                <label htmlFor="bio" className="text-white mb-2 block">
+                  Bio
+                </label>
                 <input
                   id="bio"
                   type="text"

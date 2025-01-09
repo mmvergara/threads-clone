@@ -4,35 +4,38 @@ import { eq, sql } from "drizzle-orm";
 import { and } from "drizzle-orm";
 import { threadLikes, threadReposts, threads } from "../db/schema";
 
-export async function likeThread(threadId: string, userId: string) {
+export async function toggleLikeThread(threadId: string, userId: string) {
   const id = generateID();
-  await db.transaction(async (tx) => {
-    await tx.insert(threadLikes).values({
-      id,
-      threadId,
-      userId,
-    });
-    await tx
-      .update(threads)
-      .set({ likes: sql`${threads.likes} + 1` })
-      .where(eq(threads.id, threadId));
-  });
-  return true;
-}
+  const hasUserLiked = await hasUserLikedThread(threadId, userId);
 
-export async function unlikeThread(threadId: string, userId: string) {
-  await db.transaction(async (tx) => {
-    await tx
-      .delete(threadLikes)
-      .where(
-        and(eq(threadLikes.threadId, threadId), eq(threadLikes.userId, userId))
-      );
+  return await db.transaction(async (tx) => {
+    let delta = 0;
+    if (hasUserLiked) {
+      await tx
+        .delete(threadLikes)
+        .where(
+          and(
+            eq(threadLikes.threadId, threadId),
+            eq(threadLikes.userId, userId)
+          )
+        );
+      delta = -1;
+    } else {
+      await tx.insert(threadLikes).values({
+        id,
+        threadId,
+        userId,
+      });
+      delta = 1;
+    }
+
     await tx
       .update(threads)
-      .set({ likes: sql`${threads.likes} - 1` })
+      .set({ likes: sql`${threads.likes} + ${delta}` })
       .where(eq(threads.id, threadId));
+
+    return true;
   });
-  return true;
 }
 
 export async function hasUserLikedThread(threadId: string, userId: string) {

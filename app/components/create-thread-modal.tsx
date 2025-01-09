@@ -1,13 +1,12 @@
 import { ImageUpIcon } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { UploadButton } from "~/utils/uploadthing";
-import { Form } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import { Thread, User } from "~/.server/db/schema";
 import { truncateTextEllipses } from "~/utils/formatters";
-import { toastActionData } from "~/utils/toast";
 import SubmitBtn from "./submit-btn";
-import { Intent, useUniversalActionData } from "~/utils/client-action-utils";
+import { Intent } from "~/utils/client-action-utils";
 
 type Props = {
   isOpen: boolean;
@@ -15,7 +14,7 @@ type Props = {
   currentUser: User;
   parentThread?: {
     thread: Thread;
-    user: User;
+    threadAuthor: User;
   };
 };
 
@@ -25,21 +24,14 @@ const CreateThreadModal = ({
   currentUser,
   parentThread,
 }: Props) => {
+  const fetcher = useFetcher();
   const uploadThingBtnRef = useRef<HTMLDivElement>(null);
   const [images, setImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const actionData = useUniversalActionData();
-  useEffect(() => {
-    if (!isOpen) return;
-    toastActionData(actionData, Intent.CreateThread);
-    if (actionData?.success && actionData?.intent === Intent.CreateThread) {
-      setIsOpen(false);
-    }
-  }, [actionData]);
-
   if (!isOpen) return null;
+
   return (
     <div
       className="fixed inset-0 bg-black/85 rounded-3xl flex items-start justify-center p-4 pt-[10vh] overflow-y-auto z-50"
@@ -66,15 +58,15 @@ const CreateThreadModal = ({
           <section className="flex gap-2 p-4" aria-labelledby="parent-thread">
             <div className="flex flex-col items-center">
               <img
-                src={parentThread.user.profileImageUrl}
-                alt={`${parentThread.user.displayName}'s profile`}
+                src={parentThread.threadAuthor.profileImageUrl}
+                alt={`${parentThread.threadAuthor.displayName}'s profile`}
                 className="min-w-10 max-w-10 min-h-10 max-h-10 rounded-full"
               />
               <div className="w-0.5 grow mt-2 bg-zinc-800" aria-hidden="true" />
             </div>
             <div className="flex flex-col">
               <span id="parent-thread" className="text-white font-semibold">
-                {parentThread.user.displayName}
+                {parentThread.threadAuthor.displayName}
               </span>
               <span className="text-zinc-500">
                 {truncateTextEllipses(parentThread.thread.content, 200)}
@@ -83,7 +75,11 @@ const CreateThreadModal = ({
           </section>
         )}
 
-        <Form method="post" className="contents">
+        <fetcher.Form
+          method="post"
+          action="/api/thread/create"
+          className="contents"
+        >
           <input type="hidden" name="images" value={JSON.stringify(images)} />
           {parentThread && (
             <input
@@ -240,7 +236,7 @@ const CreateThreadModal = ({
               </SubmitBtn>
             </div>
           </footer>
-        </Form>
+        </fetcher.Form>
       </div>
     </div>
   );

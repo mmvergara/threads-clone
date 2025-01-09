@@ -4,7 +4,7 @@ import { SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getThreadsWithUser, searchThreads } from "~/.server/services/threads";
 import { requireUser } from "~/.server/session/session";
-import Thread from "~/components/thread";
+import Thread from "~/components/thread/thread";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const user = await requireUser(request);
@@ -34,9 +34,14 @@ const SearchPage = () => {
     <main className="flex flex-col w-full" role="main">
       <header className="flex flex-col w-full" role="banner">
         <h1 className="sr-only">Search Threads</h1>
-        <form role="search" className="flex items-center gap-3 m-6 p-3 px-6 bg-[#0a0a0a] mb-4.5 rounded-2xl border-[1px] border-zinc-800 text-white">
+        <form
+          role="search"
+          className="flex items-center gap-3 m-6 p-3 px-6 bg-[#0a0a0a] mb-4.5 rounded-2xl border-[1px] border-zinc-800 text-white"
+        >
           <SearchIcon size={16} className="text-zinc-500" aria-hidden="true" />
-          <label htmlFor="search-input" className="sr-only">Search threads</label>
+          <label htmlFor="search-input" className="sr-only">
+            Search threads
+          </label>
           <input
             id="search-input"
             type="search"

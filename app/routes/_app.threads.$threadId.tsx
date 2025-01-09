@@ -3,9 +3,7 @@ import { useLoaderData } from "@remix-run/react";
 import { getThreadWithNestedReplies } from "~/.server/services/threads";
 import { requireUser } from "~/.server/session/session";
 import { User } from "~/.server/db/schema";
-import Thread from "~/components/thread";
-import { ActionFunctionArgs } from "@remix-run/node";
-import { universalActionHandler } from "~/.server/action-handler";
+import Thread from "~/components/thread/thread";
 import { cn } from "~/utils/formatters";
 
 type NestedThread = {
@@ -25,17 +23,17 @@ type NestedThread = {
 };
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
-  const user = await requireUser(request);
+  const currentUser = await requireUser(request);
   const thread: NestedThread | null = await getThreadWithNestedReplies(
     params.threadId!,
-    user.id
+    currentUser.id
   );
   if (!thread) {
     throw redirect("/");
   }
   return {
     thread,
-    user,
+    currentUser,
   };
 };
 
@@ -45,9 +43,6 @@ const getTotalChilds = (thread: NestedThread): number => {
     return 1 + getTotalChilds(reply);
   }, 0);
 };
-
-export const action = async ({ request }: ActionFunctionArgs) =>
-  universalActionHandler(request);
 
 const ThreadReplies = ({
   replies,
@@ -78,7 +73,8 @@ const ThreadReplies = ({
             )}
             <Thread
               thread={reply}
-              user={reply.user!}
+              threadAuthor={reply.user!}
+              currentUser={currentUser}
               isLiked={reply.isLiked}
               isReposted={reply.isReposted}
             />
@@ -97,7 +93,7 @@ const ThreadReplies = ({
 };
 
 const ThreadPage = () => {
-  const { thread, user } = useLoaderData<typeof loader>();
+  const { thread, currentUser } = useLoaderData<typeof loader>();
 
   if (!thread) {
     return (
@@ -113,13 +109,17 @@ const ThreadPage = () => {
       <article>
         <Thread
           thread={thread}
-          user={thread.user!}
+          threadAuthor={thread.user!}
+          currentUser={currentUser}
           isLiked={thread.isLiked}
           isReposted={thread.isReposted}
           isMainThread={true}
         />
         {thread.childThreads && thread.childThreads.length > 0 && (
-          <ThreadReplies replies={thread.childThreads} currentUser={user} />
+          <ThreadReplies
+            replies={thread.childThreads}
+            currentUser={currentUser}
+          />
         )}
       </article>
     </main>

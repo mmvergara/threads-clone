@@ -1,28 +1,26 @@
-import Thread from "../components/thread";
+import Thread from "../components/thread/thread";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { requireUser } from "~/.server/session/session";
 import { useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
-import { ActionFunctionArgs } from "@remix-run/node";
 import { getThreadsWithUser } from "~/.server/services/threads";
 import { useLoaderData } from "@remix-run/react";
-import { universalActionHandler } from "~/.server/action-handler";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const user = await requireUser(request);
+  console.log("Loader runnnigg");
+  const currentUser = await requireUser(request);
   try {
     const threads = await getThreadsWithUser({
-      userId: user.id,
+      currentUserId: currentUser.id,
     });
     return {
       threads,
-      user,
+      currentUser,
     };
   } catch (error) {
-    console.error(error);
     return {
       threads: [],
-      user: null,
+      currentUser: null,
     };
   }
 };
@@ -31,18 +29,16 @@ export const meta = () => {
   return [{ title: "Threads Clone" }];
 };
 
-export const action = async ({ request }: ActionFunctionArgs) =>
-  universalActionHandler(request);
-
 const ForYou = () => {
   const [isCreateThreadModalOpen, setIsCreateThreadModalOpen] = useState(false);
-  const { threads, user } = useLoaderData<Awaited<ReturnType<typeof loader>>>();
+  const { threads, currentUser } =
+    useLoaderData<Awaited<ReturnType<typeof loader>>>();
   return (
     <main className="flex flex-col w-full" role="main">
       <header className="flex items-center gap-3 px-6 py-4" role="banner">
         <img
-          src={user?.profileImageUrl}
-          alt={`${user?.displayName}'s profile picture`}
+          src={currentUser?.profileImageUrl}
+          alt={`${currentUser?.displayName}'s profile picture`}
           className="w-10 h-10 rounded-full"
         />
         <button
@@ -62,25 +58,27 @@ const ForYou = () => {
           Post
         </button>
       </header>
-      {user && (
-        <CreateThreadModal
-          isOpen={isCreateThreadModalOpen}
-          setIsOpen={setIsCreateThreadModalOpen}
-          currentUser={user}
-        />
+      {currentUser && (
+        <>
+          <CreateThreadModal
+            isOpen={isCreateThreadModalOpen}
+            setIsOpen={setIsCreateThreadModalOpen}
+            currentUser={currentUser}
+          />
+          <section aria-label="Thread feed">
+            {threads.map((thread) => (
+              <Thread
+                thread={thread.thread}
+                threadAuthor={thread.user}
+                currentUser={currentUser}
+                isLiked={thread.isLiked}
+                isReposted={thread.isReposted}
+                key={thread.thread.id}
+              />
+            ))}
+          </section>
+        </>
       )}
-      <section aria-label="Thread feed">
-        {threads.map((thread) => (
-          <article key={thread.thread.id}>
-            <Thread
-              thread={thread.thread}
-              user={thread.user}
-              isLiked={thread.isLiked}
-              isReposted={thread.isReposted}
-            />
-          </article>
-        ))}
-      </section>
     </main>
   );
 };

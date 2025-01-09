@@ -4,7 +4,7 @@ import { getUserById, isFollowedByUser } from "~/.server/services/user";
 import { getUserReposts, getUserThreads } from "~/.server/services/threads";
 import ProfileHeader from "~/components/profile-header";
 import { requireUser } from "~/.server/session/session";
-import Thread from "~/components/thread";
+import Thread from "~/components/thread/thread";
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);
   const userId = params.userId!;

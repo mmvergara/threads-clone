@@ -1,8 +1,6 @@
 import { Intent } from "~/utils/client-action-utils";
 import {
-  likeThreadAction,
   repostThreadAction,
-  unlikeThreadAction,
   unrepostThreadAction,
 } from "./services/thread-interaction-actions";
 import {
@@ -32,10 +30,6 @@ export const universalActionHandler = async (request: Request) => {
         return await createThreadAction(currentUser.id, formData, intent);
       case Intent.DeleteThread:
         return await deleteThreadAction(currentUser.id, formData, intent);
-      case Intent.LikeThread:
-        return await likeThreadAction(currentUser.id, formData, intent);
-      case Intent.UnlikeThread:
-        return await unlikeThreadAction(currentUser.id, formData, intent);
       case Intent.UpdateProfileData:
         return await updateProfileDataAction(currentUser.id, formData, intent);
       case Intent.UpdateProfileImage:

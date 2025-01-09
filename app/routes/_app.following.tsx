@@ -1,4 +1,4 @@
-import Thread from "../components/thread";
+import Thread from "../components/thread/thread";
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { requireUser } from "~/.server/session/session";
 import { useState } from "react";
@@ -33,9 +33,15 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export const meta = () => {
   return [
     { title: "Threads Clone" },
-    { name: "description", content: "Follow and interact with threads from people you follow" },
+    {
+      name: "description",
+      content: "Follow and interact with threads from people you follow",
+    },
     { property: "og:title", content: "Following - Threads Clone" },
-    { property: "og:description", content: "Stay updated with threads from people you follow" },
+    {
+      property: "og:description",
+      content: "Stay updated with threads from people you follow",
+    },
     { name: "viewport", content: "width=device-width,initial-scale=1" },
     { charSet: "utf-8" },
   ];
