@@ -1,4 +1,5 @@
 import { useFetcher } from "@remix-run/react";
+import { useEffect } from "react";
 import { User } from "~/.server/db/schema";
 
 const EditProfileModal = ({
@@ -11,6 +12,10 @@ const EditProfileModal = ({
   user: User;
 }) => {
   const editProfileDataFetcher = useFetcher();
+
+  useEffect(() => {
+    setIsOpen(false);
+  }, [editProfileDataFetcher]);
   return (
     <div
       role="dialog"
@@ -22,6 +27,7 @@ const EditProfileModal = ({
         <editProfileDataFetcher.Form
           method="post"
           className="flex flex-col gap-6"
+          action="/api/user/update-profile-data"
         >
           <header className="flex justify-between items-center">
             <h1 id="modal-title" className="text-xl font-bold text-white">
