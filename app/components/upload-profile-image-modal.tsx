@@ -1,12 +1,9 @@
 import { Form, useFetcher } from "@remix-run/react/dist/components";
 import { ImageUpIcon } from "lucide-react";
-import { useEffect } from "react";
 import { useState } from "react";
 import { useRef } from "react";
 import { toast } from "react-toastify";
-import { toastActionData } from "~/utils/toast";
 import { UploadButton } from "~/utils/uploadthing";
-import SubmitBtn from "./submit-btn";
 
 const UploadProfileImageModal = ({
   isOpen,
