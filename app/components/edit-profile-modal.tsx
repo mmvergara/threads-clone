@@ -14,7 +14,7 @@ const EditProfileModal = ({
   const editProfileDataFetcher = useFetcher();
 
   useEffect(() => {
-    setIsOpen(false);
+    if (editProfileDataFetcher.state === "submitting") setIsOpen(false);
   }, [editProfileDataFetcher]);
   return (
     <div

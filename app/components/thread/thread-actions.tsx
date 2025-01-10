@@ -1,18 +1,6 @@
-import { Form, useActionData, useFetcher } from "@remix-run/react";
-import {
-  HeartIcon,
-  MessageCircleIcon,
-  Repeat2Icon,
-  SendIcon,
-} from "lucide-react";
-import { useEffect, useState } from "react";
+import { SendIcon } from "lucide-react";
 import { toast } from "react-toastify";
 import { Thread, User } from "~/.server/db/schema";
-import { useClickOutside } from "~/hooks/useClickOutside";
-import { Intent, useUniversalActionData } from "~/utils/types";
-import { cn } from "~/utils/formatters";
-import { toastActionData } from "~/utils/toast";
-import SubmitBtn from "../submit-btn";
 import ThreadLikeBtn from "./thread-like";
 import ThreadReply from "./thread-reply";
 import ThreadRepost from "./thread-repost";
@@ -23,14 +11,12 @@ type Props = {
   isLiked: boolean;
   isReposted: boolean;
   currentUser: User;
-  repostedByUser?: User;
 };
 
 const ThreadActions = ({
   thread,
   isLiked,
   isReposted,
-  repostedByUser,
   currentUser,
   threadAuthor,
 }: Props) => {

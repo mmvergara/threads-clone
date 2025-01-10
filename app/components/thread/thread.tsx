@@ -1,8 +1,7 @@
-import { Repeat2Icon, MoreHorizontalIcon, TrashIcon } from "lucide-react";
+import { Repeat2Icon } from "lucide-react";
 import type { Thread, User } from "~/.server/db/schema";
-import { cn, since } from "~/utils/formatters";
-import { Form, useNavigate } from "@remix-run/react";
-import { useClickOutside } from "~/hooks/useClickOutside";
+import { cn } from "~/utils/formatters";
+import { useNavigate } from "@remix-run/react";
 import ThreadActions from "./thread-actions";
 import ThreadContent from "./thread-content";
 
@@ -29,10 +28,7 @@ const Thread = ({
 }: Props) => {
   const navigate = useNavigate();
 
-  const handleThreadClick = () => {
-    if (thread.parentThreadId) return;
-    navigate(`/threads/${thread.id}`);
-  };
+  const handleThreadClick = () => {};
 
   return (
     <article>

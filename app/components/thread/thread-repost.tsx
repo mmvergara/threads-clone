@@ -18,9 +18,8 @@ const ThreadRepost = ({ thread, isReposted }: Props) => {
   const repostThreadFetcher = useFetcher();
 
   useEffect(() => {
-    setIsRepostDropdownOpen(false);
-
-    
+    if (repostThreadFetcher.state === "submitting")
+      setIsRepostDropdownOpen(false);
   }, [repostThreadFetcher]);
   return (
     <div className="relative">

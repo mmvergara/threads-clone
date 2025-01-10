@@ -29,8 +29,7 @@ const CreateThreadModal = ({
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    setIsOpen(false);
-
+    if (createThreadFetcher.state === "submitting") setIsOpen(false);
   }, [createThreadFetcher]);
 
   if (!isOpen) return null;
