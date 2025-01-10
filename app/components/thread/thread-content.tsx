@@ -3,7 +3,7 @@ import { MoreHorizontalIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { Thread, User } from "~/.server/db/schema";
 import { useClickOutside } from "~/hooks/useClickOutside";
-import { since } from "~/utils/formatters";
+import { elapsedTime } from "~/utils/formatters";
 
 type Props = {
   thread: Thread;
@@ -39,7 +39,7 @@ const ThreadContent = ({ thread, threadAuthor }: Props) => {
             dateTime={thread.createdAt.toString()}
             className="text-zinc-500"
           >
-            {since(thread.createdAt)}
+            {elapsedTime(thread.createdAt)}
           </time>
         </div>
         <div className="relative">
