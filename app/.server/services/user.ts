@@ -65,7 +65,7 @@ export const toggleFollowUser = async ({
   toFollowUserId: string;
 }) => {
   const isFollowed = await isFollowedByUser(followerUserId, toFollowUserId);
-  await db.transaction(async (tx) => {
+  return await db.transaction(async (tx) => {
     let delta = 0;
     if (isFollowed) {
       await tx
@@ -89,9 +89,9 @@ export const toggleFollowUser = async ({
       .update(users)
       .set({ followers: sql`${users.followers} + ${delta}` })
       .where(eq(users.id, toFollowUserId));
-  });
 
-  return true;
+    return { followed: !isFollowed };
+  });
 };
 
 export const getFollowedUsers = async (userId: string): Promise<string[]> => {
