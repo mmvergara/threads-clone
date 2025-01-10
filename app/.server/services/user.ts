@@ -24,28 +24,36 @@ export const getUserByEmail = async (email: string) => {
   return user[0];
 };
 
-export const updateUserProfileData = async (
-  userId: string,
-  data: {
-    displayName: string;
-    bio: string;
-  }
-) => {
+export const updateUserProfileData = async ({
+  currentUserId,
+  displayName,
+  bio,
+}: {
+  currentUserId: string;
+  displayName: string;
+  bio: string;
+}) => {
   await db
     .update(users)
     .set({
-      displayName: data.displayName,
-      bio: data.bio,
+      displayName,
+      bio,
     })
-    .where(eq(users.id, userId));
+    .where(eq(users.id, currentUserId));
   return true;
 };
 
-export const updateUserProfileImage = async (
-  userId: string,
-  profileImageUrl: string
-) => {
-  await db.update(users).set({ profileImageUrl }).where(eq(users.id, userId));
+export const updateUserProfileImage = async ({
+  currentUserId,
+  profileImageUrl,
+}: {
+  currentUserId: string;
+  profileImageUrl: string;
+}) => {
+  await db
+    .update(users)
+    .set({ profileImageUrl })
+    .where(eq(users.id, currentUserId));
   return true;
 };
 
