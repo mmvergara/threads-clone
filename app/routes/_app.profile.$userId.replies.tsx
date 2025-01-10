@@ -6,6 +6,7 @@ import ProfileHeader from "~/components/profile-header";
 import { requireUser } from "~/.server/session/session";
 import Thread from "~/components/thread/thread";
 
+// TODO: Implement Granular Error Handling
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);
   const userId = params.userId!;
