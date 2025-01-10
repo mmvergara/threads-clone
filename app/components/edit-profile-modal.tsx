@@ -19,7 +19,10 @@ const EditProfileModal = ({
       className={`fixed inset-0 bg-black/80 z-50 ${isOpen ? "" : "hidden"}`}
     >
       <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-[#101010] rounded-xl p-6 border-[1px] border-zinc-600">
-        <Form method="post" className="flex flex-col gap-6">
+        <editProfileDataFetcher.Form
+          method="post"
+          className="flex flex-col gap-6"
+        >
           <header className="flex justify-between items-center">
             <h1 id="modal-title" className="text-xl font-bold text-white">
               Edit profile
@@ -71,14 +74,14 @@ const EditProfileModal = ({
           </main>
 
           <footer>
-            <SubmitBtn
-              intent={Intent.UpdateProfileData}
+            <button
+              type="submit"
               className="w-full py-3 text-md font-semibold bg-white text-black rounded-lg mt-4"
             >
               Done
-            </SubmitBtn>
+            </button>
           </footer>
-        </Form>
+        </editProfileDataFetcher.Form>
       </div>
     </div>
   );

@@ -3,7 +3,6 @@ import { ActionReturnType } from "~/.server/utils/action-utils";
 
 export enum Intent {
   UpdateProfileData = "updateProfileData",
-  UpdateProfileImage = "updateProfileImage",
 }
 
 export const useUniversalActionData = () => {

@@ -14,7 +14,6 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
   const location = useLocation();
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
-
   const followFetcher = useFetcher();
   return (
     <header role="banner" aria-label="Profile header">

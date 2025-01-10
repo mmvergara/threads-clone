@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { MetaFunction, useLoaderData } from "@remix-run/react";
 import { getUserById, isFollowedByUser } from "~/.server/services/user";
-import { getUserReposts, getUserThreads } from "~/.server/services/threads";
+import { getUserReposts } from "~/.server/services/threads";
 import ProfileHeader from "~/components/profile-header";
 import { requireUser } from "~/.server/session/session";
 import Thread from "~/components/thread/thread";
@@ -48,8 +48,9 @@ const ProfileRepliesPage = () => {
           {repostThreads.map(({ thread }) => (
             <Thread
               key={thread.id}
-              user={user}
               thread={thread}
+              threadAuthor={user}
+              currentUser={currentUser}
               isLiked={false}
               isReposted={false}
               repostedByUser={user}

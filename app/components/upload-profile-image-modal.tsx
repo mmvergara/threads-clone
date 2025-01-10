@@ -1,4 +1,4 @@
-import { Form } from "@remix-run/react/dist/components";
+import { Form, useFetcher } from "@remix-run/react/dist/components";
 import { ImageUpIcon } from "lucide-react";
 import { useEffect } from "react";
 import { useState } from "react";
@@ -7,7 +7,6 @@ import { toast } from "react-toastify";
 import { toastActionData } from "~/utils/toast";
 import { UploadButton } from "~/utils/uploadthing";
 import SubmitBtn from "./submit-btn";
-import { Intent, useUniversalActionData } from "~/utils/client-action-utils";
 
 const UploadProfileImageModal = ({
   isOpen,
@@ -20,30 +19,24 @@ const UploadProfileImageModal = ({
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const uploadThingBtnRef = useRef<HTMLDivElement>(null);
-  const actionData = useUniversalActionData();
 
-  useEffect(() => {
-    toastActionData(actionData, Intent.UpdateProfileImage);
-    if (
-      actionData?.success &&
-      actionData?.intent === Intent.UpdateProfileImage
-    ) {
-      setIsOpen(false);
-    }
-  }, [actionData]);
-
+  const updateProfileImageFetcher = useFetcher();
   return (
-    <div 
+    <div
       className={`fixed inset-0 bg-black/85 z-50 ${isOpen ? "" : "hidden"}`}
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
     >
       <main className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-[#181818] rounded-xl p-6 border-[0.8px] border-zinc-700">
-        <Form method="post" className="flex flex-col gap-6">
-          <input 
-            type="hidden" 
-            name="profileImageUrl" 
+        <updateProfileImageFetcher.Form
+          method="post"
+          action="/api/user/update-profile-image"
+          className="flex flex-col gap-6"
+        >
+          <input
+            type="hidden"
+            name="profileImageUrl"
             value={uploadedImgUrl}
             aria-hidden="true"
           />
@@ -57,7 +50,9 @@ const UploadProfileImageModal = ({
             >
               Cancel
             </button>
-            <h1 id="modal-title" className="text-white font-semibold">Upload profile picture</h1>
+            <h1 id="modal-title" className="text-white font-semibold">
+              Upload profile picture
+            </h1>
             <div className="w-20" aria-hidden="true"></div>
           </header>
 
@@ -71,7 +66,10 @@ const UploadProfileImageModal = ({
             </section>
           )}
 
-          <section className="flex flex-col items-center gap-4" aria-label="Upload controls">
+          <section
+            className="flex flex-col items-center gap-4"
+            aria-label="Upload controls"
+          >
             {uploadedImgUrl ? (
               <button
                 type="button"
@@ -92,7 +90,7 @@ const UploadProfileImageModal = ({
                 Upload profile picture
               </button>
             )}
-            
+
             <UploadButton
               endpoint="profileImageUploader"
               onUploadBegin={() => setIsUploading(true)}
@@ -117,7 +115,7 @@ const UploadProfileImageModal = ({
             />
 
             {isUploading && (
-              <div 
+              <div
                 className="flex flex-col gap-1"
                 role="progressbar"
                 aria-valuenow={progress}
@@ -139,16 +137,16 @@ const UploadProfileImageModal = ({
           </section>
 
           <footer>
-            <SubmitBtn
-              intent={Intent.UpdateProfileImage}
+            <button
+              type="submit"
               disabled={!uploadedImgUrl || isUploading}
               className="w-full py-2 rounded-md hover:font-bold transition-all duration-300 bg-white text-black disabled:opacity-50 disabled:cursor-not-allowed mt-4"
               aria-label="Save profile picture"
             >
               Save
-            </SubmitBtn>
+            </button>
           </footer>
-        </Form>
+        </updateProfileImageFetcher.Form>
       </main>
     </div>
   );

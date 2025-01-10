@@ -6,12 +6,7 @@ import { requireUser } from "~/.server/session/session";
 import { MetaFunction, useLoaderData } from "@remix-run/react";
 import Thread from "~/components/thread/thread";
 import { getUserById, isFollowedByUser } from "~/.server/services/user";
-import { universalActionHandler } from "~/.server/action-handler";
 import ProfileHeader from "~/components/profile-header";
-
-export const action = async ({ request }: ActionFunctionArgs) => {
-  return universalActionHandler(request);
-};
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);

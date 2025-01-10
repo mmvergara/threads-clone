@@ -7,7 +7,6 @@ import {
 import { requireUser } from "~/.server/session/session";
 import { Outlet, ShouldRevalidateFunction } from "@remix-run/react";
 import { getUserById } from "~/.server/services/user";
-import { universalActionHandler } from "~/.server/action-handler";
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);
