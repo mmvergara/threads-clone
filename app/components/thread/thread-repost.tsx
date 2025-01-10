@@ -1,5 +1,5 @@
 import { Repeat2Icon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Thread } from "~/.server/db/schema";
 import { Form, useFetcher } from "@remix-run/react";
 import { useClickOutside } from "~/hooks/useClickOutside";
@@ -16,6 +16,12 @@ const ThreadRepost = ({ thread, isReposted }: Props) => {
   );
 
   const repostThreadFetcher = useFetcher();
+
+  useEffect(() => {
+    setIsRepostDropdownOpen(false);
+
+    
+  }, [repostThreadFetcher]);
   return (
     <div className="relative">
       <button
