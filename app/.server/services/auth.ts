@@ -1,4 +1,4 @@
-import { generateID } from "~/utils/cuid.server";
+import { generateID } from "~/.server/utils/cuid";
 import { db } from "../db/drizzle.server";
 import { users } from "../db/schema";
 import { eq } from "drizzle-orm";

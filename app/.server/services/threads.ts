@@ -1,4 +1,4 @@
-import { generateID } from "~/utils/cuid.server";
+import { generateID } from "~/.server/utils/cuid";
 import { threadLikes, threadReposts, threads, users } from "../db/schema";
 import { db } from "../db/drizzle.server";
 import {
