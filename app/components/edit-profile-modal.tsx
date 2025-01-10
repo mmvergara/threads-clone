@@ -1,9 +1,5 @@
-import { Form } from "@remix-run/react";
-import { useEffect } from "react";
+import { useFetcher } from "@remix-run/react";
 import { User } from "~/.server/db/schema";
-import { toastActionData } from "~/utils/toast";
-import SubmitBtn from "./submit-btn";
-import { Intent, useUniversalActionData } from "~/utils/client-action-utils";
 
 const EditProfileModal = ({
   isOpen,
@@ -14,16 +10,7 @@ const EditProfileModal = ({
   setIsOpen: (open: boolean) => void;
   user: User;
 }) => {
-  const actionData = useUniversalActionData();
-  useEffect(() => {
-    toastActionData(actionData, Intent.UpdateProfileData);
-    if (
-      actionData?.success &&
-      actionData?.intent === Intent.UpdateProfileData
-    ) {
-      setIsOpen(false);
-    }
-  }, [actionData]);
+  const editProfileDataFetcher = useFetcher();
   return (
     <div
       role="dialog"
