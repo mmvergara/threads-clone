@@ -27,11 +27,10 @@ export const createThread = async ({
   imagesUrlJsonString,
   parentThreadId,
 }: CreateThreadParams) => {
-  const id = generateID();
   const res = await db
     .insert(threads)
     .values({
-      id,
+      id: generateID(),
       userId: currentUserId,
       content,
       imageUrls: imagesUrlJsonString,
@@ -77,7 +76,7 @@ export const getThreadById = async (threadId: string) => {
   return res[0];
 };
 
-export const getThreadsWithUser = async ({
+export const getThreads = async ({
   currentUserId,
 }: {
   currentUserId: string;
