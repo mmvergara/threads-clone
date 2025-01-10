@@ -23,10 +23,6 @@ export const universalActionHandler = async (request: Request) => {
         return await updateProfileDataAction(currentUser.id, formData, intent);
       case Intent.UpdateProfileImage:
         return await updateProfileImgAction(currentUser.id, formData, intent);
-      case Intent.FollowUser:
-        return await followUserAction(currentUser.id, formData, intent);
-      case Intent.UnfollowUser:
-        return await unfollowUserAction(currentUser.id, formData, intent);
       default:
         throw new Error("Invalid intent");
     }
