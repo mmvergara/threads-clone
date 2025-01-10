@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Thread, User } from "~/.server/db/schema";
 import { useClickOutside } from "~/hooks/useClickOutside";
-import { Intent, useUniversalActionData } from "~/utils/client-action-utils";
+import { Intent, useUniversalActionData } from "~/utils/types";
 import { cn } from "~/utils/formatters";
 import { toastActionData } from "~/utils/toast";
 import SubmitBtn from "../submit-btn";
