@@ -12,6 +12,10 @@ Simple Threads Clone with Remix and Drizzle
 
 ---
 
+### Todo
+
+- Zod validation on routes
+
 ### Stack
 
 - Remix
