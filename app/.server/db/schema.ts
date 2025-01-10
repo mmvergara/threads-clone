@@ -9,11 +9,11 @@ import {
 
 export const users = sqliteTable("users", {
   id: text("id").notNull().primaryKey(),
-  handle: text("handle").unique().notNull(),
-  email: text("email").unique().notNull(),
+  handle: text("handle", { length: 30 }).unique().notNull(),
+  email: text("email", { length: 254 }).unique().notNull(),
   passwordHash: text("password_hash").notNull(),
-  displayName: text("display_name").notNull(),
-  bio: text("bio").notNull().default("Wow, such empty!"),
+  displayName: text("display_name", { length: 30 }).notNull(),
+  bio: text("bio", { length: 254 }).notNull().default("Wow, such empty!"),
   profileImageUrl: text("profile_image_url")
     .notNull()
     .default("https://robohash.org/threads"),
@@ -32,7 +32,7 @@ export const threads = sqliteTable("threads", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id),
-  content: text("content").notNull(),
+  content: text("content", { length: 600 }).notNull(),
   imageUrls: text("image_urls", { mode: "json" }).notNull(),
   parentThreadId: text("parent_thread_id").references(
     (): AnySQLiteColumn => threads.id,
