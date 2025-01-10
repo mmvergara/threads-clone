@@ -8,6 +8,7 @@ import Thread from "~/components/thread/thread";
 import { getUserById, isFollowedByUser } from "~/.server/services/user";
 import ProfileHeader from "~/components/profile-header";
 
+// TODO: Implement Granular Error Handling
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);
   const userId = params.userId!;
