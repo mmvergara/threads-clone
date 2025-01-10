@@ -1,9 +1,10 @@
-import { Form, Link, useFetcher, useLocation } from "@remix-run/react";
+import { Link, useFetcher, useLocation } from "@remix-run/react";
 import { User } from "~/.server/db/schema";
 import EditProfileModal from "./edit-profile-modal";
 import UploadProfileModal from "./upload-profile-image-modal";
 import { useState } from "react";
 import { cn } from "~/utils/formatters";
+import { useToastAction } from "~/hooks/useToastAction";
 
 type Props = {
   user: User;
@@ -15,6 +16,7 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const followFetcher = useFetcher();
+  useToastAction(followFetcher.data);
   return (
     <header role="banner" aria-label="Profile header">
       <div className="px-6 pt-10">
