@@ -3,30 +3,22 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { requireUser } from "~/.server/session/session";
 import { useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
-import { ActionFunctionArgs } from "@remix-run/node";
 import { getFollowedUsersThreads } from "~/.server/services/threads";
 import { useLoaderData } from "@remix-run/react";
 import { getFollowedUsers } from "~/.server/services/user";
 
+// TODO: Implement Granular Error Handling
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);
-  try {
-    const followedUserIds = await getFollowedUsers(currentUser.id);
-    const threads = await getFollowedUsersThreads({
-      currentUserId: currentUser.id,
-      followedUserIds,
-    });
-    return {
-      threads,
-      currentUser,
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      threads: [],
-      currentUser: null,
-    };
-  }
+  const followedUserIds = await getFollowedUsers(currentUser.id);
+  const threads = await getFollowedUsersThreads({
+    currentUserId: currentUser.id,
+    followedUserIds,
+  });
+  return {
+    threads,
+    currentUser,
+  };
 };
 
 export const meta = () => {
@@ -54,8 +46,8 @@ const ForYou = () => {
     <main className="flex flex-col w-full" role="main">
       <header className="flex items-center gap-3 px-6 py-4" role="banner">
         <img
-          src={currentUser?.profileImageUrl}
-          alt={`${currentUser?.displayName}'s profile picture`}
+          src={currentUser.profileImageUrl}
+          alt={`${currentUser.displayName}'s profile picture`}
           className="w-10 h-10 rounded-full"
         />
         <button
