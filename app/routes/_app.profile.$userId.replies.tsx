@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { LoaderFunctionArgs } from "@remix-run/node";
 import { MetaFunction, useLoaderData } from "@remix-run/react";
 import { getUserById, isFollowedByUser } from "~/.server/services/user";
 import { getUserReplyThreads } from "~/.server/services/threads";

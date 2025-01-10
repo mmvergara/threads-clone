@@ -46,8 +46,8 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
             aria-label="Change profile picture"
           >
             <img
-              src={user.profileImageUrl || "https://via.placeholder.com/40x40"}
-              alt={`${user.displayName}'s profile picture`}
+              src={user.profileImageUrl}
+              alt={`${user.displayName}'s profile`}
               className="w-full h-full rounded-full"
             />
           </button>

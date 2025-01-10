@@ -38,13 +38,6 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   };
 };
 
-const getTotalChilds = (thread: NestedThread): number => {
-  if (!thread.childThreads.length) return 0;
-  return thread.childThreads.reduce((acc, reply) => {
-    return 1 + getTotalChilds(reply);
-  }, 0);
-};
-
 const ThreadReplies = ({
   replies,
   currentUser,
@@ -56,7 +49,7 @@ const ThreadReplies = ({
 }) => {
   return (
     <section className="relative" aria-label="Thread replies">
-      {replies.map((reply, index) => {
+      {replies.map((reply) => {
         const isFirstLevel = level === 0;
         return (
           <article key={reply.id} className={cn("relative pl-8")}>

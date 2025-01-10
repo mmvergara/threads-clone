@@ -1,6 +1,5 @@
 import { useFetcher } from "@remix-run/react";
 import { HeartIcon } from "lucide-react";
-import { useEffect } from "react";
 import { useToastAction } from "~/hooks/useToastAction";
 
 type Props = {

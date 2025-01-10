@@ -2,6 +2,8 @@ import { generateID } from "~/.server/utils/cuid";
 import { db } from "../db/drizzle.server";
 import { userFollowers, users } from "../db/schema";
 import { and, eq, getTableColumns, sql } from "drizzle-orm";
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { passwordHash, ...userWithoutPasswordHash } = getTableColumns(users);
 
 export const getUserById = async (id: string) => {

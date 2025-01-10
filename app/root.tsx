@@ -5,10 +5,10 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useRouteError,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
 import { ToastContainer } from "react-toastify";
-import { useRouteError } from "@remix-run/react";
 import { AlertCircle } from "lucide-react";
 import "./tailwind.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -48,7 +48,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export function ErrorBoundary() {
   const error = useRouteError();
   return (
-    <html>
+    <html lang="en">
       <head>
         <title>Oops! Something went wrong</title>
         <Meta />
@@ -66,7 +66,7 @@ export function ErrorBoundary() {
                 Something went wrong
               </h1>
               <p className="text-zinc-400">
-                We're sorry, but we encountered an unexpected error.
+                {`We're sorry, but we encountered an unexpected error.`}
               </p>
             </div>
 

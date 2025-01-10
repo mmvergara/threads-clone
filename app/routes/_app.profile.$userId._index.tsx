@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
-import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { LoaderFunctionArgs } from "@remix-run/node";
 import { getUserThreads } from "~/.server/services/threads";
 import { requireUser } from "~/.server/services/session";
 import { MetaFunction, useLoaderData } from "@remix-run/react";
@@ -54,22 +54,22 @@ const ProfilePage = () => {
             <div className="flex items-center gap-3 px-6 py-4">
               <img
                 src={user.profileImageUrl}
-                alt={`${user.displayName}'s profile picture`}
+                alt={`${user.displayName}'s Profile`}
                 className="w-10 h-10 rounded-full"
               />
               <button
                 onClick={() => setIsCreateThreadModalOpen(true)}
                 className="flex-1 ml-2 text-left text-zinc-500 text-sm cursor-text"
                 aria-label="Create new thread"
-                role="button"
+                type="button"
               >
-                What's new?
+                {` What's new?`}
               </button>
               <button
                 onClick={() => setIsCreateThreadModalOpen(true)}
                 className="px-4 py-2 rounded-xl text-white border-[1px] border-zinc-700"
                 aria-label="Create post"
-                role="button"
+                type="button"
               >
                 Post
               </button>

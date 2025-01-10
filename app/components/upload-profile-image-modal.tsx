@@ -1,7 +1,6 @@
-import { Form, useFetcher } from "@remix-run/react/dist/components";
+import { useFetcher } from "@remix-run/react/dist/components";
 import { ImageUpIcon } from "lucide-react";
-import { useState } from "react";
-import { useRef } from "react";
+import { useState , useRef } from "react";
 import { toast } from "react-toastify";
 import { UploadButton } from "~/utils/uploadthing";
 
@@ -57,7 +56,7 @@ const UploadProfileImageModal = ({
             <section className="flex justify-center" aria-label="Image preview">
               <img
                 src={uploadedImgUrl}
-                alt="Profile picture preview"
+                alt="Profile Preview"
                 className="w-32 h-32 rounded-full object-cover"
               />
             </section>

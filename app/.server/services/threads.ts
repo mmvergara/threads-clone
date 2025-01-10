@@ -13,6 +13,7 @@ import {
   sql,
 } from "drizzle-orm";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const { passwordHash, ...userWithoutPasswordHash } = getTableColumns(users);
 
 type CreateThreadParams = {
@@ -163,7 +164,7 @@ export const getUserReplyThreads = async ({
       isLiked: sql<boolean>`EXISTS (SELECT 1 FROM thread_likes WHERE thread_id = ${threads.id} AND user_id = ${currentUserId})`,
     })
     .from(threads)
-    .where(isNotNull(threads.parentThreadId));
+    .where(and(isNotNull(threads.parentThreadId), eq(threads.userId, userId)));
   return res;
 };
 
@@ -219,7 +220,7 @@ export const getThreadWithNestedReplies = async (
         user: userWithoutPasswordHash,
         isLiked: sql<boolean>`CASE WHEN ${threadLikes.id} IS NOT NULL THEN 1 ELSE 0 END`,
         isReposted: sql<boolean>`CASE WHEN ${threadReposts.id} IS NOT NULL THEN 1 ELSE 0 END`,
-        childThreads: sql<any[]>`null`, // Placeholder for nested threads
+        childThreads: sql<NestedThread[]>`null`, // Placeholder for nested threads
       })
       .from(threads)
       .leftJoin(users, eq(threads.userId, users.id))
@@ -264,7 +265,7 @@ export const getThreadWithNestedReplies = async (
       user: { ...userWithoutPasswordHash },
       isLiked: sql<boolean>`CASE WHEN ${threadLikes.id} IS NOT NULL THEN 1 ELSE 0 END`,
       isReposted: sql<boolean>`CASE WHEN ${threadReposts.id} IS NOT NULL THEN 1 ELSE 0 END`,
-      childThreads: sql<any[]>`null`, // Placeholder for nested threads
+      childThreads: sql<NestedThread[]>`null`, // Placeholder for nested threads
     })
     .from(threads)
     .leftJoin(users, eq(threads.userId, users.id))

@@ -28,17 +28,20 @@ const Thread = ({
 }: Props) => {
   const navigate = useNavigate();
 
-  const handleThreadClick = () => {};
+  const handleThreadClick = () => {
+    navigate(`/threads/${thread.id}`);
+  };
 
   return (
     <article>
       <div
+        onKeyDown={() => {}}
         onClick={handleThreadClick}
         className={cn(
           "flex gap-2 flex-col px-6 py-4 cursor-pointer relative",
           isMainThread && "border-b border-zinc-800"
         )}
-        role="article"
+        role="button"
         aria-label={`Thread by ${threadAuthor.displayName}`}
         tabIndex={0}
       >
@@ -49,22 +52,22 @@ const Thread = ({
           </p>
         )}
         <div className="flex gap-2">
-          <header
+          <button
             className="flex-shrink-0 relative"
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/profile/${threadAuthor.id}`);
             }}
-            role="button"
             tabIndex={0}
+            type="button"
             aria-label={`View ${threadAuthor.displayName}'s profile`}
           >
             <img
               src={threadAuthor.profileImageUrl}
-              alt={`${threadAuthor.displayName}'s profile picture`}
+              alt={`${threadAuthor.displayName}'s Profile`}
               className="w-10 h-10 rounded-full"
             />
-          </header>
+          </button>
 
           <div className="flex-1 w-[calc(100%-50px)]">
             <ThreadContent thread={thread} threadAuthor={threadAuthor} />

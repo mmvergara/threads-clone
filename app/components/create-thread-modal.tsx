@@ -33,7 +33,7 @@ const CreateThreadModal = ({
 
   useEffect(() => {
     if (createThreadFetcher.state === "submitting") setIsOpen(false);
-  }, [createThreadFetcher]);
+  }, [createThreadFetcher, setIsOpen]);
 
   if (!isOpen) return null;
 
@@ -188,9 +188,9 @@ const CreateThreadModal = ({
                     endpoint="threadImageUploader"
                     onUploadBegin={() => setIsUploading(true)}
                     onUploadProgress={setProgress}
-                    onClientUploadComplete={(images: any) => {
+                    onClientUploadComplete={(images: { url: string }[]) => {
                       setIsUploading(false);
-                      setImages(images.map((i: any) => i.url));
+                      setImages(images.map((i) => i.url));
                     }}
                     onUploadError={(error: Error) => {
                       setIsUploading(false);

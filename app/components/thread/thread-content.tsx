@@ -1,4 +1,4 @@
-import { useFetcher, useNavigate } from "@remix-run/react";
+import { useFetcher } from "@remix-run/react";
 import { MoreHorizontalIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { Thread, User } from "~/.server/db/schema";
@@ -16,7 +16,6 @@ const ThreadContent = ({ thread, threadAuthor }: Props) => {
     setIsDeleteDropdownOpen(false)
   );
   const images = JSON.parse(thread.imageUrls as string) as string[];
-  const navigate = useNavigate();
 
   const deleteThreadFetcher = useFetcher();
   return (
@@ -24,12 +23,6 @@ const ThreadContent = ({ thread, threadAuthor }: Props) => {
       <div className="flex flex-wrap items-center gap-2 justify-between">
         <div
           className="flex items-center gap-2"
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/profile/${threadAuthor.id}`);
-          }}
-          role="button"
-          tabIndex={0}
           aria-label={`View ${threadAuthor.displayName}'s profile`}
         >
           <span className="font-semibold text-white">

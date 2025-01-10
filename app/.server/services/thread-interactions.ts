@@ -1,7 +1,6 @@
 import { generateID } from "~/.server/utils/cuid";
 import { db } from "../db/drizzle.server";
-import { eq, sql } from "drizzle-orm";
-import { and } from "drizzle-orm";
+import { eq, sql , and } from "drizzle-orm";
 import { threadLikes, threadReposts, threads } from "../db/schema";
 
 export async function toggleLikeThread(threadId: string, userId: string) {

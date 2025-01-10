@@ -5,7 +5,6 @@ import {
   integer,
   AnySQLiteColumn,
   uniqueIndex,
-  UniqueConstraint,
   index,
 } from "drizzle-orm/sqlite-core";
 

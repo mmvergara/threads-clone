@@ -35,7 +35,7 @@ const SearchPage = () => {
 
   useEffect(() => {
     navigate(`/search?q=${search}`);
-  }, [search]);
+  }, [search, navigate]);
 
   return (
     <main className="flex flex-col w-full" role="main">
@@ -66,7 +66,7 @@ const SearchPage = () => {
         {threads.length === 0 ? (
           <p className="text-center text-zinc-500 p-4">No threads found</p>
         ) : (
-          <ul className="flex flex-col w-full" role="list">
+          <ul className="flex flex-col w-full">
             {threads.map((thread) => (
               <li key={thread.thread.id}>
                 <Thread

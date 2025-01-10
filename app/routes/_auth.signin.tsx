@@ -1,17 +1,13 @@
 import {
   Form,
-  isRouteErrorResponse,
   Link,
   MetaFunction,
   useActionData,
   useNavigation,
-  useParams,
-  useRouteError,
   useSearchParams,
 } from "@remix-run/react";
 import {
   ActionFunctionArgs,
-  json,
   LoaderFunctionArgs,
   redirect,
 } from "@remix-run/node";
@@ -22,8 +18,6 @@ import {
   storeUserInSession,
 } from "~/.server/services/session";
 import { getUserByEmail, getUserById } from "~/.server/services/user";
-import { useEffect } from "react";
-import { toast } from "react-toastify";
 import { handleServerError } from "~/.server/utils/error-handler";
 import { useToastAction } from "~/hooks/useToastAction";
 
@@ -162,7 +156,7 @@ const ThreadsSignIn = () => {
 
         <footer className="text-center mt-6 space-y-4">
           <div className="flex items-center justify-center mt-4">
-            <span className="text-gray-500">Don't have an account?</span>
+            <span className="text-gray-500">{`Don't have an account?`}</span>
             <Link
               to="/signup"
               className="ml-2 text-blue-500 hover:underline"

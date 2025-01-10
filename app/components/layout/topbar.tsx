@@ -1,6 +1,5 @@
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon } from "lucide-react";
 import { Link, useLocation } from "@remix-run/react";
-import { ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 
 const TopBar = () => {
@@ -23,7 +22,11 @@ const TopBar = () => {
 
   return (
     <header className="flex fixed w-full z-40 bg-[#0a0a0a] flex-row items-center justify-center gap-4 p-3 border-b-[1px] sm:border-none border-[#3d3d3d]">
-      <nav role="navigation" aria-label="Main navigation" className="flex gap-2">
+      <nav
+        role="navigation"
+        aria-label="Main navigation"
+        className="flex gap-2"
+      >
         <h1 className="font-bold mb-1 ml-2">
           {links.find((link) => link.href === location.pathname)?.name}
         </h1>
