@@ -3,26 +3,19 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { requireUser } from "~/.server/session/session";
 import { useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
-import { getThreadsWithUser } from "~/.server/services/threads";
 import { useLoaderData } from "@remix-run/react";
+import { getThreads } from "~/.server/services/threads";
 
+// TODO: Implement Granular Error Handling
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  console.log("Loader runnnigg");
   const currentUser = await requireUser(request);
-  try {
-    const threads = await getThreadsWithUser({
-      currentUserId: currentUser.id,
-    });
-    return {
-      threads,
-      currentUser,
-    };
-  } catch (error) {
-    return {
-      threads: [],
-      currentUser: null,
-    };
-  }
+  const threads = await getThreads({
+    currentUserId: currentUser.id,
+  });
+  return {
+    threads,
+    currentUser,
+  };
 };
 
 export const meta = () => {
@@ -31,8 +24,8 @@ export const meta = () => {
 
 const ForYou = () => {
   const [isCreateThreadModalOpen, setIsCreateThreadModalOpen] = useState(false);
-  const { threads, currentUser } =
-    useLoaderData<Awaited<ReturnType<typeof loader>>>();
+  const { currentUser, threads } = useLoaderData<typeof loader>();
+
   return (
     <main className="flex flex-col w-full" role="main">
       <header className="flex items-center gap-3 px-6 py-4" role="banner">
