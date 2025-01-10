@@ -5,9 +5,7 @@ import { and } from "drizzle-orm";
 import { threadLikes, threadReposts, threads } from "../db/schema";
 
 export async function toggleLikeThread(threadId: string, userId: string) {
-  const id = generateID();
   const hasUserLiked = await hasUserLikedThread(threadId, userId);
-
   return await db.transaction(async (tx) => {
     let delta = 0;
     if (hasUserLiked) {
@@ -22,7 +20,7 @@ export async function toggleLikeThread(threadId: string, userId: string) {
       delta = -1;
     } else {
       await tx.insert(threadLikes).values({
-        id,
+        id: generateID(),
         threadId,
         userId,
       });
@@ -57,7 +55,6 @@ export async function toggleRepostThread({
   currentUserId: string;
 }) {
   return await db.transaction(async (tx) => {
-    const id = generateID();
     const hasUserReposted =
       (
         await db
@@ -86,7 +83,7 @@ export async function toggleRepostThread({
       delta = -1;
     } else {
       await tx.insert(threadReposts).values({
-        id,
+        id: generateID(),
         threadId,
         repostingUserId: currentUserId,
       });
@@ -99,29 +96,3 @@ export async function toggleRepostThread({
     return true;
   });
 }
-
-export async function unrepostThread(threadId: string, userId: string) {
-  await db.transaction(async (tx) => {
-    await tx
-      .delete(threadReposts)
-      .where(
-        and(
-          eq(threadReposts.threadId, threadId),
-          eq(threadReposts.repostingUserId, userId)
-        )
-      );
-    await tx
-      .update(threads)
-      .set({ reposts: sql`${threads.reposts} - 1` })
-      .where(eq(threads.id, threadId));
-  });
-  return true;
-}
-
-export async function hasUserRepostedThread({
-  threadId,
-  currentUserId,
-}: {
-  threadId: string;
-  currentUserId: string;
-}) {}
