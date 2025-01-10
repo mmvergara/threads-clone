@@ -1,7 +1,8 @@
 import { ActionFunctionArgs } from "@remix-run/node";
 import { z } from "zod";
 import { deleteThread } from "~/.server/services/threads";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
+import { handleServerError } from "~/.server/utils/error-handler";
 
 const deleteThreadSchema = z.object({
   threadId: z
@@ -34,7 +35,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     });
     return { success: true };
   } catch (error) {
-    console.error(error);
-    return { error: "Something went wrong" };
+    return handleServerError(error);
   }
 };

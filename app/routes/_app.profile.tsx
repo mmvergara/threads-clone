@@ -4,7 +4,7 @@ import {
   redirect,
   MetaFunction,
 } from "@remix-run/node";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
 import { Outlet, ShouldRevalidateFunction } from "@remix-run/react";
 import { getUserById } from "~/.server/services/user";
 

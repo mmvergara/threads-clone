@@ -1,7 +1,7 @@
 import { ActionFunctionArgs } from "@remix-run/node";
 import { z } from "zod";
 import { updateUserProfileImage } from "~/.server/services/user";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   if (request.method !== "POST") {

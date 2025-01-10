@@ -18,7 +18,7 @@ import {
   isEmailTaken,
   isHandleTaken,
 } from "~/.server/services/auth";
-import { getUserIdFromSession } from "~/.server/session/session";
+import { getUserIdFromSession } from "~/.server/services/session";
 import { getUserById } from "~/.server/services/user";
 import { handleServerError } from "~/.server/utils/error-handler";
 import { useToastAction } from "~/hooks/useToastAction";

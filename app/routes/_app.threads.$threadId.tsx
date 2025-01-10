@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, redirect, MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import { getThreadWithNestedReplies } from "~/.server/services/threads";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
 import { User } from "~/.server/db/schema";
 import Thread from "~/components/thread/thread";
 import { cn } from "~/utils/formatters";

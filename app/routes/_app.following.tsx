@@ -1,6 +1,6 @@
 import Thread from "../components/thread/thread";
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
 import { useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
 import { getFollowedUsersThreads } from "~/.server/services/threads";

@@ -2,7 +2,7 @@ import { useState } from "react";
 import CreateThreadModal from "~/components/create-thread-modal";
 import { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { getUserThreads } from "~/.server/services/threads";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
 import { MetaFunction, useLoaderData } from "@remix-run/react";
 import Thread from "~/components/thread/thread";
 import { getUserById, isFollowedByUser } from "~/.server/services/user";

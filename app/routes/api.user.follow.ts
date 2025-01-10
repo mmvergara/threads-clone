@@ -1,7 +1,7 @@
 import { ActionFunctionArgs } from "@remix-run/node";
 import { z } from "zod";
 import { toggleFollowUser } from "~/.server/services/user";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
 import { handleServerError } from "~/.server/utils/error-handler";
 
 export const action = async ({ request }: ActionFunctionArgs) => {

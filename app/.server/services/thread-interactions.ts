@@ -32,7 +32,7 @@ export async function toggleLikeThread(threadId: string, userId: string) {
       .set({ likes: sql`${threads.likes} + ${delta}` })
       .where(eq(threads.id, threadId));
 
-    return true;
+    return { liked: !hasUserLiked };
   });
 }
 
@@ -93,6 +93,6 @@ export async function toggleRepostThread({
       .update(threads)
       .set({ reposts: sql`${threads.reposts} + ${delta}` })
       .where(eq(threads.id, threadId));
-    return true;
+    return { reposted: !hasUserReposted };
   });
 }

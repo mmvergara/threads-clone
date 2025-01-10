@@ -66,6 +66,7 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
           />
           {isCurrentUser ? (
             <button
+              type="button"
               onClick={() => setIsEditProfileOpen(true)}
               className="flex-1 px-4 py-1.5 border-[1px] font-bold border-zinc-600 rounded-lg text-white"
               aria-label="Edit profile"

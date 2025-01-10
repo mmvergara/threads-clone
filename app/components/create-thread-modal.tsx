@@ -5,6 +5,7 @@ import { UploadButton } from "~/utils/uploadthing";
 import { useFetcher } from "@remix-run/react";
 import { Thread, User } from "~/.server/db/schema";
 import { truncateTextEllipses } from "~/utils/formatters";
+import { useToastAction } from "~/hooks/useToastAction";
 
 type Props = {
   isOpen: boolean;
@@ -27,6 +28,8 @@ const CreateThreadModal = ({
   const [images, setImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  useToastAction(createThreadFetcher.data);
 
   useEffect(() => {
     if (createThreadFetcher.state === "submitting") setIsOpen(false);

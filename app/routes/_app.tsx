@@ -1,6 +1,6 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
 import BottomBar from "~/components/layout/bottombar";
 import Sidebar from "~/components/layout/sidebar";
 import TopBar from "~/components/layout/topbar";

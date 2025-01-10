@@ -1,7 +1,8 @@
 import { ActionFunctionArgs } from "@remix-run/node";
 import { z } from "zod";
 import { toggleRepostThread } from "~/.server/services/thread-interactions";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
+import { handleServerError } from "~/.server/utils/error-handler";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   if (request.method !== "POST") {
@@ -17,13 +18,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       })
       .length(10, "Invalid thread id")
       .parse(formData.get("threadId"));
-    await toggleRepostThread({
+    const { reposted } = await toggleRepostThread({
       threadId,
       currentUserId: currentUser.id,
     });
-    return null;
+    return { success: reposted ? "Thread reposted" : "Thread un-reposted" };
   } catch (error) {
-    console.error(error);
-    return { error: "Something went wrong" };
+    return handleServerError(error);
   }
 };

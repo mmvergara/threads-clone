@@ -1,7 +1,8 @@
 import { ActionFunctionArgs } from "@remix-run/node";
 import { z } from "zod";
 import { toggleLikeThread } from "~/.server/services/thread-interactions";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
+import { handleServerError } from "~/.server/utils/error-handler";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   if (request.method !== "POST") {
@@ -17,10 +18,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       .length(10, "Invalid thread id")
       .parse(formData.get("threadId"));
 
-    const isLiked = await toggleLikeThread(threadId, currentUser.id);
-    return { isLiked };
+    const { liked } = await toggleLikeThread(threadId, currentUser.id);
+    return { success: liked ? "Thread liked" : "Thread unliked" };
   } catch (error) {
-    console.error(error);
-    return { error: "Something went wrong" };
+    return handleServerError(error);
   }
 };

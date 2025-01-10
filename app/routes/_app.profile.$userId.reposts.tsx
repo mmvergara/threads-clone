@@ -3,7 +3,7 @@ import { MetaFunction, useLoaderData } from "@remix-run/react";
 import { getUserById, isFollowedByUser } from "~/.server/services/user";
 import { getUserReposts } from "~/.server/services/threads";
 import ProfileHeader from "~/components/profile-header";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
 import Thread from "~/components/thread/thread";
 
 // TODO: Implement Granular Error Handling

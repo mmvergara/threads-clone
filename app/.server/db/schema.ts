@@ -5,6 +5,8 @@ import {
   integer,
   AnySQLiteColumn,
   uniqueIndex,
+  UniqueConstraint,
+  index,
 } from "drizzle-orm/sqlite-core";
 
 export const users = sqliteTable("users", {
@@ -31,7 +33,9 @@ export const threads = sqliteTable("threads", {
   id: text("id").notNull().primaryKey(),
   userId: text("user_id")
     .notNull()
-    .references(() => users.id),
+    .references(() => users.id, {
+      onDelete: "cascade",
+    }),
   content: text("content", { length: 600 }).notNull(),
   imageUrls: text("image_urls", { mode: "json" }).notNull(),
   parentThreadId: text("parent_thread_id").references(
@@ -125,6 +129,10 @@ export const userFollowers = sqliteTable(
   (table) => {
     return {
       uniqueFollow: uniqueIndex("unique_follow_idx").on(
+        table.followedUserId,
+        table.followerUserId
+      ),
+      noSelfFollow: index("no_self_follow_idx").on(
         table.followedUserId,
         table.followerUserId
       ),

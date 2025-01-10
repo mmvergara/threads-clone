@@ -4,6 +4,7 @@ import { Thread } from "~/.server/db/schema";
 import { Form, useFetcher } from "@remix-run/react";
 import { useClickOutside } from "~/hooks/useClickOutside";
 import { cn } from "~/utils/formatters";
+import { useToastAction } from "~/hooks/useToastAction";
 
 type Props = {
   thread: Thread;
@@ -16,6 +17,7 @@ const ThreadRepost = ({ thread, isReposted }: Props) => {
   );
 
   const repostThreadFetcher = useFetcher();
+  useToastAction(repostThreadFetcher.data);
 
   useEffect(() => {
     if (repostThreadFetcher.state === "submitting")

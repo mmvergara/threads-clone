@@ -3,7 +3,7 @@ import { useLoaderData, useNavigate } from "@remix-run/react";
 import { SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getThreads, searchThreads } from "~/.server/services/threads";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
 import Thread from "~/components/thread/thread";
 
 // TODO: Implement Granular Error Handling

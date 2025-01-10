@@ -12,10 +12,6 @@ Simple Threads Clone with Remix and Drizzle
 
 ---
 
-### Todo
-
-- Zod validation on routes
-
 ### Stack
 
 - Remix
@@ -63,9 +59,7 @@ npx drizzle-kit studio
 
 - Remix has a straightforward logic, only took me a few days to understand the concepts of Remix.
 
-- Tried implementing proper html semantics and accessibility like aria-labels, etc.
-
-- I like drizzle better than prisma.
+- Execessive use of toast notifications, but it's just for the sake of learning.
 
 - They kinda stick to web standards, so it's easy to understand.
 

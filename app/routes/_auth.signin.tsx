@@ -20,7 +20,7 @@ import bcrypt from "bcrypt";
 import {
   getUserIdFromSession,
   storeUserInSession,
-} from "~/.server/session/session";
+} from "~/.server/services/session";
 import { getUserByEmail, getUserById } from "~/.server/services/user";
 import { useEffect } from "react";
 import { toast } from "react-toastify";

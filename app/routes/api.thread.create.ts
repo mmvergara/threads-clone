@@ -1,7 +1,8 @@
 import { ActionFunctionArgs } from "@remix-run/node";
 import { z } from "zod";
 import { createThread } from "~/.server/services/threads";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
+import { handleServerError } from "~/.server/utils/error-handler";
 
 const createThreadSchema = z.object({
   content: z.string().min(1, "Content is required"),
@@ -32,7 +33,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   if (request.method !== "POST") {
     return { status: 405, error: "Method not allowed" };
   }
-  console.log("Create thread action running");
 
   try {
     const currentUser = await requireUser(request);
@@ -43,15 +43,14 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       images: formData.get("images"),
       parentThreadId: formData.get("parentThreadId"),
     });
-    const isLiked = await createThread({
+    await createThread({
       content: valid.content.trim(),
       imagesUrlJsonString: valid.images || "[]",
       parentThreadId: valid?.parentThreadId || undefined,
       currentUserId: currentUser.id,
     });
-    return { isLiked };
+    return { success: "Thread created successfully" };
   } catch (error) {
-    console.error(error);
-    return { error: "Something went wrong" };
+    return handleServerError(error);
   }
 };

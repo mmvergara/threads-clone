@@ -48,7 +48,7 @@ const uploadRouter = {
 export type UploadRouter = typeof uploadRouter;
 
 import { createRouteHandler } from "uploadthing/remix";
-import { getUserIdFromSession } from "~/.server/session/session";
+import { getUserIdFromSession } from "~/.server/services/session";
 
 export const { action, loader } = createRouteHandler({
   router: uploadRouter,

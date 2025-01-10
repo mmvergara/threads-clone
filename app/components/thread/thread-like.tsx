@@ -1,5 +1,7 @@
 import { useFetcher } from "@remix-run/react";
 import { HeartIcon } from "lucide-react";
+import { useEffect } from "react";
+import { useToastAction } from "~/hooks/useToastAction";
 
 type Props = {
   threadId: string;
@@ -8,6 +10,8 @@ type Props = {
 };
 const ThreadLike = ({ isLiked, likes, threadId }: Props) => {
   const fetcher = useFetcher();
+  useToastAction(fetcher.data);
+
   return (
     <fetcher.Form method="post" action="/api/thread/like">
       <button

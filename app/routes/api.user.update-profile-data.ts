@@ -4,7 +4,7 @@ import {
   updateUserProfileData,
   updateUserProfileImage,
 } from "~/.server/services/user";
-import { requireUser } from "~/.server/session/session";
+import { requireUser } from "~/.server/services/session";
 
 const updateProfileDataSchema = z.object({
   displayName: z
