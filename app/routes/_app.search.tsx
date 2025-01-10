@@ -2,27 +2,34 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useNavigate } from "@remix-run/react";
 import { SearchIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getThreadsWithUser, searchThreads } from "~/.server/services/threads";
+import { getThreads, searchThreads } from "~/.server/services/threads";
 import { requireUser } from "~/.server/session/session";
 import Thread from "~/components/thread/thread";
 
+// TODO: Implement Granular Error Handling
 export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const user = await requireUser(request);
+  const currentUser = await requireUser(request);
   const url = new URL(request.url);
   const searchQuery = url.searchParams.get("q") || "";
   if (!searchQuery) {
-    const threads = await getThreadsWithUser({ userId: user.id });
-    return threads;
+    const threads = await getThreads({ currentUserId: currentUser.id });
+    return {
+      threads,
+      currentUser,
+    };
   }
   const threads = await searchThreads({
-    currentUserId: user.id,
+    currentUserId: currentUser.id,
     searchQuery: searchQuery,
   });
-  return threads;
+  return {
+    threads,
+    currentUser,
+  };
 };
 
 const SearchPage = () => {
-  const threads = useLoaderData<Awaited<ReturnType<typeof loader>>>();
+  const { threads, currentUser } = useLoaderData<typeof loader>();
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
 
@@ -65,7 +72,8 @@ const SearchPage = () => {
                 <Thread
                   isReposted={false}
                   thread={thread.thread}
-                  user={thread.user}
+                  threadAuthor={thread.user}
+                  currentUser={currentUser}
                   isLiked={thread.isLiked}
                   withoutActions
                 />

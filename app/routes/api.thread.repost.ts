@@ -1,4 +1,5 @@
 import { ActionFunctionArgs } from "@remix-run/node";
+import { z } from "zod";
 import { toggleRepostThread } from "~/.server/services/thread-interactions";
 import { requireUser } from "~/.server/session/session";
 
@@ -10,7 +11,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     const currentUser = await requireUser(request);
     const formData = await request.formData();
-    const threadId = formData.get("threadId") as string;
+    const threadId = z
+      .string({
+        message: "Thread Id is required.",
+      })
+      .length(10, "Invalid thread id")
+      .parse(formData.get("threadId"));
     await toggleRepostThread({
       threadId,
       currentUserId: currentUser.id,

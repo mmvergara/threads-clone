@@ -1,15 +1,21 @@
-import { Form, Link, MetaFunction, useActionData } from "@remix-run/react";
+import {
+  Form,
+  isRouteErrorResponse,
+  Link,
+  MetaFunction,
+  useActionData,
+  useNavigation,
+  useParams,
+  useRouteError,
+  useSearchParams,
+} from "@remix-run/react";
 import {
   ActionFunctionArgs,
+  json,
   LoaderFunctionArgs,
   redirect,
 } from "@remix-run/node";
 import { z } from "zod";
-import {
-  ActionReturnType,
-  handleActionError,
-  handleCatchErrorAction,
-} from "~/.server/utils/action-utils";
 import bcrypt from "bcrypt";
 import {
   getUserIdFromSession,
@@ -17,7 +23,9 @@ import {
 } from "~/.server/session/session";
 import { getUserByEmail, getUserById } from "~/.server/services/user";
 import { useEffect } from "react";
-import { toastActionData } from "~/utils/toast";
+import { toast } from "react-toastify";
+import { handleServerError } from "~/.server/utils/error-handler";
+import { useToastAction } from "~/hooks/useToastAction";
 
 export const meta: MetaFunction = () => {
   return [
@@ -40,24 +48,34 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 const signInSchema = z.object({
-  email: z.string().email("Please enter a valid email"),
-  password: z.string().min(8, "Password must be 8 or more characters"),
+  email: z
+    .string({ message: "Email is required" })
+    .email("Please enter a valid email"),
+  password: z
+    .string({ message: "Password is required" })
+    .min(8, "Password must be 8 or more characters"),
 });
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     const formData = await request.formData();
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    const valid = await signInSchema.parseAsync({ email, password });
+    const valid = signInSchema.parse({
+      email: formData.get("email"),
+      password: formData.get("password"),
+    });
 
     const user = await getUserByEmail(valid.email);
-    if (!user) return handleActionError(["Invalid Credentials"], "signIn");
+    if (!user) {
+      throw new Error("Invalid Credentials");
+    }
 
-    const validPassword = await bcrypt.compare(password, user.passwordHash);
-    if (!validPassword)
-      return handleActionError(["Invalid Credentials"], "signIn");
+    const validPassword = await bcrypt.compare(
+      valid.password,
+      user.passwordHash
+    );
+    if (!validPassword) {
+      throw new Error("Invalid Credentials");
+    }
 
     const sessionHeader = await storeUserInSession(user.id);
     return redirect("/", {
@@ -66,16 +84,16 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       },
     });
   } catch (error) {
-    return handleCatchErrorAction(error, "signIn");
+    return handleServerError(error);
   }
 };
 
 const ThreadsSignIn = () => {
-  const actionData = useActionData() as ActionReturnType;
-  useEffect(() => {
-    toastActionData(actionData, "signIn");
-  }, [actionData]);
-
+  const actionData = useActionData<typeof action>();
+  const navigation = useNavigation();
+  const isSubmitting = navigation.state === "submitting";
+  const justSignedUp = useSearchParams()[0].get("justSignedUp");
+  useToastAction(actionData);
   return (
     <main
       className="min-h-screen bg-[#101010] text-white flex items-center justify-center px-4"
@@ -89,6 +107,9 @@ const ThreadsSignIn = () => {
           <p className="text-zinc-400 mt-2" aria-label="Description">
             Not really, this is just a clone.
           </p>
+          {justSignedUp && (
+            <p className="text-green-500">Account Created Successfully!</p>
+          )}
         </header>
 
         <section aria-label="Sign in form">
@@ -133,7 +154,7 @@ const ThreadsSignIn = () => {
                 className="w-full py-3 bg-white text-black font-semibold rounded-xl hover:bg-blue-500 transition duration-300"
                 aria-label="Sign in"
               >
-                Log In
+                {isSubmitting ? "Signing in..." : "Sign in"}
               </button>
             </fieldset>
           </Form>

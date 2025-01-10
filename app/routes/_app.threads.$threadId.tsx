@@ -22,6 +22,7 @@ type NestedThread = {
   childThreads: NestedThread[];
 };
 
+// TODO: Implement Granular Error Handling
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);
   const thread: NestedThread | null = await getThreadWithNestedReplies(

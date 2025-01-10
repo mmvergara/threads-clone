@@ -11,22 +11,17 @@ import {
   redirect,
 } from "@remix-run/node";
 import { z } from "zod";
-import {
-  ActionReturnType,
-  handleActionError,
-  handleActionSuccess,
-  handleCatchErrorAction,
-} from "~/.server/utils/action-utils";
+
 import bcrypt from "bcrypt";
 import {
   createUser,
   isEmailTaken,
   isHandleTaken,
 } from "~/.server/services/auth";
-import { useEffect } from "react";
 import { getUserIdFromSession } from "~/.server/session/session";
-import { toastActionData } from "~/utils/toast";
 import { getUserById } from "~/.server/services/user";
+import { handleServerError } from "~/.server/utils/error-handler";
+import { useToastAction } from "~/hooks/useToastAction";
 
 export const meta: MetaFunction = () => {
   return [
@@ -49,55 +44,58 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 const signUpSchema = z.object({
-  email: z.string().email("Please enter a valid email"),
+  email: z
+    .string({ message: "Email is required" })
+    .email("Please enter a valid email"),
   handle: z
-    .string()
+    .string({ message: "Handle is required" })
     .min(3, "Handle must be 3 or more characters")
-    .max(20, "Handle must be 20 or less characters"),
+    .max(30, "Handle must be 20 or less characters"),
   password: z.string().min(8, "Password must be 8 or more characters"),
 });
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   try {
     const formData = await request.formData();
-    const email = formData.get("email") as string;
-    const handle = formData.get("handle") as string;
-    const password = formData.get("password") as string;
-    const valid = await signUpSchema.parseAsync({ email, handle, password });
+
+    const valid = signUpSchema.parse({
+      email: formData.get("email"),
+      handle: formData.get("handle"),
+      password: formData.get("password"),
+    });
 
     const emailTaken = await isEmailTaken(valid.email);
-    if (emailTaken)
-      return handleActionError(["Email is already taken"], "signUp");
-
+    if (emailTaken) {
+      throw new Error("Email is already taken");
+    }
     const handleTaken = await isHandleTaken(valid.handle);
-    if (handleTaken)
-      return handleActionError(["Handle is already taken"], "signUp");
+    if (handleTaken) {
+      throw new Error("Handle is already taken");
+    }
 
     const salt = await bcrypt.genSalt();
-    const passwordHash = await bcrypt.hash(password, salt);
+    const passwordHash = await bcrypt.hash(valid.password, salt);
 
     await createUser({
       email: valid.email,
       handle: valid.handle,
       passwordHash: passwordHash,
     });
-    return handleActionSuccess("Successfully created account!", "signUp");
+
+    return redirect("/signin?justSignedUp=true");
   } catch (error) {
-    return handleCatchErrorAction(error, "signUp");
+    return handleServerError(error);
   }
 };
 
 const ThreadsSignUp = () => {
-  const actionData = useActionData() as ActionReturnType;
-  const navigate = useNavigate();
-  useEffect(() => {
-    toastActionData(actionData, "signUp");
-    if (actionData?.success) {
-      navigate("/signin");
-    }
-  }, [actionData]);
+  const actionData = useActionData<typeof action>();
+  useToastAction(actionData);
   return (
-    <main className="min-h-screen bg-[#101010] text-white flex items-center justify-center px-4" role="main">
+    <main
+      className="min-h-screen bg-[#101010] text-white flex items-center justify-center px-4"
+      role="main"
+    >
       <div className="w-full max-w-sm rounded-lg shadow-lg p-6">
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold tracking-tight text-white">
@@ -112,9 +110,11 @@ const ThreadsSignUp = () => {
           <Form method="post" className="space-y-2">
             <fieldset>
               <legend className="sr-only">Sign up credentials</legend>
-              
+
               <div className="mb-4">
-                <label htmlFor="email" className="sr-only">Email</label>
+                <label htmlFor="email" className="sr-only">
+                  Email
+                </label>
                 <input
                   id="email"
                   type="email"
@@ -128,7 +128,9 @@ const ThreadsSignUp = () => {
               </div>
 
               <div className="mb-4">
-                <label htmlFor="handle" className="sr-only">Handle (username)</label>
+                <label htmlFor="handle" className="sr-only">
+                  Handle (username)
+                </label>
                 <input
                   id="handle"
                   type="text"
@@ -143,7 +145,9 @@ const ThreadsSignUp = () => {
               </div>
 
               <div className="mb-4">
-                <label htmlFor="password" className="sr-only">Password</label>
+                <label htmlFor="password" className="sr-only">
+                  Password
+                </label>
                 <input
                   id="password"
                   type="password"
@@ -170,8 +174,8 @@ const ThreadsSignUp = () => {
         <footer className="text-center mt-6 space-y-4">
           <div className="flex items-center justify-center mt-4">
             <span className="text-gray-500">Already have an account?</span>
-            <Link 
-              to="/signin" 
+            <Link
+              to="/signin"
               className="ml-2 text-blue-500 hover:underline"
               aria-label="Go to sign in page"
             >

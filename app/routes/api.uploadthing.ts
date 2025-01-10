@@ -24,7 +24,18 @@ const uploadRouter = {
       maxFileSize: "4MB",
       maxFileCount: 5,
     },
-  }).onUploadComplete(async () => {}),
+  })
+    .middleware(async ({ event }) => {
+      const user = getUserIdFromSession(event.request);
+      if (!user) {
+        return {
+          code: "UNAUTHORIZED",
+          message: "You need to be logged in to upload images",
+        };
+      }
+      return {};
+    })
+    .onUploadComplete(async () => {}),
 
   profileImageUploader: f({
     image: {
@@ -37,6 +48,7 @@ const uploadRouter = {
 export type UploadRouter = typeof uploadRouter;
 
 import { createRouteHandler } from "uploadthing/remix";
+import { getUserIdFromSession } from "~/.server/session/session";
 
 export const { action, loader } = createRouteHandler({
   router: uploadRouter,

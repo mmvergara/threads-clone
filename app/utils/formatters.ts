@@ -1,7 +1,7 @@
 import { twMerge } from "tailwind-merge";
 import { type ClassValue, clsx } from "clsx";
-// Date to since
-export const since = (unixTimestamp: number) => {
+
+export const elapsedTime = (unixTimestamp: number) => {
   const now = new Date();
   const date = new Date(unixTimestamp * 1000);
   const diff = now.getTime() - date.getTime();

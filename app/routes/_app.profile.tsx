@@ -8,6 +8,7 @@ import { requireUser } from "~/.server/session/session";
 import { Outlet, ShouldRevalidateFunction } from "@remix-run/react";
 import { getUserById } from "~/.server/services/user";
 
+// TODO: Implement Granular Error Handling
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);
   const requestUrl = new URL(request.url);

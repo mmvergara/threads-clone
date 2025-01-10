@@ -1,22 +1,29 @@
 import { ActionFunctionArgs } from "@remix-run/node";
+import { z } from "zod";
 import { toggleFollowUser } from "~/.server/services/user";
 import { requireUser } from "~/.server/session/session";
+import { handleServerError } from "~/.server/utils/error-handler";
 
 export const action = async ({ request }: ActionFunctionArgs) => {
   if (request.method !== "POST") {
-    return { status: 405, error: "Method not allowed" };
+    throw new Response("Method not allowed", { status: 405 });
   }
   try {
     const currentUser = await requireUser(request);
     const formData = await request.formData();
-    const toFollowUserId = formData.get("toFollowUserId") as string;
-    await toggleFollowUser({
+    const toFollowUserId = z
+      .string({
+        message: "toFollowUserId is required.",
+      })
+      .length(10, "Invalid toFollowUserId")
+      .parse(formData.get("toFollowUserId"));
+
+    const { followed } = await toggleFollowUser({
       followerUserId: currentUser.id,
       toFollowUserId,
     });
-    return null;
+    return { success: followed ? "Followed" : "Unfollowed" };
   } catch (error) {
-    console.error(error);
-    return { error: "Something went wrong" };
+    handleServerError(error);
   }
 };
