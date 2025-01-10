@@ -1,12 +1,10 @@
 import { ImageUpIcon } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { UploadButton } from "~/utils/uploadthing";
 import { useFetcher } from "@remix-run/react";
 import { Thread, User } from "~/.server/db/schema";
 import { truncateTextEllipses } from "~/utils/formatters";
-import SubmitBtn from "./submit-btn";
-import { Intent } from "~/utils/client-action-utils";
 
 type Props = {
   isOpen: boolean;
@@ -24,11 +22,16 @@ const CreateThreadModal = ({
   currentUser,
   parentThread,
 }: Props) => {
-  const fetcher = useFetcher();
+  const createThreadFetcher = useFetcher();
   const uploadThingBtnRef = useRef<HTMLDivElement>(null);
   const [images, setImages] = useState<string[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    setIsOpen(false);
+
+  }, [createThreadFetcher]);
 
   if (!isOpen) return null;
 
@@ -75,7 +78,7 @@ const CreateThreadModal = ({
           </section>
         )}
 
-        <fetcher.Form
+        <createThreadFetcher.Form
           method="post"
           action="/api/thread/create"
           className="contents"
@@ -236,7 +239,7 @@ const CreateThreadModal = ({
               </button>
             </div>
           </footer>
-        </fetcher.Form>
+        </createThreadFetcher.Form>
       </div>
     </div>
   );
