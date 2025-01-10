@@ -1,12 +1,5 @@
 import { Intent } from "~/utils/client-action-utils";
-import {
-  repostThreadAction,
-  unrepostThreadAction,
-} from "./services/thread-interaction-actions";
-import {
-  createThreadAction,
-  deleteThreadAction,
-} from "./services/threads-actions";
+import { createThreadAction } from "./services/threads-actions";
 import {
   followUserAction,
   unfollowUserAction,
@@ -26,10 +19,6 @@ export const universalActionHandler = async (request: Request) => {
     intent = formData.get("intent") as string;
     console.log(request.url, "=", intent);
     switch (intent) {
-      case Intent.CreateThread:
-        return await createThreadAction(currentUser.id, formData, intent);
-      case Intent.DeleteThread:
-        return await deleteThreadAction(currentUser.id, formData, intent);
       case Intent.UpdateProfileData:
         return await updateProfileDataAction(currentUser.id, formData, intent);
       case Intent.UpdateProfileImage:
@@ -38,10 +27,6 @@ export const universalActionHandler = async (request: Request) => {
         return await followUserAction(currentUser.id, formData, intent);
       case Intent.UnfollowUser:
         return await unfollowUserAction(currentUser.id, formData, intent);
-      case Intent.RepostThread:
-        return await repostThreadAction(currentUser.id, formData, intent);
-      case Intent.UnrepostThread:
-        return await unrepostThreadAction(currentUser.id, formData, intent);
       default:
         throw new Error("Invalid intent");
     }

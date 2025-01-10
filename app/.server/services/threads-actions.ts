@@ -36,24 +36,3 @@ export const createThreadAction = async (
   });
   return handleActionSuccess("Thread created", intent, thread);
 };
-
-export const deleteThreadAction = async (
-  currentUserId: string,
-  formData: FormData,
-  intent: Intent
-) => {
-  const threadId = formData.get("threadId") as string;
-
-  const thread = await getThreadById(threadId);
-
-  if (thread.userId !== currentUserId) {
-    return handleActionError(
-      ["You are not allowed to delete this thread"],
-      intent
-    );
-  }
-
-  await deleteThread(threadId, thread.parentThreadId ?? undefined);
-
-  return handleActionSuccess("Thread deleted", intent);
-};

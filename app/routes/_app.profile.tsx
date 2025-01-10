@@ -35,9 +35,6 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
   return currentParams.userId !== nextParams.userId;
 };
 
-export const action = async ({ request }: ActionFunctionArgs) =>
-  universalActionHandler(request);
-
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   if (!data?.user) {
     return [

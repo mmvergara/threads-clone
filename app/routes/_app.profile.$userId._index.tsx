@@ -96,8 +96,9 @@ const ProfilePage = () => {
             {threads.map((thread) => (
               <article key={thread.thread.id}>
                 <Thread
-                  user={user}
+                  currentUser={currentUser}
                   thread={thread.thread}
+                  threadAuthor={user}
                   isLiked={thread.isLiked}
                   isReposted={thread.isReposted}
                 />

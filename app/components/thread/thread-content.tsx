@@ -1,11 +1,9 @@
-import { Form, useNavigate } from "@remix-run/react";
+import { useFetcher, useNavigate } from "@remix-run/react";
 import { MoreHorizontalIcon, TrashIcon } from "lucide-react";
 import { useState } from "react";
 import { Thread, User } from "~/.server/db/schema";
 import { useClickOutside } from "~/hooks/useClickOutside";
 import { since } from "~/utils/formatters";
-import SubmitBtn from "../submit-btn";
-import { Intent } from "~/utils/client-action-utils";
 
 type Props = {
   thread: Thread;
@@ -20,6 +18,7 @@ const ThreadContent = ({ thread, threadAuthor }: Props) => {
   const images = JSON.parse(thread.imageUrls as string) as string[];
   const navigate = useNavigate();
 
+  const deleteThreadFetcher = useFetcher();
   return (
     <section className="ml-2" aria-label="Thread content">
       <div className="flex flex-wrap items-center gap-2 justify-between">
@@ -64,22 +63,30 @@ const ThreadContent = ({ thread, threadAuthor }: Props) => {
               role="menu"
             >
               <div className="p-2">
-                <Form method="post">
+                <deleteThreadFetcher.Form
+                  method="post"
+                  action="/api/thread/delete"
+                >
                   <input
                     type="hidden"
                     name="threadId"
                     value={thread.id}
                     aria-hidden="true"
                   />
-                  <SubmitBtn
-                    intent={Intent.DeleteThread}
+                  <input
+                    type="hidden"
+                    name="parentThreadId"
+                    value={thread.parentThreadId || ""}
+                    aria-hidden="true"
+                  />
+                  <button
+                    type="submit"
                     className="w-full flex gap-2 items-center p-4 hover:bg-[#252525] rounded-lg text-red-500"
-                    role="menuitem"
                   >
                     <TrashIcon className="w-5 h-5" aria-hidden="true" />
                     Delete
-                  </SubmitBtn>
-                </Form>
+                  </button>
+                </deleteThreadFetcher.Form>
               </div>
             </div>
           )}

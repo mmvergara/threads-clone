@@ -21,8 +21,8 @@ const Sidebar = () => {
       aria-label="Main navigation"
     >
       <div className="flex items-center justify-center">
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           aria-label="Home"
           className="flex items-center justify-center"
         >
@@ -31,8 +31,8 @@ const Sidebar = () => {
       </div>
 
       <nav className="flex-1 flex flex-col gap-4 items-center justify-center">
-        <Link 
-          to="/" 
+        <Link
+          to="/"
           className="hover:bg-[#171717] py-2.5 px-4 rounded-lg"
           aria-label="Go to home page"
         >
@@ -45,7 +45,7 @@ const Sidebar = () => {
         >
           <SearchIcon size={28} aria-hidden="true" />
         </Link>
-        <button 
+        <button
           className="bg-[#171717] hover:text-white py-2.5 px-4 rounded-lg"
           aria-label="Create new post"
         >
@@ -79,7 +79,7 @@ const Sidebar = () => {
         </button>
 
         {isDropdownOpen && (
-          <div 
+          <div
             id="dropdown-menu"
             className="absolute bottom-16 left-16 z-10 w-48 bg-[#171717] rounded-xl border-[1px] border-[#303030] shadow-lg"
             role="menu"

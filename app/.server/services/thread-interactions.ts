@@ -49,20 +49,55 @@ export async function hasUserLikedThread(threadId: string, userId: string) {
   return like.length > 0;
 }
 
-export async function repostThread(threadId: string, userId: string) {
-  await db.transaction(async (tx) => {
+export async function toggleRepostThread({
+  threadId,
+  currentUserId,
+}: {
+  threadId: string;
+  currentUserId: string;
+}) {
+  return await db.transaction(async (tx) => {
     const id = generateID();
-    await tx.insert(threadReposts).values({
-      id,
-      threadId,
-      repostingUserId: userId,
-    });
+    const hasUserReposted =
+      (
+        await db
+          .select()
+          .from(threadReposts)
+          .where(
+            and(
+              eq(threadReposts.threadId, threadId),
+              eq(threadReposts.repostingUserId, currentUserId)
+            )
+          )
+          .limit(1)
+      ).length > 0;
+
+    let delta = 0;
+
+    if (hasUserReposted) {
+      await tx
+        .delete(threadReposts)
+        .where(
+          and(
+            eq(threadReposts.threadId, threadId),
+            eq(threadReposts.repostingUserId, currentUserId)
+          )
+        );
+      delta = -1;
+    } else {
+      await tx.insert(threadReposts).values({
+        id,
+        threadId,
+        repostingUserId: currentUserId,
+      });
+    }
+
     await tx
       .update(threads)
-      .set({ reposts: sql`${threads.reposts} + 1` })
+      .set({ reposts: sql`${threads.reposts} + ${delta}` })
       .where(eq(threads.id, threadId));
+    return true;
   });
-  return true;
 }
 
 export async function unrepostThread(threadId: string, userId: string) {
@@ -83,16 +118,10 @@ export async function unrepostThread(threadId: string, userId: string) {
   return true;
 }
 
-export async function hasUserRepostedThread(threadId: string, userId: string) {
-  const repost = await db
-    .select()
-    .from(threadReposts)
-    .where(
-      and(
-        eq(threadReposts.threadId, threadId),
-        eq(threadReposts.repostingUserId, userId)
-      )
-    )
-    .limit(1);
-  return repost.length > 0;
-}
+export async function hasUserRepostedThread({
+  threadId,
+  currentUserId,
+}: {
+  threadId: string;
+  currentUserId: string;
+}) {}

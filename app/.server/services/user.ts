@@ -49,45 +49,40 @@ export const updateUserProfileImage = async (
   return true;
 };
 
-export const followUser = async (
-  followerUserId: string,
-  toFollowUserId: string
-) => {
-  const id = generateID();
+export const toggleFollowUser = async ({
+  followerUserId,
+  toFollowUserId,
+}: {
+  followerUserId: string;
+  toFollowUserId: string;
+}) => {
+  const isFollowed = await isFollowedByUser(followerUserId, toFollowUserId);
   await db.transaction(async (tx) => {
-    await tx.insert(userFollowers).values({
-      id,
-      followedUserId: toFollowUserId,
-      followerUserId,
-    });
-
+    let delta = 0;
+    if (isFollowed) {
+      await tx
+        .delete(userFollowers)
+        .where(
+          and(
+            eq(userFollowers.followedUserId, toFollowUserId),
+            eq(userFollowers.followerUserId, followerUserId)
+          )
+        );
+      delta = -1;
+    } else {
+      await tx.insert(userFollowers).values({
+        id: generateID(),
+        followedUserId: toFollowUserId,
+        followerUserId,
+      });
+      delta = 1;
+    }
     await tx
       .update(users)
-      .set({ followers: sql`${users.followers} + 1` })
+      .set({ followers: sql`${users.followers} + ${delta}` })
       .where(eq(users.id, toFollowUserId));
   });
 
-  return true;
-};
-
-export const unfollowUser = async (
-  followerUserId: string,
-  toUnfollowUserId: string
-) => {
-  await db.transaction(async (tx) => {
-    await tx
-      .delete(userFollowers)
-      .where(
-        and(
-          eq(userFollowers.followedUserId, toUnfollowUserId),
-          eq(userFollowers.followerUserId, followerUserId)
-        )
-      );
-    await tx
-      .update(users)
-      .set({ followers: sql`${users.followers} - 1` })
-      .where(eq(users.id, toUnfollowUserId));
-  });
   return true;
 };
 

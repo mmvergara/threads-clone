@@ -226,14 +226,14 @@ const CreateThreadModal = ({
               <span className="text-zinc-500 text-sm">
                 Anyone can reply & quote
               </span>
-              <SubmitBtn
-                intent={Intent.CreateThread}
+              <button
+                type="submit"
                 className="px-4 py-2 rounded-full bg-white text-black"
                 disabled={isUploading}
                 aria-disabled={isUploading}
               >
                 Post
-              </SubmitBtn>
+              </button>
             </div>
           </footer>
         </fetcher.Form>

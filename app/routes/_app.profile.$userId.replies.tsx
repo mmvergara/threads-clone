@@ -5,12 +5,11 @@ import { getUserReplyThreads } from "~/.server/services/threads";
 import ProfileHeader from "~/components/profile-header";
 import { requireUser } from "~/.server/session/session";
 import Thread from "~/components/thread/thread";
-import { universalActionHandler } from "~/.server/action-handler";
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const currentUser = await requireUser(request);
   const userId = params.userId!;
-  const user = await getUserById(userId);
+  const profileUser = await getUserById(userId);
   const isFollowed = await isFollowedByUser(currentUser.id, userId);
   const replyThreads = await getUserReplyThreads({
     userId,
@@ -18,7 +17,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   });
   return {
     replyThreads,
-    user,
+    profileUser,
     isFollowed,
     isCurrentUser: currentUser.id === userId,
     currentUser,
@@ -27,27 +26,24 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
   return [
-    { title: `Replies by ${data?.user?.handle}` },
+    { title: `Replies by ${data?.profileUser?.handle}` },
     {
       name: "description",
-      content: `Replies by ${data?.user?.handle}`,
+      content: `Replies by ${data?.profileUser?.handle}`,
     },
   ];
 };
 
-export const action = async ({ request }: ActionFunctionArgs) =>
-  universalActionHandler(request);
-
 const ProfileRepliesPage = () => {
-  const { replyThreads, user, isFollowed, isCurrentUser, currentUser } =
+  const { replyThreads, profileUser, isFollowed, isCurrentUser, currentUser } =
     useLoaderData<Awaited<ReturnType<typeof loader>>>();
 
   return (
-    <main role="main" aria-label={`${user.handle}'s replies`}>
+    <main role="main" aria-label={`${profileUser.handle}'s replies`}>
       <header>
         <ProfileHeader
           isFollowed={isFollowed}
-          user={user}
+          user={profileUser}
           isCurrentUser={isCurrentUser}
         />
       </header>
@@ -61,8 +57,9 @@ const ProfileRepliesPage = () => {
             {replyThreads.map((thread) => (
               <article key={thread.thread.id}>
                 <Thread
-                  user={user}
+                  threadAuthor={profileUser}
                   thread={thread.thread}
+                  currentUser={currentUser}
                   isLiked={thread.isLiked}
                   isReposted={false}
                 />

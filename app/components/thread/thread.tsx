@@ -1,11 +1,7 @@
 import { Repeat2Icon, MoreHorizontalIcon, TrashIcon } from "lucide-react";
 import type { Thread, User } from "~/.server/db/schema";
 import { cn, since } from "~/utils/formatters";
-import CreateThreadModal from "../create-thread-modal";
-import { useState } from "react";
 import { Form, useNavigate } from "@remix-run/react";
-import { Intent } from "~/utils/client-action-utils";
-import SubmitBtn from "../submit-btn";
 import { useClickOutside } from "~/hooks/useClickOutside";
 import ThreadActions from "./thread-actions";
 import ThreadContent from "./thread-content";

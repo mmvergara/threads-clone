@@ -1,10 +1,8 @@
 import { Repeat2Icon } from "lucide-react";
 import { useState } from "react";
 import { Thread } from "~/.server/db/schema";
-import SubmitBtn from "../submit-btn";
-import { Form } from "@remix-run/react";
+import { Form, useFetcher } from "@remix-run/react";
 import { useClickOutside } from "~/hooks/useClickOutside";
-import { Intent } from "~/utils/client-action-utils";
 import { cn } from "~/utils/formatters";
 
 type Props = {
@@ -16,6 +14,8 @@ const ThreadRepost = ({ thread, isReposted }: Props) => {
   const repostDropdownRef = useClickOutside(() =>
     setIsRepostDropdownOpen(false)
   );
+
+  const repostThreadFetcher = useFetcher();
   return (
     <div className="relative">
       <button
@@ -42,27 +42,25 @@ const ThreadRepost = ({ thread, isReposted }: Props) => {
           role="menu"
         >
           <div className="p-2">
-            <Form method="post">
+            <repostThreadFetcher.Form method="post" action="/api/thread/repost">
               <input
                 type="hidden"
                 name="threadId"
                 value={thread.id}
                 aria-hidden="true"
               />
-              <SubmitBtn
-                intent={
-                  isReposted ? Intent.UnrepostThread : Intent.RepostThread
-                }
+              <button
+                onClick={(e) => e.stopPropagation()}
+                type="submit"
                 className="w-full flex gap-2 items-center p-4 hover:bg-[#252525] rounded-lg"
-                role="menuitem"
               >
                 <Repeat2Icon
                   className={cn("w-5 h-5", isReposted && "text-red-500")}
                   aria-hidden="true"
                 />
                 {isReposted ? "Remove" : "Repost"}
-              </SubmitBtn>
-            </Form>
+              </button>
+            </repostThreadFetcher.Form>
           </div>
         </div>
       )}

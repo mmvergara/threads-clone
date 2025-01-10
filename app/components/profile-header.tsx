@@ -1,11 +1,9 @@
-import { Form, Link, useLocation } from "@remix-run/react";
+import { Form, Link, useFetcher, useLocation } from "@remix-run/react";
 import { User } from "~/.server/db/schema";
 import EditProfileModal from "./edit-profile-modal";
 import UploadProfileModal from "./upload-profile-image-modal";
 import { useState } from "react";
 import { cn } from "~/utils/formatters";
-import SubmitBtn from "./submit-btn";
-import { Intent } from "~/utils/client-action-utils";
 
 type Props = {
   user: User;
@@ -17,6 +15,7 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
 
+  const followFetcher = useFetcher();
   return (
     <header role="banner" aria-label="Profile header">
       <div className="px-6 pt-10">
@@ -25,10 +24,17 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
             <h1 className="text-xl font-bold text-white">
               {user?.displayName}
             </h1>
-            <p className="text-white" aria-label="Username">@{user?.handle}</p>
-            <p className="text-white mt-4" aria-label="Bio">{user?.bio}</p>
+            <p className="text-white" aria-label="Username">
+              @{user?.handle}
+            </p>
+            <p className="text-white mt-4" aria-label="Bio">
+              {user?.bio}
+            </p>
             <div className="flex items-center gap-2 mt-4">
-              <span className="text-zinc-500 text-sm" aria-label="Follower count">
+              <span
+                className="text-zinc-500 text-sm"
+                aria-label="Follower count"
+              >
                 {user?.followers} followers
               </span>
             </div>
@@ -46,16 +52,14 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
           </button>
         </div>
 
-        <Form method="post" className="flex gap-2 mt-6">
-          <input 
-            type="hidden" 
-            name="toFollowUserId" 
-            value={user.id}
-            aria-hidden="true"
-          />
-          <input 
-            type="hidden" 
-            name="toUnfollowUserId" 
+        <followFetcher.Form
+          method="post"
+          action="/api/user/follow"
+          className="flex gap-2 mt-6"
+        >
+          <input
+            type="hidden"
+            name="toFollowUserId"
             value={user.id}
             aria-hidden="true"
           />
@@ -67,27 +71,22 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
             >
               Edit profile
             </button>
-          ) : isFollowed ? (
-            <SubmitBtn
-              intent={Intent.UnfollowUser}
+          ) : (
+            <button
+              type="submit"
               className="flex-1 px-4 py-1.5 border-[1px] font-bold border-zinc-600 rounded-lg text-white hover:text-red-500 hover:border-red-500 transition-colors"
               aria-label="Unfollow user"
             >
-              Unfollow
-            </SubmitBtn>
-          ) : (
-            <SubmitBtn
-              intent={Intent.FollowUser}
-              className="flex-1 px-4 py-1.5 border-[1px] font-bold border-zinc-600 rounded-lg text-black bg-white"
-              aria-label="Follow user"
-            >
-              Follow
-            </SubmitBtn>
+              {isFollowed ? "Unfollow" : "Follow"}
+            </button>
           )}
-        </Form>
+        </followFetcher.Form>
       </div>
 
-      <nav className="flex mt-4 text-zinc-500 font-semibold" aria-label="Profile sections">
+      <nav
+        className="flex mt-4 text-zinc-500 font-semibold"
+        aria-label="Profile sections"
+      >
         <Link
           to={`/profile/${user.id}`}
           className={cn(
@@ -96,7 +95,9 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
               ? "border-white text-white"
               : "border-zinc-700"
           )}
-          aria-current={location.pathname.endsWith(`/${user.id}`) ? "page" : undefined}
+          aria-current={
+            location.pathname.endsWith(`/${user.id}`) ? "page" : undefined
+          }
         >
           Threads
         </Link>
@@ -108,7 +109,9 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
               ? "border-white text-white"
               : "border-zinc-700"
           )}
-          aria-current={location.pathname.endsWith("/replies") ? "page" : undefined}
+          aria-current={
+            location.pathname.endsWith("/replies") ? "page" : undefined
+          }
         >
           Replies
         </Link>
@@ -120,7 +123,9 @@ const ProfileHeader = ({ user, isCurrentUser, isFollowed }: Props) => {
               ? "border-white text-white"
               : "border-zinc-700"
           )}
-          aria-current={location.pathname.endsWith("/reposts") ? "page" : undefined}
+          aria-current={
+            location.pathname.endsWith("/reposts") ? "page" : undefined
+          }
         >
           Reposts
         </Link>

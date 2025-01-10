@@ -15,6 +15,7 @@ import { toastActionData } from "~/utils/toast";
 import SubmitBtn from "../submit-btn";
 import ThreadLikeBtn from "./thread-like";
 import ThreadReply from "./thread-reply";
+import ThreadRepost from "./thread-repost";
 
 type Props = {
   thread: Thread;
@@ -45,7 +46,7 @@ const ThreadActions = ({
         threadAuthor={threadAuthor}
         currentUser={currentUser}
       />
-
+      <ThreadRepost thread={thread} isReposted={isReposted} />
 
       <button
         onClick={(e) => {

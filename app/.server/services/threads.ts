@@ -50,12 +50,19 @@ export const createThread = async ({
   return res[0];
 };
 
-export const deleteThread = async (
-  threadId: string,
-  parentThreadId?: string
-) => {
+export const deleteThread = async ({
+  threadId,
+  currentUserId,
+  parentThreadId,
+}: {
+  threadId: string;
+  currentUserId: string;
+  parentThreadId?: string;
+}) => {
   await db.transaction(async (tx) => {
-    await tx.delete(threads).where(eq(threads.id, threadId));
+    await tx
+      .delete(threads)
+      .where(and(eq(threads.id, threadId), eq(threads.userId, currentUserId)));
     if (parentThreadId) {
       await tx
         .update(threads)
