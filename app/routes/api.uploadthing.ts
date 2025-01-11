@@ -1,5 +1,12 @@
+import { createRouteHandler } from "uploadthing/remix";
 import { createUploadthing, type FileRouter } from "uploadthing/remix";
-
+import { UploadThingError } from "uploadthing/server";
+import { getSession } from "~/.server/services/session";
+const getUserIdFromSession = async (request: Request) => {
+  const session = await getSession(request.headers.get("Cookie"));
+  const userId = session.get("userId") as string;
+  return userId;
+};
 const f = createUploadthing({
   errorFormatter(err) {
     if (err.code === "BAD_REQUEST") {
@@ -14,11 +21,7 @@ const f = createUploadthing({
   },
 });
 
-// TODO: Add middleware to check if user is logged in
-// TODO: Add middleware to check if user is logged in
-// TODO: Add middleware to check if user is logged in
-// TODO: Add middleware to check if user is logged in
-const uploadRouter = {
+export const uploadRouter = {
   threadImageUploader: f({
     image: {
       maxFileSize: "4MB",
@@ -27,12 +30,7 @@ const uploadRouter = {
   })
     .middleware(async ({ event }) => {
       const user = getUserIdFromSession(event.request);
-      if (!user) {
-        return {
-          code: "UNAUTHORIZED",
-          message: "You need to be logged in to upload images",
-        };
-      }
+      if (!user) throw new UploadThingError("Unauthorized");
       return {};
     })
     .onUploadComplete(async () => {}),
@@ -47,13 +45,9 @@ const uploadRouter = {
 
 export type UploadRouter = typeof uploadRouter;
 
-import { createRouteHandler } from "uploadthing/remix";
-import { getUserIdFromSession } from "~/.server/services/session";
-
 export const { action, loader } = createRouteHandler({
   router: uploadRouter,
   config: {
     logFormat: "pretty",
-    // logLevel: "Error",
   },
 });
