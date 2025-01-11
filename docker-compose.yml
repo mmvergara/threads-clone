@@ -1,0 +1,15 @@
+version: "3.8"
+services:
+  threads_clone:
+    build: .
+    image: threads_clone:latest
+    ports:
+      - "3111:3000"
+    environment:
+      SESSION_SECRET: ${SESSION_SECRET}
+      UPLOADTHING_TOKEN: ${UPLOADTHING_TOKEN}
+    volumes:
+      - thread-clone-sqlite-db:/home/appuser/data/
+
+volumes:
+  thread-clone-sqlite-db:
