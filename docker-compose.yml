@@ -4,7 +4,7 @@ services:
     build: .
     image: threads_clone:latest
     ports:
-      - "3111:3000"
+      - "3000:3000"
     environment:
       SESSION_SECRET: ${SESSION_SECRET}
       UPLOADTHING_TOKEN: ${UPLOADTHING_TOKEN}

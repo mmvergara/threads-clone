@@ -123,6 +123,7 @@ const CreateThreadModal = ({
                       className="w-full flex-1 bg-transparent text-white placeholder-zinc-500 mt-2 resize-none focus:outline-none text-sm mb-2"
                       rows={1}
                       style={{ height: "auto" }}
+                      onClick={(e) => e.stopPropagation()}
                       onInput={(e) => {
                         const target = e.target as HTMLTextAreaElement;
                         target.style.height = "auto";
@@ -229,7 +230,7 @@ const CreateThreadModal = ({
           <footer className="p-6 pt-2">
             <div className="flex items-center justify-between">
               <span className="text-zinc-500 text-sm">
-                Anyone can reply & quote
+                Anyone can reply & quote to this thread
               </span>
               <button
                 type="submit"
