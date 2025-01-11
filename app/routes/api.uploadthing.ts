@@ -1,12 +1,7 @@
-import { ActionFunctionArgs } from "@remix-run/node";
 import { createRouteHandler } from "uploadthing/remix";
 import { createUploadthing, type FileRouter } from "uploadthing/remix";
 import { UploadThingError } from "uploadthing/server";
 import { getUserIdFromSession } from "~/.server/services/session";
-
-const auth = (args: ActionFunctionArgs) => {
-  return getUserIdFromSession(args.request);
-};
 
 const f = createUploadthing({
   errorFormatter(err) {
@@ -30,7 +25,7 @@ const uploadRouter = {
     },
   })
     .middleware(async ({ event }) => {
-      const user = auth(event);
+      const user = getUserIdFromSession(event.request);
       if (!user) throw new UploadThingError("Unauthorized");
       return {};
     })
