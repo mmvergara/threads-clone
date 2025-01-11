@@ -1,12 +1,8 @@
 import { createRouteHandler } from "uploadthing/remix";
 import { createUploadthing, type FileRouter } from "uploadthing/remix";
 import { UploadThingError } from "uploadthing/server";
-import { getSession } from "~/.server/services/session";
-const getUserIdFromSession = async (request: Request) => {
-  const session = await getSession(request.headers.get("Cookie"));
-  const userId = session.get("userId") as string;
-  return userId;
-};
+import { getUserIdFromSession } from "~/.server/services/session";
+
 const f = createUploadthing({
   errorFormatter(err) {
     if (err.code === "BAD_REQUEST") {
