@@ -15,7 +15,9 @@ COPY . .
 RUN mkdir data && \
     touch data/local.db && \
     bunx drizzle-kit push && \
-    bun run build
+    bun run build && \
+    rm -rf node_modules && \
+    bun install --frozen-lockfile --production
 
 # FINAL STAGE
 # FINAL STAGE
