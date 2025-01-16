@@ -1,7 +1,6 @@
 version: "3.8"
 services:
   threads_clone:
-    build: .
     image: threads_clone:latest
     ports:
       - "3000:3000"
